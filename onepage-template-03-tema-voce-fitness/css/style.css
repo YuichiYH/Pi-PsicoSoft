@@ -1,3 +1,5 @@
+
+
 /*CLASS*/
 .branco   { color: #ffffff; }
 .verde     { color: #2bbdce; }
@@ -7,6 +9,8 @@
 .title.center { text-align:center; }
 
 .content { float:left; width:92%; margin:0 4%; padding: 20px 0; }
+
+
 
 /*HEADER*/
 .main_header          { background:#ffffff; z-index:1; }
@@ -20,9 +24,12 @@
 .mobile_action        { color: #646464; text-align:center; width:40px; height:40px; line-height:45px; font-size:1.8em; float:right; cursor:pointer; margin:30px 8px; }
 .mobile_action.active { color:#f7777e; }
 
+
+
 /*MENU*/
 
 /*1279PX BREAKPOINT - 1279 dividido por 16 = 79.9375em*/
+
 @media (max-width: 79.9375em){
 .main_header_nav { position:fixed; left:-100%; background-color:#2bbdca; top:0; width:76%; min-width:200px; max-width:360px; height:100%; overflow:hidden; overflow-y:auto; -webkit-box-shadow:5px 0px 5px -5px rgba(0,0,0,0.75); -moz-box-shadow:5px 0px 5px -5px rgba(0,0,0,0.75); box-shadow:5px 0px 5px -5px rgba(0,0,0,0.75); z-index:99;  }
 .main_header_nav_item      { float:left; width:100%; position:relative; border-bottom:1px #55d0db solid; }
@@ -32,8 +39,12 @@
 
 }
 
+
+
 /*PAG*/
 .coluna { width:100%; float:left; margin-bottom:30px; }
+
+
 
 /*Chamada*/
 .section-chamada  { padding:0em 0; background-color:#fff; }
@@ -45,6 +56,8 @@
 .topoPag .centraliza h1  { width: 100%; font-size:2em; float:left; text-align:center; text-transform:uppercase; font-family:'open_sansbold'; text-shadow: 2px 1px 5px #535353;}
 .topoPag .centraliza p   { width:100%; font-size:1em; float:left; text-align:center; text-transform:uppercase; font-family:'open_sansregular'; }
 .topoPag .centraliza p b { display:none; }
+
+
 
 /*Modalidades*/
 .section-modalidades          { background-color:#e3e3e3; }
@@ -63,6 +76,9 @@
 
 /*Modalidades*/
 
+
+
+
 /*Galeria*/
 .section-galeria          { background-color:#2bbdce; }
 .section-galeria .content { float:left; padding: 0.5em 0 0em 0; }
@@ -75,6 +91,8 @@
 .foto:hover .image-link { bottom:20%; transition: all .3s ease-in-out; opacity:1; } 
 .foto:hover .mascara    { background: rgba(247, 119, 126, 0.69); }
 /*Termina Galeria*/
+
+
 
 /*Contato*/
 .section-contato          { background-color:#f9f9f9; }
@@ -91,6 +109,9 @@
 .info     { width:100%; float:left; display:block; margin-bottom:20px; }
 .info p   { width:100%; margin-bottom:5px; font-size: 0.79em; color:#7b7979; }
 .info p i { margin-right:5px; }
+
+
+
 
 
 /*FOOTER*/
@@ -114,7 +135,12 @@
   .colfooter .redesocial       { color:#ffffff; float:left; text-decoration:none; display:block; width:100%; margin-bottom:10px; transition:0.2s; }
   .colfooter .redesocial:hover { color: #494949; transition:0.2s; }
 
+
+
+
+  
   /*Formulário*/
+
   .my-formulario { width:100%; float:left; }
   .label { float:left; width:100%; margin-bottom:5px; position:relative; }
 
@@ -179,6 +205,8 @@
 
 /*480PX BREAKPOINT*/
 /*480 dividido por 16 = 30em*/
+
+
 @media (min-width:30em){
 
 .box-css { float:left; width:48%; margin-right:4%; min-height: 300px;}
@@ -190,12 +218,16 @@
 
 /*600PX BREAKPOINT*/
 /*600 dividido por 16 = 37,5em*/
+
 @media (min-width:37em){
 
 .topoPag .centraliza h1 { font-size:3em; margin-top:20px; }
 .topoPag .centraliza p   { font-size:1.1em; }
 
 } 
+
+
+
 
 /*768PX BREAKPOINT*/
 /*768 dividido por 16 = 48em*/
@@ -229,6 +261,8 @@
 
 } 
 
+
+
 /*960PX BREAKPOINT*/
 /*960 dividido por 16 = 60em*/
 @media (min-width:60em){
@@ -242,11 +276,15 @@
 }
 
 
+
+
 /*1024PX BREAKPOINT*/
 /*1024 dividido por 16 = 64em*/
 @media (min-width:64em){
 
 }
+
+
 
 /*1280PX BREAKPOINT*/
 /*1280 dividido por 16 = 80em*/
