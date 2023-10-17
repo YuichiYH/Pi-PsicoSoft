@@ -18,6 +18,7 @@ body {
   height: 100vh;
 }
 
+
 h1 {
   font-weight: 700;
   letter-spacing: -1.5px;
@@ -25,12 +26,14 @@ h1 {
   margin-bottom: 15px;
 }
 
+
 h1.title {
   font-size: 45px;
   line-height: 45px;
   margin: 0;
   text-shadow: 0 0 10px rgba(16, 64, 74, 0.5);
 }
+
 
 p {
   font-size: 14px;
@@ -40,6 +43,7 @@ p {
   margin: 20px 0 30px;
   text-shadow: 0 0 10px rgba(16, 64, 74, 0.5);
 }
+
 
 span {
   font-size: 14px;
@@ -120,7 +124,9 @@ button.ghost {
 
 #login i {
   position: absolute;
-  left: 50px;
+
+  left: 100px;
+  
 }
 
 #register i {
@@ -169,8 +175,8 @@ input {
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 0px 10px rgba(0, 0, 0, 0.22);
   position: relative;
   overflow: hidden;
-  width: 768px;
-  max-width: 100%;
+  width: 50%;
+  max-width: 500px;
   min-height: 500px;
 }
 
@@ -248,8 +254,8 @@ input {
 }
 
 .login-container {
-  left: 0;
-  width: 50%;
+  left: 100;
+  width: 100%;
   z-index: 2;
 }
 
@@ -361,6 +367,7 @@ input {
   transform: translateX(0);
 }
 
+
 .container.right-panel-active .overlay-right {
   transform: translateX(20%);
 }
@@ -383,4 +390,12 @@ input {
 
 .social-container a:hover {
   border: 1px solid #4bb6b7;
+}
+
+
+fim{
+  align-items: center;
+  margin: 0 5px;
+  height: 40px;
+  width: 40px;
 }
