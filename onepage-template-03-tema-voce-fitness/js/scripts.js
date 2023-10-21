@@ -12,20 +12,20 @@ $(function () {
     });
 
     //HEADER
-    $(window).scroll(function () {
+    // $(window).scroll(function () {
           
-          if($(this).scrollTop() > 0){
+    //       if($(this).scrollTop() > 0){
               
-              if (!$('.main_header').hasClass('fixed')){
-                   $('.main_header').stop().addClass('fixed');
-              }
+    //           if (!$('.main_header').hasClass('fixed')){
+    //                $('.main_header').stop().addClass('fixed');
+    //           }
           
-          }else{
+    //       }else{
           
-              $('.main_header').removeClass('fixed');
+    //           $('.main_header').removeClass('fixed');
           
-          }
-    });
+    //       }
+    // });
 
     //Scroll Ancora
     /*
