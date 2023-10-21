@@ -18,6 +18,13 @@ body {
 }
 
 
+#cpfbotao{
+  
+  font-family:'open_sansregular';
+  font-size:10px; 
+  color: #b90000;
+}
+
 h1 {
   font-weight: 700;
   letter-spacing: -1.5px;

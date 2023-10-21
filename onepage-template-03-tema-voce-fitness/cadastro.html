@@ -1,18 +1,90 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
+
 <head>
+
     <meta charset="UTF-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Cadastro paciente</title>
+    <link rel="stylesheet" href="estilo.css">
+
+    <title>Cadastr PSICOSOFT</title>
 
 </head>
 
+
 <body>
-    
 
 
+    <div>
+        <h1>PSICOSOFT</h1>
+    </div>
+    <div class="container" id="container">
+
+        <div class="form-container login-container">
+
+            <form class="form-lg">
+
+                <h1>Faça Cadastro</h1>
+
+                <div class="form-control2">
+                    <input type="text" class="name" placeholder="Nome Completo">
+
+                    <span></span>
+                </div>
+
+
+
+                <div class="form-control2">
+                    <input type="email" class="email-2" placeholder="Email para cadastro" />
+                    <small class="email-error-2"></small>
+                    <span></span>
+                </div>
+
+
+
+                <div class="form-control2">
+                    <input type="password" class="password-2" placeholder="Senha" />
+                    <small class="password-error-2"></small>
+                    <span></span>
+                </div>
+
+
+
+                <div class="form-control2">
+                    <input type="password" class="password-2" placeholder="Repetir a senha" />
+                    <small class="password-error-2"></small>
+                    <span></span>
+                </div>
+
+                <div class="form-control2">                  
+                    <input type="text" name="cpf"
+                    pattern="\d{3}\.\d{3}\.\d{3}-\d{2}" title="Digite o CPF no formato nnn.nnn.nnn-nn" 
+                    placeholder="CPF:"/> 
+                    <input  type="submit">
+
+                </div>
+
+                <div class="content">
+
+
+                </div>
+
+
+
+
+
+                <a href="login.html" class="button">Cadastrar</a>
+
+            </form>
+
+        </div>
+
+
+
+    </div>
 </body>
+
 
 </html>
