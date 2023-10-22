@@ -6,6 +6,10 @@
   box-sizing: border-box;
 }
 
+#titulo{
+  font-size:medium;
+}
+
 body {
   background: url(img/medico.jpeg)top center / cover no-repeat;
   display: flex;
