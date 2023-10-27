@@ -11,7 +11,7 @@
 
 <body>
         <div class="form container">
-            <form action="#">
+            <form>
                 <div class="form-header">
                     <div class="title">
                         <h1>Cadastre-se</h1>
@@ -46,15 +46,14 @@
                         <input id="password" type="password" name="password" placeholder="Digite sua senha" required>
                     </div>
 
+                    <div class="input-box">
+                        <label for="confirmPassword">Confirme sua Senha</label>
+                        <input id="confirmPassword" type="password" name="confirmPassword" placeholder="Digite sua senha novamente" required>
+                    </div>
 
                     <div class="input-box">
                         <label for="cpf">CPF</label>
                         <input id="cpf" type="text" name="cpf" placeholder="Digite seu CPF" required>
-                    </div>
-
-                    <div class="input-box">
-                        <label for="confirmPassword">Confirme sua Senha</label>
-                        <input id="confirmPassword" type="password" name="confirmPassword" placeholder="Digite sua senha novamente" required>
                     </div>
 
                     <div class="input-box">
@@ -93,10 +92,11 @@
                 </div>
 
                 <div class="continue-button">
-                    <button><a href="login.html">Continuar</a> </button>
+                    <button id="submit"><a>Continuar</a></button>
                 </div>
             </form>
         </div>
 </body>
+<script src="js/register.js"></script>
 
 </html>

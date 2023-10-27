@@ -1,3 +1,4 @@
+
 function getInputValues() {
     var inputs = document.getElementsByTagName('input');
     console.log(inputs)
@@ -14,33 +15,32 @@ function getInputValues() {
 function onRegister(){
     var values = getInputValues()
 
-    var error = document.getElementById("error")
+    // var error = document.getElementById("error")
 
-    error.textContent = ""
+    // error.textContent = ""
 
-    var error_switch = false;
+    console.log(values);
 
-    if (localStorage.getItem(values[1]) !== null){
-        error.textContent += "Email já utilizado"
-        return
-    }
+    // if (localStorage.getItem(values[1]) !== null){
+    //     error.textContent += "Email já utilizado"
+    //     return
+    // }
 
-    if (values.some(item => item === "")){
-        error.textContent += "Valores Faltando "
-        return
-    }
+    // if(values[2] !== values[3]){
+    //     error.textContent += "Senhas não são as mesmas"
+    //     return
+    // }
 
-    if(values[2] !== values[3]){
-        error.textContent += "Senhas não são as mesmas"
-        return
-    }
-
-    if (!(values[4] < 100000000000)){
-        console.log(values[4])
-        error.textContent += "CPF invalido"
-        return
-    }
+    // if (!(values[4] < 100000000000)){
+    //     console.log(values[4])
+    //     error.textContent += "CPF invalido"
+    //     return;
+    // }
 
     localStorage.setItem(values[1], JSON.stringify(values));
     window.location.href = "login.html"
 }
+
+const button = document.getElementById("submit");
+
+button.addEventListener("click", onRegister);
