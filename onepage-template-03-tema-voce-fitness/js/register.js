@@ -1,0 +1,46 @@
+function getInputValues() {
+    var inputs = document.getElementsByTagName('input');
+    console.log(inputs)
+    var values = [];
+    for (var i = 0; i < inputs.length; i++) {
+        values.push(inputs[i].value);
+      
+    }
+    console.log(values);
+
+    return(values);
+}
+
+function onRegister(){
+    var values = getInputValues()
+
+    var error = document.getElementById("error")
+
+    error.textContent = ""
+
+    var error_switch = false;
+
+    if (localStorage.getItem(values[1]) !== null){
+        error.textContent += "Email já utilizado"
+        return
+    }
+
+    if (values.some(item => item === "")){
+        error.textContent += "Valores Faltando "
+        return
+    }
+
+    if(values[2] !== values[3]){
+        error.textContent += "Senhas não são as mesmas"
+        return
+    }
+
+    if (!(values[4] < 100000000000)){
+        console.log(values[4])
+        error.textContent += "CPF invalido"
+        return
+    }
+
+    localStorage.setItem(values[1], JSON.stringify(values));
+    window.location.href = "login.html"
+}
