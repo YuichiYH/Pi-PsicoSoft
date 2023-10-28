@@ -1,11 +1,14 @@
 function getInputValues() {
     var inputs = document.getElementsByTagName('input');
     console.log(inputs)
+
     var values = [];
+    
     for (var i = 0; i < inputs.length; i++) {
         values.push(inputs[i].value);
       
     }
+
     console.log(localStorage.getItem(values[4]));
 
     return(values);

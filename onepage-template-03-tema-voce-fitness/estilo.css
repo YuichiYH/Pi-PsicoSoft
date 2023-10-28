@@ -112,6 +112,7 @@ a:hover {
   text-transform: capitalize;
   transition: 0.3s ease-in-out;
   cursor: pointer;
+  
 }
 
 .button:hover {

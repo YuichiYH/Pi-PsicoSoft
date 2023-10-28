@@ -52,7 +52,7 @@
 .topoPag                 { width:100%; height:100%; background-color:transparent; float:left; position:relative; overflow:hidden; transition:all 500ms; -moz-transition:all 500ms; -ms-transition:all 500ms; -o-transition:all 500ms; -webkit-transition:all 500ms;}
 .topoPag .mascara        { overflow:hidden; position:relative; }
 .topoPag .centraliza     { width: 90%; height:auto; top:26%; position:absolute; margin:0 5%; }
-.topoPag  img            { width:100%; }
+.topoPag  img            { width:100%; margin-bottom: 80px;}
 .topoPag .centraliza h1  { width: 100%; font-size:2em; float:left; text-align:center; text-transform:uppercase; font-family:'open_sansbold'; text-shadow: 2px 1px 5px #535353;}
 .topoPag .centraliza p   { width:100%; font-size:1em; float:left; text-align:center; text-transform:uppercase; font-family:'open_sansregular'; }
 .topoPag .centraliza p b { display:none; }
@@ -93,22 +93,33 @@
 /*Termina Galeria*/
 
 /*SOBRE*/
+
 #conteudo {
   background: #ad1d1d;
-  width: 1200px;
-  height: 400px;
+  width: 1300px;
+  height: 450px;
   display: flex;
+  justify-content: center;
+  align-items: center;
+  margin:auto;
+  border-radius: 18PX;
+  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.664)
+  
 
 }
 #item{
-  background: #03000000;
+  padding: 80px;
+  background: #879c3c00;
   border: 10px solid darkgreen;
   margin: 10px;
+ 
+
 }
+
 /*TERMINA SOBRE*/
 
 /*Contato*/
-.section-contato          { background-color:#f9f9f9; }
+.section-contato          { background-color:#fff; }
 .section-contato .content { float:left; padding: 0.5em 0 0em 0; }
  
 .formulario       { width:100%; height:100%; float:left; }
