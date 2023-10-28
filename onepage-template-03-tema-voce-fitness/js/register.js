@@ -16,13 +16,21 @@ function onRegister(){
     var values = getInputValues()
 
     // var error = document.getElementById("error")
+    var inputs = document.getElementsByTagName('input');
 
     // error.textContent = ""
 
     console.log(values);
 
-    // if (localStorage.getItem(values[1]) !== null){
-    //     error.textContent += "Email já utilizado"
+    for (var i = 0; i < inputs.length; i++) {
+        if (inputs[i].value === '') {
+            console.log("No values");
+          return
+        }
+    }
+
+    // if (localStorage.getItem(values[2]) !== null){
+    //     //error.textContent += "Email já utilizado"
     //     return
     // }
 
@@ -37,7 +45,7 @@ function onRegister(){
     //     return;
     // }
 
-    localStorage.setItem(values[1], JSON.stringify(values));
+    localStorage.setItem(values[2], JSON.stringify(values));
     window.location.href = "login.html"
 }
 
