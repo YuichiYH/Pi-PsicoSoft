@@ -94,16 +94,16 @@
 
 /*SOBRE*/
 #lado{
-
-  margin-left: 500px;
+  margin: auto;
+  
   padding: auto ;
-  justify-content: space-between;
+  
 }
 
 
 #conteudo {
   
-  background: #ad1d1d;
+  background-image: linear-gradient(#2bbdce, #fff);
   width: 1800px;
   height: 700px;
   display: flex;
@@ -113,10 +113,11 @@
 }
 
 #item{
-  width: 100px;
-  right: 100px;
-  border: 2px solid darkgreen;
-  margin: 100px;
+  padding: 100px;
+  width: 1000px;
+  right: 300px;
+  
+  margin: auto;
 
 }
 
