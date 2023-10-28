@@ -93,26 +93,30 @@
 /*Termina Galeria*/
 
 /*SOBRE*/
+#lado{
+
+  margin-left: 500px;
+  padding: auto ;
+  justify-content: space-between;
+}
+
 
 #conteudo {
-  background: #ad1d1d;
-  width: 1300px;
-  height: 450px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin:auto;
-  border-radius: 18PX;
-  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.664)
   
-
+  background: #ad1d1d;
+  width: 1800px;
+  height: 700px;
+  display: flex;
+  margin:auto;
+  border-radius: 15PX;
+  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.664)
 }
+
 #item{
-  padding: 80px;
-  background: #879c3c00;
-  border: 10px solid darkgreen;
-  margin: 10px;
- 
+  width: 100px;
+  right: 100px;
+  border: 2px solid darkgreen;
+  margin: 100px;
 
 }
 
