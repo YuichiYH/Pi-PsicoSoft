@@ -1,17 +1,16 @@
-
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
 
 * {
-  
   box-sizing: border-box;
 }
 
-#titulo{
-  font-size:medium;
+#titulo {
+  font-size: 50PX;
+  
 }
 
 body {
-  background: url(img/medico.jpeg)top center / cover no-repeat;
+  background: url(img/medico.jpeg) top center / cover no-repeat;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -21,11 +20,9 @@ body {
   height: 100vh;
 }
 
-
-#cpfbotao{
-  
-  font-family:'open_sansregular';
-  font-size:10px; 
+#cpfbotao {
+  font-family: "open_sansregular";
+  font-size: 10px;
   color: #b90000;
 }
 
@@ -36,14 +33,12 @@ h1 {
   margin-bottom: 15px;
 }
 
-
 h1.title {
   font-size: 45px;
   line-height: 45px;
   margin: 0;
   text-shadow: 0 0 10px rgba(16, 64, 74, 0.5);
 }
-
 
 p {
   font-size: 14px;
@@ -53,7 +48,6 @@ p {
   margin: 20px 0 30px;
   text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
 }
-
 
 span {
   font-size: 14px;
@@ -112,7 +106,6 @@ a:hover {
   text-transform: capitalize;
   transition: 0.3s ease-in-out;
   cursor: pointer;
-  
 }
 
 .button:hover {
@@ -137,7 +130,6 @@ a:hover {
   position: absolute;
 
   left: 100px;
-  
 }
 
 #register i {
@@ -369,7 +361,7 @@ input {
   transform: translateX(-20%);
 }
 
-.container .right-panel-active  .overlay-left {
+.container .right-panel-active .overlay-left {
   transform: translateX(0);
 }
 
@@ -377,7 +369,6 @@ input {
   right: 0;
   transform: translateX(0);
 }
-
 
 .container.right-panel-active .overlay-right {
   transform: translateX(20%);
