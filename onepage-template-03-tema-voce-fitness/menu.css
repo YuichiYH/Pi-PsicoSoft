@@ -8,7 +8,7 @@ body {
 }
 
 .container {
-  width: 30%;
+  width: 40%;
   margin: auto;
   
   background-color: #fff;
@@ -60,24 +60,24 @@ button {
   color: #fff;
   font-size: 15px;
   font-weight: 700;
-  margin-left: 50px;
+  margin-left: 100px;
   margin-right: 50px;
-  padding: 18px 80px;
+  padding: 15px 50px;
   letter-spacing: 1px;
   text-transform: capitalize;
   transition: 0.3s ease-in-out;
   cursor: pointer;
   list-style: none;
 }
-.button:hover {
-  letter-spacing: 3px;
+button:hover {
+  letter-spacing: 2px;
 }
 
-.button:active {
+button:active {
   transform: scale(0.95);
 }
 
-.button:focus {
+button:focus {
   outline: none;
 }
 
