@@ -1,24 +1,23 @@
-
-
-
-
-
-
-
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   background: url(img/medico.jpeg) top center / cover no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-family: "Poppins", sans-serif;
+  overflow: hidden;
+  height: 100vh;
 }
 
 .container {
-  width: 40%;
-  margin: auto;
-  
   background-color: #fff;
-  padding: 30px;
   border-radius: 25px;
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 0px 10px rgba(0, 0, 0, 0.22);
+  position: relative;
+  overflow: hidden;
+  width: 50%;
+  max-width: 500px;
+  min-height: 500px;
 }
 
 h1 {
@@ -26,8 +25,13 @@ h1 {
 }
 
 form {
-  margin-top: 30px;
-  padding: 30px;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 0 50px;
+  height: 100%;
+  text-align: center;
 }
 
 label {
@@ -57,6 +61,9 @@ input[type="submit"]:hover {
 }
 
 button {
+  margin-top: 4%;
+  margin-bottom: 4%;
+  display: flex;
   position: relative;
   border-radius: 10px;
   border: 1px solid #4bb6b7;
@@ -64,15 +71,18 @@ button {
   color: #fff;
   font-size: 15px;
   font-weight: 700;
-  margin-left: 100px;
-  margin-right: 50px;
   padding: 15px 50px;
   letter-spacing: 1px;
   text-transform: capitalize;
   transition: 0.3s ease-in-out;
   cursor: pointer;
   list-style: none;
+  text-align: center;
+  vertical-align: middle;
+  display: table-cell;
+
 }
+
 button:hover {
   letter-spacing: 2px;
 }
@@ -85,46 +95,14 @@ button:focus {
   outline: none;
 }
 
+@media (max-width:768px){
 
-
-
-.main_header {
-  background: #ffffff;
-  z-index: 1;
-}
-
-.main_header .content {
-  float: left;
-  padding: 0px 0;
-}
-
-.main_header.fixed {
-  display: block;
-  position: fixed;
-  z-index: 99;
-}
-
-.main_header_logo {
-  font-size: 0;
-  float: left;
-}
-
-.main_header_logo img {
-  height: 100px;
-}
-
-.mobile_action {
-  color: #646464;
-  text-align: center;
-  width: 40px;
-  height: 40px;
-  line-height: 45px;
-  font-size: 1.8em;
-  float: right;
-  cursor: pointer;
-  margin: 30px 8px;
-}
-
-.mobile_action.active {
-  color: #f7777e;
-}
+  body{
+    padding: 0;
+  }
+  .container{
+    margin: 0;
+    width: 100%;
+  }
+  
+  }
