@@ -393,3 +393,11 @@ input {
 .social-container a:hover {
   border: 1px solid #4bb6b7;
 }
+
+@media (max-width:768px){
+
+.container{
+  width: 100%;
+}
+
+}
