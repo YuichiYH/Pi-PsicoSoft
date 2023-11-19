@@ -43,19 +43,21 @@ body {
 
 .login-button {
     display: flex;
+    flex-direction: column;
     align-items: center;
 }
 
 .login-button button {
     border: none;
-    background-color: #6c63ff;
+    background-color: #2bbdce;
     padding: 0.4rem 1rem;
     border-radius: 5px;
     cursor: pointer;
+    margin-bottom: 6%;
 }
 
 .login-button button:hover {
-    background-color: #6b63fff1;
+    background-color: #64d6e2;
 }
 
 .login-button button a {
@@ -69,7 +71,7 @@ body {
     display: block;
     width: 5rem;
     height: 0.3rem;
-    background-color: #6c63ff;
+    background-color: #2bbdce;
     margin: 0 auto;
     position: absolute;
     border-radius: 10px;
@@ -102,7 +104,7 @@ body {
 }
 
 .input-box input:focus-visible {
-    outline: 1px solid #6c63ff;
+    outline: 1px solid #2bbdce;
 }
 
 .input-box label,
@@ -142,14 +144,14 @@ body {
     width: 100%;
     margin-top: 2.5rem;
     border: none;
-    background-color: #6c63ff;
+    background-color: #2bbdce;
     padding: 0.62rem;
     border-radius: 5px;
     cursor: pointer;
 }
 
 .continue-button button:hover {
-    background-color: #6b63fff1;
+    background-color: #64d6e2;
 }
 
 .continue-button button a {
