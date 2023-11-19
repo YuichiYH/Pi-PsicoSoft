@@ -25,6 +25,11 @@ ul.main_header_nav {
     list-style: none;
 }
 
+.icon-menu:before {
+    content: "\e500";
+}
+
+
 .clear {
     clear: both;
 }
@@ -66,3 +71,21 @@ ul.main_header_nav {
     }
 }
 
+@media (max-width: 79.9375em){
+    .main_header_nav {
+        position: fixed;
+        left: -100%;
+        background-color: #2bbdca;
+        top: 0;
+        width: 76%;
+        min-width: 200px;
+        max-width: 360px;
+        height: 100%;
+        overflow: hidden;
+        overflow-y: auto;
+        -webkit-box-shadow: 5px 0px 5px -5px rgba(0, 0, 0, 0.75);
+        -moz-box-shadow: 5px 0px 5px -5px rgba(0, 0, 0, 0.75);
+        box-shadow: 5px 0px 5px -5px rgba(0, 0, 0, 0.75);
+        z-index: 99;
+    }
+}
