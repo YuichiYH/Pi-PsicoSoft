@@ -4,14 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Agendamento de Consultas</title>
-    
+
     <link rel="stylesheet" href="menu.css">
     <link rel="stylesheet" href="header.css">
     <link rel="stylesheet" type="text/css" href="css/fonts-icones.css">
-    
+    <link rel="stylesheet" type="text/css" href="css/magnific-popup.css">
+
 </head>
 
-<body >
+<body>
 
     <header class="main_header fixed">
 
@@ -31,8 +32,8 @@
                 <li class="main_header_nav_item"><a href="cadastro.html" class="scrollSuave" title="Cadastro">
                         Cadastrar</a></li>
 
-                        <li class="main_header_nav_item"><a href="consulta.html" class="scrollSuave" title="Consulta">
-                            Consulta</a></li>
+                <li class="main_header_nav_item"><a href="consulta.html" class="scrollSuave" title="Consulta">
+                        Consulta</a></li>
 
             </ul>
 
@@ -42,10 +43,10 @@
 
     </header>
 
-    
-    <div class="container" >
-        
-        
+
+    <div class="container">
+
+
         <h1>Agendamento de Consultas</h1>
 
         <form id="appointmentForm">
@@ -78,11 +79,16 @@
 
             <textarea id="notes" name="notes" rows="15"></textarea>
 
-            <button><a href="pagamento.html">Agendar</button> 
-            <button><a href="index.html">Cancelar</button> 
+            <div>
+                <button><a href="pagamento.html">Agendar</a></button>
+                <button><a href="index.html">Cancelar</a></button>
+            </div>
         </form>
 
     </div>
+    <script src="js/jquery.js"></script>
+    <script src="js/scripts.js"></script>
+    <script src="js/jquery.magnific-popup.min.js"></script>
 </body>
 
 </html>
