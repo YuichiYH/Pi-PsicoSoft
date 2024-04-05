@@ -128,3 +128,8 @@ button:focus {
 .mobile_action.active {
   color: #f7777e;
 }
+
+
+@media (max-width: 768px){
+    
+}
