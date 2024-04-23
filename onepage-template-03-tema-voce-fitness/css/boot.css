@@ -37,7 +37,7 @@ input.btn{width: auto; cursor: pointer;}
 @font-face {
     font-family: 'open_sansbold';
     src: url('opensans/opensans-bold-webfont.woff2') format('woff2'),
-         url('opensans/opensans-bold-webfont.woff') format('woff');
+        url('opensans/opensans-bold-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 
@@ -46,7 +46,7 @@ input.btn{width: auto; cursor: pointer;}
 @font-face {
     font-family: 'open_sansextrabold';
     src: url('opensans/opensans-extrabold-webfont.woff2') format('woff2'),
-         url('opensans/opensans-extrabold-webfont.woff') format('woff');
+        url('opensans/opensans-extrabold-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 

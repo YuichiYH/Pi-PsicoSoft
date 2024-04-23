@@ -123,6 +123,7 @@
   .main_header_nav_item:hover, .main_header_nav_item>a:hover {
     background-color: #f3f3f3;
     color: #f7777e;
+
   }
 
   .main_header_nav_item span {
@@ -1049,7 +1050,7 @@ input[type="text"], textarea {
 
   .main_header_nav a:hover, .main_header_nav>li:hover>a {
     background: transparent;
-    color: #f7777e;
+    color: #ff000d;
   }
 
   .main_header_nav a.menuAtivo {
