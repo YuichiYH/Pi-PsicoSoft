@@ -98,11 +98,7 @@ a{
     justify-content: flex-start;
     background-color: #2bbdce;
     }
-  
-    .card2:hover {
-    
-    }
-  
+
     .card2:hover span {
     opacity: 0;
     z-index: -3;
@@ -203,13 +199,6 @@ a{
 }
 
 
-
-.sec1{
-    /*cor apenas para exmplo*/
-    
-    
-    
-}
 
 
 /*seção 1*/
