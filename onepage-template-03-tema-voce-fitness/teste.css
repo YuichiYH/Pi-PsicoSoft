@@ -229,8 +229,8 @@ a{
     padding: 32px;
     overflow: hidden;
     border-radius: 10px;
-    background: rgb(246 246 246 );;
-    
+    background: #2bbdce;
+    border: 0.1px solid rgb(255, 255, 255);
     transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
     margin: 60px;
     }
@@ -241,8 +241,9 @@ a{
     flex-direction: column;
     align-items: center;
     gap: 20px;
-    color: #000000;
+    color: #ffffff;
     transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
+    
     }
 
 
@@ -273,7 +274,7 @@ a{
     cursor: pointer;
     background: #0974f1;
     border-radius: 5px;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 10px rgba(139, 139, 139, 0.418);
     }
 
 
