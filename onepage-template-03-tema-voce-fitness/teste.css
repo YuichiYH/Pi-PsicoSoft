@@ -7,6 +7,15 @@
     font-family: subtitulo;
     src: url(css/fonts-icones/JupiteroidBold-9YgLj.ttf);
 }
+
+@font-face {
+    font-family: argen;
+    src: url(css/fonts-icones/ArgentumSans-Medium.otf);
+}
+@font-face {
+    font-family: subtitulo2;
+    src: url(css/fonts-icones/ArgentumSans-ThinItalic.otf);
+}
 body{
     margin: 0;
     
@@ -48,6 +57,13 @@ a{
     margin: 0;
     width: 100%;
     
+}
+
+/*seção 1 MEDICO*/
+.sec1{
+    width: 100%;
+    
+ 
 }
 
 
@@ -201,18 +217,67 @@ a{
 
 
 
-/*seção 1*/
+
+
+/*SEC2 SOBRE A PSICOSOFT */
+
 .sec2{
-    width: 100%;
     
-    border-bottom: #313131;
-    margin-top: 22%;
+    margin-top: 32%;
+    background-image: linear-gradient(to left, #1e464b, #2bbdce);
     display: grid;
-    grid-template-columns: auto auto auto;
+    grid-template-columns: auto auto;
+    column-gap: 50px;
     justify-content: center;
+    
+}
+
+.desc1{
+    width: 700px;
+    
+}
+.desc2{
+    width: 700px;
+    
+}
+.titulo2{
+    text-align: center;
+    font-family: argen;
+    font-size: 30pt;
+    color: white;
+    text-shadow: 1px 1px 3px grey;
     
     
 }
+.subtitulo2{
+    text-align: center;
+    font-family: subtitulo2;
+    font-size: 18pt;
+    color: white;
+    text-shadow: 1px 1px 2px rgb(0, 0, 0);
+    
+}
+
+.pc{
+    width: 100%;
+    
+}
+
+
+
+
+
+/* SEC3 BOTOES COM TRANSITION*/
+.sec3{
+    align-items: center;
+    width: 50%;
+    border-bottom: #313131;
+    display: grid;
+    grid-template-columns: auto auto auto;
+    justify-content: center;
+    background-image: linear-gradient(to right,  #ffffff48, #00e5ff4f);
+}
+
 
 
 
