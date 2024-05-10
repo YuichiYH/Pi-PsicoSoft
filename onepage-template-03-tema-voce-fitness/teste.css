@@ -347,7 +347,7 @@ a{
     .card:hover {
     box-shadow: 0 0 20px #7e7e7e;
     border-color: #7e7e7e;
-    transform: scale(1.1, 1.1);
+    transform: scale(1.0, 1.0);
     
     }
 
@@ -544,22 +544,51 @@ a{
         
 
 
-
-
-.logo_final{
-    width: 3%;
-}    
-
-        .footer1{
-            position: inherit;
-        }
-
-        .final{
-            
-            height: 50px;
-            border-top: solid 1px rgba(139, 139, 139, 0.301);
-            color: rgba(128, 128, 128, 0.685);
+        .logo_final{
+            width: 120px;
+            height: 100px;
+        } 
+        .div2{
             text-align: center;
             
+        
+        
+        }
+        .footertitulo, .titleFooter{
+            font-size: 15pt;
+            font-family: argen;
+        }
+        
+        .conteudo{
+            display: grid;
+            grid-template-columns: auto auto auto auto;
+            padding: 80px;
             
+        }
+        
+    .footer1{
+        border-top: 0.5px solid rgba(194, 194, 194, 0.37);
+        }
+        
+                .final{
+                    height: 50px;
+                    border-top: solid 1px rgba(139, 139, 139, 0.301);
+                    color: rgba(128, 128, 128, 0.685);
+                    text-align: center;
+                }
+        
+        
+            .colfooter{
+                width: 200px;
+                
+            }
+        
+        
+        
+        html,body{
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
         }
