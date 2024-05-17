@@ -34,6 +34,7 @@ body {
     display: flex;
     justify-content: space-around;
     position: sticky;
+    z-index: 2;
     top: 0;
     background-color: white;
     box-shadow: 0.2px 0.2px 20px rgba(95, 95, 95, 0.575);
@@ -216,8 +217,15 @@ a {
 
 .titulo1 {
     align-items: center;
-
-    margin-top: -41%;
+    position: relative;
+    
+}
+.txt{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
 }
 
 
@@ -228,8 +236,8 @@ a {
 /*SEC2 SOBRE A PSICOSOFT */
 
 .sec2 {
+    margin: -4px;
     height: 800px;
-    margin-top: 26%;
     background-image: linear-gradient(to left, #1e464b, #2bbdce);
     display: grid;
     grid-template-columns: auto auto;
@@ -265,18 +273,11 @@ a {
     font-size: 18pt;
     color: white;
     text-shadow: 1px 1px 2px rgb(0, 0, 0);
-
 }
 
 .pc {
     width: 100%;
-
-
 }
-
-
-
-
 
 /* SEC3 BOTOES COM TRANSITION*/
 .sec3 {
