@@ -236,7 +236,7 @@ a {
 /*SEC2 SOBRE A PSICOSOFT */
 
 .sec2 {
-    margin: -4px;
+    margin-top: -4px;
     height: 800px;
     background-image: linear-gradient(to left, #1e464b, #2bbdce);
     display: grid;
