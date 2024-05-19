@@ -813,15 +813,68 @@ ul {
 }
 
 
-
-
-
-
-
 html, body {
     width: 100%;
     height: 100%;
     margin: 0;
     padding: 0;
+    
     scroll-behavior: smooth;
+}
+
+
+/* DESKTOP >=1200PX xl// 
+NOTEBOOK >=992px lg// 
+TABLET >=768px md// 
+CELULARES >=576PX sm// */
+
+@media (max-width:1200px) {
+
+    .menu{
+        
+        width: 100%;
+        height: 50px;
+        
+        transition: all 0.5s ease-in-out;
+        font-size: 20px;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        color: #f5f5f5;
+        
+
+    }
+    .menu:hover{
+        position: relative;
+        height: 60px;
+        width: 100%;
+        display: flex;
+        
+        transition: all 0.5s;
+    }
+    .menul{
+        
+        margin: 0;
+        padding: 0;
+    }
+
+    .menul:hover{
+        display: flex;
+        font: 50pt;
+    }
+    .logotipo{
+        display: none;
+    }
+    .subtitulo{
+        font-size: 0px;
+        
+    }
+    .texto_principal {
+        font-size: 20pt;
+        top: 40%;
+        position: fixed;
+    }
+
+
 }
