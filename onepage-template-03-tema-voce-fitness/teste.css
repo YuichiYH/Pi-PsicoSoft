@@ -456,6 +456,74 @@ a {
 }
 
 
+/* SEÇÂO DDA IMAGEM */
+.sec5{
+    background-color: #1e464b;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    height: 800px;
+}
+
+.txt1{
+    width: 30%;
+    text-align: justify;
+    color: white;
+    letter-spacing: 1px;
+    font-family: subtitulo;
+}
+
+.part1{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 100px;
+}
+
+
+.txt3{
+    margin-left: 100px;
+    
+}
+
+
+
+
+/* SE;'AO DDA IMAGEM 2 */
+
+.sec6{
+    background-color: #2bbdce;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    height: 800px;
+}
+
+.txt2{
+    width: 30%;
+    text-align: justify;
+    color: white;
+    letter-spacing: 1px;
+    font-family: subtitulo;
+    margin-left: 80px;
+}
+
+.part2{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+.img1{
+    width: 35%;
+    
+}
+
+
+
+
+
 
 /* REDES SOCIAIS */
 ul {
