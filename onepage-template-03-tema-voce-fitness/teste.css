@@ -30,7 +30,7 @@ body {
 
 /* menu*/
 
-.menu {
+.menu1 {
     display: flex;
     justify-content: space-around;
     position: sticky;
@@ -44,17 +44,85 @@ body {
     width: 120px;
 }
 
-.ul_menu {
+.ul_menu1 {
     display: flex;
     list-style-type: none;
 }
 
-.li_menu {
+.li_menu1 {
+    /* margin: 5px;
+    align-items: center;
+    background-color: #2bbdce;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
+    box-sizing: border-box;
+    color: rgba(0, 0, 0, 0.85);
+    cursor: pointer;
+    display: inline-flex;
+    font-family: titulo;
+    font-size: 14px;
+    font-weight: 600;
+    justify-content: center;
+    line-height: 1.25;
+    min-height: 3rem;
+    padding: calc(.875rem - 1px) calc(1.5rem - 1px);
+    text-decoration: none;
+    transition: all 250ms;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: baseline;
+    width: auto; */
+    
+    height: 22px;
+    align-items: center;
+    font-size: 15px;
+    display: inline-block;
+    outline: 0;
+    border: 0;
+    cursor: pointer;
+    will-change: box-shadow,transform;
+    background: #2bbdce;
+    box-shadow: 0px 0.01em 0.01em rgb(45 35 66 / 40%), 0px 0.3em 0.7em -0.01em rgb(45 35 66 / 30%), inset 0px -0.01em 0px rgb(58 65 111 / 50%);
+    padding: 0 2em;
+    border-radius: 0.3em;
+    text-decoration: none;
     padding: 10px;
+    font-family: argen;
+    margin-left: 1px;
+    text-shadow: 0 1px 0 rgb(0 0 0 / 40%);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+/* .li_menu1:hover
+.li_menu1:focus{
+    border-color: rgba(0, 0, 0, 0.15);
+    box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
+    color: rgba(0, 0, 0, 0.65);
+} */
+.li_menu1:hover{
+    /* transform: translateY(-3px); */
+
+    box-shadow: 0px 0.1em 0.2em rgb(45 35 66 / 40%), 0px 0.4em 0.7em -0.3em rgb(45 35 66 / 30%), inset 0px -0.3em 0px #259faf;
+    transform: translateY(-0.1em);
+
+}
+.li_menu1:active{
+/*     background-color: #F0F0F1;
+    border-color: rgba(0, 0, 0, 0.15);
+    box-shadow: rgba(0, 0, 0, 0.06) 0 2px 4px;
+    color: rgba(0, 0, 0, 0.65);
+    transform: translateY(0); */
+
+
+    box-shadow: inset 0px 0.1em 0.6em rgb(44, 44, 44);
+    transform: translateY(0.1em);
 }
 
 a {
     text-decoration: none;
+    color: white;
 
 }
 
