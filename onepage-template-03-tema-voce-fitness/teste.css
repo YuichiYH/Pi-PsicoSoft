@@ -793,7 +793,7 @@ a {
     
 }
 
-/* SE;'AO DDA IMAGEM 2 */
+/* SEÇAO DDA IMAGEM 2 */
 
 .sec6{
     background-color: #2bbdce;
@@ -823,6 +823,7 @@ a {
     width: 35%;
     
 }
+
 
 
 /* REDES SOCIAIS */
@@ -1246,7 +1247,7 @@ CELULARES >=576PX sm// */
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin: 0;
+      margin: 10px;
     }
     .cardsContainer{
       
@@ -1296,6 +1297,44 @@ CELULARES >=576PX sm// */
 @media (max-width: 79.9375em){
 
 
+    .img2{
+        width: 100px;
+       
+    }
+
+    .txt3{
+
+
+    }
+    .txt1{
+        width: 100px;
+    }
+
+
+
+    .pc{
+        width: 100%;
+        
+    }
+    .desc2{
+        width: 80%;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .desc1 {
+        
+        width: 80%;
+        margin: 0 auto;
+        padding-top: 30px;
+    }
+
+    .sec2 {
+        display: block;
+        width: 100%;
+        height: 600px ;
+    }
     .texto_principal{
         font-size: 30pt;
         margin: 0 auto;
@@ -1399,7 +1438,4 @@ CELULARES >=576PX sm// */
     display: block;
     }
 
-    .pc{
-        width: 50%;
-    }
 }
