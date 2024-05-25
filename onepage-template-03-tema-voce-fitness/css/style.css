@@ -467,16 +467,7 @@
   margin: 0 auto;
   max-width: 21.75rem;
 }
-.cardDescricaoConteiner{
-  -webkit-font-smoothing: antialiased;
-  color: rgba(255, 255, 255, 0.89);
-  font-size: 0.875rem;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-  font-weight: 400;
-  line-height: 1.43;
-  letter-spacing: 0.01071em;
-  box-sizing: inherit;
-}
+
 .cardTitulo{
   -webkit-font-smoothing: antialiased;
   box-sizing: inherit;
