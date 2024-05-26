@@ -17,28 +17,25 @@ body {
     height: 100vh;
   }
 
-.container {
-    border-radius: 25px;
-    width: 80%;
-    height: 85vh;
-    display: flex;
-    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.664)
-}
-
-.form {
-    width: 50%;
-    display: flex;
-    flex-direction: column;
+.container2 {
+    border-radius: 10px;
+    display: grid;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.664);
     justify-content: center;
     align-items: center;
     background-color: #fff;
-    padding: 3rem;
+    padding: 50px;
+    
+}
+
+.botao1{
+    margin: 0px 0px 20px 20px;
 }
 
 .form-header {
-    margin-bottom: 3rem;
+    
     display: flex;
-    justify-content: space-between;
+    
 }
 
 .login-button {
@@ -47,7 +44,7 @@ body {
     align-items: center;
 }
 
-.login-button button {
+.login-button {
     border: none;
     background-color: #2bbdce;
     padding: 0.4rem 1rem;
@@ -56,17 +53,17 @@ body {
     margin-bottom: 6%;
 }
 
-.login-button button:hover {
+.login-button:hover {
     background-color: #2bbdce;
 }
 
-.login-button button a {
+.login-button{
     text-decoration: none;
     font-weight: 500;
     color: #fff;
 }
 
-.form-header h1::after {
+.form-header h1:after {
     content: '';
     display: block;
     width: 5rem;
@@ -78,16 +75,17 @@ body {
 }
 
 .input-group {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    padding: 1rem 0;
+    display: grid;
+    grid-template-columns: auto ;
+    
+    
+    
+
 }
 
 .input-box {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 1.1rem;
+    
+
 }
 
 .input-box input {
@@ -140,8 +138,8 @@ body {
     color: #000000c0;
 }
 
-.continue-button button {
-    width: 100%;
+.continue-button{
+    width: 50%;
     margin-top: 2.5rem;
     border: none;
     background-color: #2bbdce;
@@ -150,14 +148,13 @@ body {
     cursor: pointer;
 }
 
-.continue-button button:hover {
+.continue-button:hover {
     background-color: #2bbece98;
 }
 
-.continue-button button a {
-    text-decoration: none;
-    font-size: 0.93rem;
-    font-weight: 500;
+.continue-button {
+   
+    
     color: #fff;
 }
 
