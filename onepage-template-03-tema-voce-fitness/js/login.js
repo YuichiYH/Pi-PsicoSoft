@@ -71,7 +71,8 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
         console.log(data)
         // Check the response and show alert accordingly
         if (data.success) {
-            alert("Login successful!");
+            alert(`Login successful! \nWelcome ${data.client.name}`);
+            window.location.href = "index.html"
         } else {
             alert("Login failed. Please check your credentials.");
         }

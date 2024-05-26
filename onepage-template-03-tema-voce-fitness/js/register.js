@@ -86,10 +86,12 @@ document.getElementById('formulario').addEventListener('submit', function(event)
     })
     .then(data => {
         console.log('Success:', data);
+        window.location.href = "login.html"
         // Do something with the response data if needed
     })
     .catch(error => {
         console.error('Error:', error);
+        alert("ERRO NO CADASTRO")
         // Handle error
     });
 });
