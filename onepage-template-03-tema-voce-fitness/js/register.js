@@ -46,12 +46,12 @@ function onRegister(){
     // }
 
     localStorage.setItem(values[2], JSON.stringify(values));
-    window.location.href = "login.html"
+    /* window.location.href = "login.html" */
 }
 
 const button = document.getElementById("submit");
 
-button.addEventListener("click", onRegister);
+/* button.addEventListener("click", onRegister); */
 
 
 
@@ -59,7 +59,7 @@ button.addEventListener("click", onRegister);
 
 
 /* yoshi script */
-document.getElementById('submit').addEventListener('submit', function(event) {
+document.getElementById('formulario').addEventListener('submit', function(event) {
     event.preventDefault(); // Prevent the form from submitting normally
 
     // Get form data
