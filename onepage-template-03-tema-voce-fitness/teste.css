@@ -43,6 +43,7 @@ body {
 .ul_menu1 {
     display: flex;
     list-style-type: none;
+    
 }
 
 .li_menu1 {
@@ -71,7 +72,7 @@ body {
     vertical-align: baseline;
     width: auto; */
     
-    height: 22px;
+    height: 32px;
     align-items: center;
     font-size: 15px;
     display: inline-block;
@@ -86,7 +87,7 @@ body {
     text-decoration: none;
     padding: 10px;
     font-family: argen;
-    margin-left: 1px;
+    margin-left: 10px;
     text-shadow: 0 1px 0 rgb(0 0 0 / 40%);
     transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
@@ -119,6 +120,7 @@ body {
 a {
     text-decoration: none;
     color: white;
+    
 
 }
 
@@ -1238,19 +1240,18 @@ CELULARES >=576PX sm// */
 @media (max-width:768px){
 
     .branco{
-      display: block;
-      margin-top: 20px;
-      
+        display: block;
+        margin-top: 20px;
+        
     }
 
     .conhecaContainer {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 10px;
     }
     .cardsContainer{
-      
 
     }
 
@@ -1297,13 +1298,11 @@ CELULARES >=576PX sm// */
 @media (max-width: 79.9375em){
 
 
-    .img2{
+    .img2, .img1{
         width: 300px;
-
-       
     }
 
-    .part1{
+    .part1, .part2{
         display:block;  
         padding: 0px;
         justify-content: center;
@@ -1313,8 +1312,8 @@ CELULARES >=576PX sm// */
     .txt3{
         margin-left: 0px;
     }
-    .txt1{
-        width: 280px;
+    .txt1, .txt2{
+        width: 300px;
         text-align: start;
         padding-top: 30px ;
         margin: 40px 0px 40px 0px;
@@ -1323,7 +1322,7 @@ CELULARES >=576PX sm// */
     .p_bemvindo{
         font-size: 30pt;
     }
-    .sec5{
+    .sec5, .sec6{
         
         height: 600px ;
         
@@ -1353,6 +1352,7 @@ CELULARES >=576PX sm// */
         display: block;
         width: 100%;
         height: 600px ;
+       
     }
     .texto_principal{
         font-size: 30pt;
