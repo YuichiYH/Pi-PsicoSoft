@@ -52,3 +52,44 @@ function onRegister(){
 const button = document.getElementById("submit");
 
 button.addEventListener("click", onRegister);
+
+
+
+
+
+
+/* yoshi script */
+document.getElementById('submit').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the form from submitting normally
+
+    // Get form data
+    var formData = new FormData(this);
+    var jsonData = {};
+    formData.forEach(function(value, key) {
+        jsonData[key] = value;
+    });
+
+    // Send POST request
+    var url = 'https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/paciente'; // Replace 'YOUR_URL_HERE' with the URL you want to send the request to
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(jsonData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Success:', data);
+        // Do something with the response data if needed
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // Handle error
+    });
+});
