@@ -1298,16 +1298,35 @@ CELULARES >=576PX sm// */
 
 
     .img2{
-        width: 100px;
+        width: 300px;
+
        
     }
 
-    .txt3{
-
+    .part1{
+        display:block;  
+        padding: 0px;
+        justify-content: center;
+        align-items: center;
 
     }
+    .txt3{
+        margin-left: 0px;
+    }
     .txt1{
-        width: 100px;
+        width: 280px;
+        text-align: start;
+        padding-top: 30px ;
+        margin: 40px 0px 40px 0px;
+        
+    }
+    .p_bemvindo{
+        font-size: 30pt;
+    }
+    .sec5{
+        
+        height: 600px ;
+        
     }
 
 
