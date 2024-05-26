@@ -30,3 +30,9 @@ function login(){
 
     console.log(login_values);
 }
+
+
+function Bem_vindo(){
+    alert("Bemvindo  "+document.getElementById('email').value);
+
+}
