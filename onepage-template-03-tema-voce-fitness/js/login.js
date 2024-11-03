@@ -14,7 +14,7 @@ function getInputValues() {
     return(values);
 }
 
-function login(){
+function login(event){
     var values = getInputValues()
 
     console.log(values);
@@ -43,8 +43,6 @@ function Bem_vindo(){
 
 
 /* yoshi script */
-
-
 document.getElementById("loginForm").addEventListener("submit", function(event) {
     event.preventDefault(); // Prevent the form from submitting normally
 
@@ -55,7 +53,8 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
     // Create an object to send in the POST request
     var data = {
         email: email,
-        password: password
+        password: password,
+        empresa: "PSICOSOFT"
     };
 
     // Send POST request

@@ -65,7 +65,6 @@ document.getElementById('formulario').addEventListener('submit', function(event)
     // Get form data
     var formData = new FormData(this);
     var jsonData = {};
-    var body = {};
     formData.forEach(function(value, key) {
         jsonData[key] = value;
     });
