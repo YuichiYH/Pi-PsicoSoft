@@ -1466,7 +1466,7 @@ CELULARES >=576PX sm// */
 .form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
     max-width: 400px;
     
     
@@ -1538,14 +1538,14 @@ CELULARES >=576PX sm// */
   .form label {
     position: relative;
     padding: 5px;
-    margin-right: 10px;
+    margin-right: 5px;
   }
   
   .form label .input {
     background-color: #2bbdca;
     color: #ffffff;
     width: 100%;
-    padding: 20px 05px 05px 10px;
+    padding: 5px 05px 05px 5px;
     outline: 0;
     border: 1px solid rgba(105, 105, 105, 0.397);
     border-radius: 10px;
@@ -1554,7 +1554,7 @@ CELULARES >=576PX sm// */
   .form label .input + span {
     color: rgb(255, 255, 255);
     position: absolute;
-    left: 10px;
+    
     top: 0px;
     font-size: 0.9em;
     cursor: text;
@@ -1621,7 +1621,7 @@ CELULARES >=576PX sm// */
     display: flex;
     cursor: pointer;
     user-select: none;
-    padding-left: 60px;
+    padding-left: auto;
   }
   
   .container1 svg {
