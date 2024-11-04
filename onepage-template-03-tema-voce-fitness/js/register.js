@@ -69,6 +69,8 @@ document.getElementById('formulario').addEventListener('submit', function(event)
         jsonData[key] = value;
     });
 
+    jsonData["Empresas"] = "PSICOSOFT"
+
     // Send POST request
     var url = 'https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/paciente'; // Replace 'YOUR_URL_HERE' with the URL you want to send the request to
     fetch(url, {
