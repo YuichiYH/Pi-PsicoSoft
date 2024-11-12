@@ -23,10 +23,18 @@ main {
 }
 
 .feedback-form {
-    background-color: white;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+
+width: 100%;
+height: 70%;
+padding-bottom: 20px ;
+margin-bottom: 20px;
+box-shadow: 3px 3px 10px 10px rgba(92, 92, 92, 0.11);
+}
+
+.main{
+    
+    display: flex;
+    justify-content: center;
 }
 
 .form-group {
@@ -78,7 +86,7 @@ main {
 }
 
 .rating label {
-    font-size: 40px;  /* Aumenta o tamanho da estrela */
+    font-size: 45px;  /* Aumenta o tamanho da estrela */
     color: #ccc;  /* Cor padrão das estrelas não selecionadas */
     cursor: pointer;
     position: relative;
