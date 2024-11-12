@@ -1,0 +1,115 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.container {
+    width: 90%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+header {
+    background-color: #007bff;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+}
+
+main {
+    padding: 20px 0;
+}
+
+.feedback-form {
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.submit-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #0056b3;
+}
+
+.rating {
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 10px;
+}
+
+.rating input[type="radio"] {
+    display: none;  /* Esconde os inputs de rádio */
+}
+
+.rating label {
+    font-size: 40px;  /* Aumenta o tamanho da estrela */
+    color: #ccc;  /* Cor padrão das estrelas não selecionadas */
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s ease;  /* Efeito suave ao passar o mouse */
+}
+
+.rating label span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    color: #000000;  /* Cor do número dentro da estrela */
+    font-weight: bold;
+}
+
+/* Estrelas ficam amarelas quando o radio está selecionado */
+.rating input[type="radio"]:checked ~ label {
+    color: #f39c12;  /* Estrelas à direita da estrela marcada */
+}
+
+/* Quando o mouse passa sobre uma estrela, ela e todas à esquerda ficam amarelas */
+.rating label:hover,
+.rating label:hover ~ label {
+    color: #f39c12;
+}
+
+/* Controle de visualização das estrelas selecionadas: ao clicar, as estrelas à esquerda ficam amarelas */
+.rating input[type="radio"]:checked + label,
+.rating input[type="radio"]:checked + label + label,
+.rating input[type="radio"]:checked + label + label + label,
+.rating input[type="radio"]:checked + label + label + label + label {
+    color: #f39c12;
+}
