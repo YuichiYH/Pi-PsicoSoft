@@ -12,7 +12,7 @@ body {
 }
 
 header {
-    background-color: #007bff;
+    background-color: #2bbdca;
     color: white;
     padding: 20px 0;
     text-align: center;
@@ -61,7 +61,7 @@ box-shadow: 3px 3px 10px 10px rgba(92, 92, 92, 0.11);
 }
 
 .submit-btn {
-    background-color: #007bff;
+    background-color: #2bbdca;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -72,7 +72,7 @@ box-shadow: 3px 3px 10px 10px rgba(92, 92, 92, 0.11);
 }
 
 .submit-btn:hover {
-    background-color: #0056b3;
+    background-color: #2bbdca;
 }
 
 .rating {
