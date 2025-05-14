@@ -78,6 +78,7 @@ box-shadow: 3px 3px 10px 10px rgba(92, 92, 92, 0.11);
 .rating {
     display: flex;
     justify-content: space-evenly;
+    flex-direction: row-reverse;
     margin-top: 10px;
 }
 
