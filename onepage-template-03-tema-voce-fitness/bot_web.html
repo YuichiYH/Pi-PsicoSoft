@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PisicoSoft Chat</title>
+    <link rel="stylesheet" href="css/style_chat.css">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="header-content">
+                <img src="img/pisicosoft_logo.png" alt="Logo da Pisicosoft" class="logo"> 
+                <span>Chat Pisicosoft</span>
+                <div class="header-buttons">
+                    <button onclick="recomecarChat()" class="restart-button">🔄 Recomeçar</button>
+                    <button id="close-chat"><img src="img/close.png" alt="Fechar"></button>
+                </div>
+                <p>Agende suas consultas, acesse seu histórico, confirme atendimentos e conte com a gente em cada etapa do seu cuidado. 💙</p>
+            </div>
+        </div>
+        <div id="chatbox" class="chatbox"></div>
+
+        <div class="input-area">
+            <div id="typing-indicator" class="typing-indicator"></div>
+            <div class="message-input">
+                <input id="userInput" type="text" placeholder="Digite sua mensagem..." />
+                <input type="datetime-local" id="calendarInput" style="display:none;" />
+                <button id="send-button"><img src="img/message.png" alt="Enviar"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
