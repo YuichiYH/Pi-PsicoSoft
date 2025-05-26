@@ -6,6 +6,11 @@ const sendButton = document.getElementById('send-button');
 const closeButton = document.getElementById('close-chat'); 
 const chatContainer = document.querySelector('.chat-container'); 
 
+let sessionId = localStorage.getItem('pisicosoftChatSessionId');
+if (!sessionId) {
+    sessionId = crypto.randomUUID();
+    localStorage.setItem('pisicosoftChatSessionId', sessionId);
+}
 
 const API_BASE_URL = 'https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha';
 
