@@ -6,18 +6,7 @@ const sendButton = document.getElementById('send-button');
 const closeButton = document.getElementById('close-chat'); 
 const chatContainer = document.querySelector('.chat-container'); 
 
-let sessionId = localStorage.getItem('pisicosoftChatSessionId');
-if (!sessionId) {
-    sessionId = crypto.randomUUID();
-    localStorage.setItem('pisicosoftChatSessionId', sessionId);
-}
-
 const API_BASE_URL = 'https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha';
-
-if (!sessionId) {
-    sessionId = crypto.randomUUID(); 
-    localStorage.setItem('pisicosoftChatSessionId', sessionId);
-}
 
 function appendMessage(sender, message) {
     const div = document.createElement('div');
@@ -55,11 +44,71 @@ function showTypingIndicator() {
 
 // Esconde o indicador de digitação
 function hideTypingIndicator() {
-    if (typingIndicator) {
-        typingIndicator.classList.remove('typing');
-        typingIndicator.textContent = "";
-    }
+    setTimeout(() => {
+        if (typingIndicator) {
+            typingIndicator.classList.remove('typing');
+            typingIndicator.textContent = "";
+        }
+    }, 1000);
 }
+
+function chatBotFunction(user_input) {
+    let state = localStorage.getItem("state");
+    if (!state) {
+        state = 'start'; // Estado inicial
+        localStorage.setItem("state", state);
+    }
+    
+    user_input_lower = user_input.toLowerCase().trim();
+
+    switch (state) {
+        case 'start':
+            localStorage["state"] = "menu";
+            response = {"response": (
+                "Olá! Eu sou o assistente da Pisicosoft.<br>"
+                + "Em que posso te ajudar hoje?<br><br>"
+                + "(1) Agendar consulta<br>"
+                + "(2) Ver consultas anteriores<br>"
+                + "(3) Confirmar agendamento<br>"
+                + "(4) Remarcar consulta<br>"
+                + "(5) Cancelar consulta"
+            )};
+            break;
+        case 'menu':
+            if (user_input_lower in ["1", "agendar", "marcar"]) {
+                localStorage["state"] = "ask_name";
+                response = {"response": "Ótimo! Vamos agendar sua consulta. Qual é o seu nome completo?"};
+            } else if (user_input_lower in ["2", "ver", "acessar"]) {
+                localStorage["state"] = "check_name";
+                response = {"response": "Tudo bem, vamos verificar suas consultas. Qual é o seu nome completo?"};
+            } else if (user_input_lower in ["3", "confirmar"]) {
+                localStorage["state"] = "confirm_name";
+                response = {"response": "Vamos confirmar o seu agendamento. Qual é o seu nome completo?"};
+            } else if (user_input_lower in ["4", "remarcar"]) {
+                localStorage["state"] = "ask_remarcar";
+                response = {"response": "Vamos remarcar a sua consulta. Qual é o seu nome completo?"};
+            } else if (user_input_lower in ["5", "cancelar"]) {
+                localStorage["state"] = "cancelar_name";
+                response = {"response": "Certo! Vamos cancelar sua consulta. Qual é o seu nome completo?"};
+            } else {
+                response = {"response": "Desculpe, não entendi. Por favor escolha uma opção válida:<br><br>"
+                    + "(1) Agendar consulta<br>"
+                    + "(2) Ver consultas anteriores<br>"
+                    + "(3) Confirmar agendamento<br>"
+                    + "(4) Remarcar consulta<br>"
+                    + "(5) Cancelar consulta"
+                    };
+            }
+            break;
+        case 'success':
+            hideTypingIndicator();
+            break;
+        default:
+            console.warn('Estado desconhecido:', state);
+    }
+    return response;
+};
+
 
 // Função para enviar mensagem
 function sendMessage() {
@@ -70,39 +119,14 @@ function sendMessage() {
     appendMessage('Você', messageText);
     input.value = '';
     showTypingIndicator();
+    
+    response = chatBotFunction(messageText); 
 
-    fetch(`${API_BASE_URL}/chat`, { 
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-Session-Id': sessionId 
-        },
-        body: JSON.stringify({ message: messageText })
-    })
-    .then(response => {
-        if (!response.ok) {
-           
-            return response.json().then(errData => {
-                throw new Error(errData.error || `Erro ${response.status} do servidor`);
-            }).catch(() => {
-               
-                throw new Error(`Erro ${response.status} do servidor`);
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        hideTypingIndicator();
-        // A Lambda retorna um objeto com uma chave "response" dentro do "body"
-        // e o "body" da resposta da Lambda é uma string JSON.
-        // A resposta do fetch já parseou o JSON do corpo da Lambda.
-        appendMessage('PisicoSoft', data.response); 
-    })
-    .catch(error => {
-        hideTypingIndicator();
-        console.error('Erro ao enviar mensagem:', error);
-        appendMessage('PisicoSoft', `Desculpe, ocorreu um erro: ${error.message}`);
-    });
+    hideTypingIndicator();
+    // A Lambda retorna um objeto com uma chave "response" dentro do "body"
+    // e o "body" da resposta da Lambda é uma string JSON.
+    // A resposta do fetch já parseou o JSON do corpo da Lambda.
+    appendMessage('PisicoSoft', response.response); 
 }
 
 // Evento de clique do botão enviar
@@ -135,11 +159,11 @@ function recomecarChat() {
     if (input) input.value = '';
     showTypingIndicator();
 
+    // TODO: Mudar
     fetch(`${API_BASE_URL}/chat`, { // << USA A NOVA URL
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-Session-Id': sessionId // << ENVIA O SESSION ID
         },
         body: JSON.stringify({ message: 'recomeçar' }) // A Lambda já trata "recomeçar"
     })
@@ -180,7 +204,6 @@ if (calendarInputElement) {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-Session-Id': sessionId // << ENVIA O SESSION ID
                 },
                 body: JSON.stringify({ message: formattedDateTime })
             })
