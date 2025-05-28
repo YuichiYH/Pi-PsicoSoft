@@ -349,17 +349,28 @@ async function sendMessage() {
     appendMessage('PsicoSoft', botTurn.response);
 
     if (botTurn.action) {
-        let endpoint = '/chat';
-        let bodyPayload = { message: messageText, sessionData: botTurn.dataToFetch }; // Envia a mensagem original e os dados acumulados
+        let bodyPayload = {}; // Inicializa o payload que será enviado
 
         if (botTurn.action === "SAVE_CONSULTA") {
-            console.log("Preparando para enviar para Lambda (salvar):", botTurn.dataToFetch);
+            const collectedData = botTurn.dataToFetch;
+
             bodyPayload = {
-                action: "salvar_consulta", // Informa a Lambda qual operação realizar
-                consultaData: botTurn.dataToFetch // Envia todos os dados coletados
+                ClienteId: collectedData.cpf, // Opção: usar CPF
+                FuncionarioId: "psicosoft_dr@gmail.com",
+                nome: collectedData.nome,
+                cpf: collectedData.cpf,
+                especialidade: collectedData.especialidade,
+                forma: collectedData.forma,
+                horario: collectedData.horario,
+                motivo: collectedData.motivo,
+                idade: String(collectedData.idade)
             };
+        
+            console.log("Payload final formatado para a Lambda original:", JSON.stringify(bodyPayload, null, 2));
+
+            // Limpar dados após preparar o payload para envio
             localStorage.removeItem("chatbotData");
-            localStorage.setItem("chatbotState", "start");
+            localStorage.setItem("chatbotState", "start"); // Volta ao início após a tentativa de salvar
         }
         else if (botTurn.action === "FETCH_HISTORY") {
             console.log("Preparando para buscar histórico na Lambda:", botTurn.dataToFetch);
@@ -368,9 +379,8 @@ async function sendMessage() {
                 cpf: botTurn.dataToFetch.cpf_consulta
             };
         }
-
         try {
-            const response = await fetch(`${API_BASE_URL}/chat`, {
+            const response = await fetch(`${API_BASE_URL}/Consulta`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(bodyPayload)
