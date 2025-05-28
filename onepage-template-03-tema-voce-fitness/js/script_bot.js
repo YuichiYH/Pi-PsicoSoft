@@ -242,16 +242,34 @@ function chatBotStateMachine(userInput) {
 
         case "ask_horario":
             try {
-                if (!/^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}$/.test(userInput.trim())) {
-                     throw new Error("Formato inválido");
+                const input = userInput.trim();
+
+                // Valida o formato DD/MM/AAAA HH:MM
+                if (!/^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}$/.test(input)) {
+                    throw new Error("Formato inválido");
                 }
-                data.horario = userInput.trim();
+
+                // Converte a string para um objeto Date
+                const [datePart, timePart] = input.split(' ');
+                const [day, month, year] = datePart.split('/').map(Number);
+                const [hour, minute] = timePart.split(':').map(Number);
+
+                const selectedDate = new Date(year, month - 1, day, hour, minute);
+
+                // Compara com a data atual
+                const now = new Date();
+                if (selectedDate < now) {
+                    throw new Error("Data no passado");
+                }
+
+                data.horario = input;
                 nextState = "confirmacao_agendamento";
                 responseMessage = `Você está prestes a agendar:<br>` +
                     `Nome: ${data.nome}<br>` +
                     `Data e horário: ${data.horario}<br>` +
                     `Especialidade: ${data.especialidade}<br>` +
                     `Formato: ${data.forma}<br>Deseja confirmar? (sim/não)`;
+
             } catch (e) {
                 responseMessage = "Data inválida. Use o seletor de calendário ou digite no formato DD/MM/AAAA HH:MM.";
             }
