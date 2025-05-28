@@ -322,43 +322,33 @@ async function sendMessage() {
     showTypingIndicator();
     
     const botTurn = chatBotStateMachine(messageText);
-    hideTypingIndicator();
     
+    hideTypingIndicator();
     appendMessage('PsicoSoft', botTurn.response);
 
     if (botTurn.action) {
-        let endpoint = '/chat'; // Default endpoint
+        let endpoint = '/chat';
         let bodyPayload = { message: messageText, sessionData: botTurn.dataToFetch }; // Envia a mensagem original e os dados acumulados
 
         if (botTurn.action === "SAVE_CONSULTA") {
-            // Para salvar, podemos usar um endpoint específico ou uma flag no payload
-            // A Lambda precisará saber que é para salvar estes dados.
-            // Ex: bodyPayload.intent = "salvar_consulta";
-            // Ou usar um endpoint diferente se sua Lambda estiver roteando assim.
             console.log("Preparando para enviar para Lambda (salvar):", botTurn.dataToFetch);
             bodyPayload = {
                 action: "salvar_consulta", // Informa a Lambda qual operação realizar
                 consultaData: botTurn.dataToFetch // Envia todos os dados coletados
             };
-            // Limpar dados locais após tentativa de salvar
             localStorage.removeItem("chatbotData");
-            localStorage.setItem("chatbotState", "start"); // Garante reinício do fluxo de dados
+            localStorage.setItem("chatbotState", "start");
         }
         else if (botTurn.action === "FETCH_HISTORY") {
             console.log("Preparando para buscar histórico na Lambda:", botTurn.dataToFetch);
             bodyPayload = {
                 action: "buscar_consultas",
-                cpf: botTurn.dataToFetch.cpf_consulta // A Lambda espera 'cpf' para buscar
+                cpf: botTurn.dataToFetch.cpf_consulta
             };
         }
-        // Adicione outros `else if (botTurn.action === "...")` para outras operações com fetch
 
         try {
-            // O endpoint `/chat` na sua Lambda precisa ser capaz de lidar com esses `action`s
-            // ou você precisará de endpoints diferentes para cada tipo de ação.
-            // A forma como o Python original estava estruturado, ele esperava `message` e
-            // determinava o fluxo baseado no estado interno. Agora, a Lambda pode ser mais direcionada.
-            const response = await fetch(`${API_BASE_URL}/chat`, { // Pode ser um endpoint diferente dependendo da ação
+            const response = await fetch(`${API_BASE_URL}/chat`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(bodyPayload)
@@ -370,24 +360,18 @@ async function sendMessage() {
             }
 
             const dataFromLambda = await response.json();
-            hideTypingIndicator(); // Esconder novamente caso o fetch demore
+            hideTypingIndicator();
 
-            // Se o fetch foi para buscar dados (ex: histórico), a Lambda retorna a mensagem
             if (botTurn.action === "FETCH_HISTORY" && dataFromLambda.response) {
                 appendMessage('PsicoSoft', dataFromLambda.response);
-                localStorage.setItem("chatbotState", dataFromLambda.nextState || "menu"); // Lambda pode sugerir próximo estado
+                localStorage.setItem("chatbotState", dataFromLambda.nextState || "menu");
             } else if (botTurn.action === "SAVE_CONSULTA" && dataFromLambda.response) {
-                // A mensagem de confirmação já foi dada pelo `chatBotStateMachine`
-                // Mas a Lambda pode enviar uma confirmação adicional ou um ID, se necessário.
-                // console.log("Resposta da Lambda ao salvar:", dataFromLambda.response);
             }
-            // Outras actions podem ter tratamentos específicos aqui
 
         } catch (error) {
             hideTypingIndicator();
             console.error(`Erro ao executar ação ${botTurn.action}:`, error);
             appendMessage('PsicoSoft', `Desculpe, ocorreu um erro ao processar sua solicitação: ${error.message}`);
-            // Rollback state or data if needed
             localStorage.setItem("chatbotState", "menu"); // Volta ao menu em caso de erro de fetch
         }
     }
@@ -402,7 +386,7 @@ if (sendButton) {
 if (closeButton) {
     closeButton.addEventListener('click', function() {
         if (chatContainer) {
-            chatContainer.style.display = 'none'; // Ou qualquer outra lógica para fechar/minimizar
+            chatContainer.style.display = 'none';
         }
     });
 }
@@ -433,12 +417,6 @@ if (calendarInputElement) {
             
             hideTypingIndicator();
             appendMessage('PsicoSoft', botTurn.response);
-
-            // Se houver uma ação de fetch (improvável aqui, mas por consistência)
-            if (botTurn.action === "SAVE_CONSULTA") { // Exemplo, normalmente não salvaria aqui
-                // ... lógica de fetch similar à de sendMessage ...
-                console.log("Ação de fetch disparada pelo calendário - Incomum neste ponto");
-            }
 
             this.value = ''; // Limpar o campo do calendário
             if (calendarInputElement) calendarInputElement.style.display = 'none';
@@ -475,8 +453,6 @@ if (restartButton) {
 
 // Iniciar chat ao carregar a página
 window.addEventListener('load', () => {
-    // Poderia chamar `recomecarChat()` ou enviar uma mensagem inicial para `chatBotStateMachine`
-    // para exibir a primeira saudação.
     const initialBotTurn = chatBotStateMachine(''); // Enviar uma string vazia pode acionar o estado 'start'
     if (initialBotTurn.response && chatbox && chatbox.children.length === 0) { // Só adiciona se o chatbox estiver vazio
         // Não precisa de `showTypingIndicator` aqui, é a primeira mensagem.
