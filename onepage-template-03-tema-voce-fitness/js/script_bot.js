@@ -84,8 +84,12 @@ function appendMessage(sender, message) {
     if (chatbox) chatbox.appendChild(div);
     if (chatbox) chatbox.scrollTop = chatbox.scrollHeight;
 
-    // Mostrar calendário quando o bot perguntar data/hora
-    const showCalendar = sender !== 'Você' && message && message.includes("Qual o melhor dia e horário para você");
+    const normalizedMessage = message.toLowerCase();
+
+    const showCalendar = sender !== 'Você' && (
+        normalizedMessage.includes("qual o melhor dia e horário") ||
+        normalizedMessage.includes("data inválida")
+    );
     if (calendarInputElement) {
         calendarInputElement.style.display = showCalendar ? 'inline-block' : 'none';
     }
@@ -436,11 +440,16 @@ if (calendarInputElement) {
             hideTypingIndicator();
             appendMessage('PsicoSoft', botTurn.response);
 
-            this.value = ''; // Limpar o campo do calendário
-            if (calendarInputElement) calendarInputElement.style.display = 'none';
-            if (userInputElement) {
-                userInputElement.style.display = 'inline-block';
-                userInputElement.focus();
+            // Verifica se a resposta contém mensagem de erro
+            const deuErroDeData = botTurn.response.includes("Data inválida");
+
+            if (!deuErroDeData) {
+                this.value = ''; // Limpar o campo do calendário
+                if (calendarInputElement) calendarInputElement.style.display = 'none';
+                if (userInputElement) {
+                    userInputElement.style.display = 'inline-block';
+                    userInputElement.focus();
+                }
             }
         }
     });
