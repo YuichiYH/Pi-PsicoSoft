@@ -1,6 +1,6 @@
 // Seleciona os elementos do DOM
 const chatbox = document.getElementById('chatbox');
-const userInputElement = document.getElementById('userInput'); // Renomeado para evitar conflito com a variável 'input'
+const userInputElement = document.getElementById('userInput');
 const typingIndicator = document.getElementById('typing-indicator');
 const sendButton = document.getElementById('send-button');
 const closeButton = document.getElementById('close-chat');
@@ -8,11 +8,11 @@ const chatContainer = document.querySelector('.chat-container');
 const calendarInputElement = document.getElementById('calendarInput');
 const restartButton = document.querySelector('.restart-button');
 
-// URL da sua API Gateway (Lambda)
-const API_BASE_URL = 'https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha'; // Mantenha sua URL
+// URL da API Gateway (Lambda)
+const API_BASE_URL = 'https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha';
 
 // ==============================================================================
-// Funções Auxiliares (Replicadas do Python ou novas)
+// Funções Auxiliares
 // ==============================================================================
 
 function validarCPF(cpf) {
@@ -108,7 +108,7 @@ function hideTypingIndicator() {
             typingIndicator.classList.remove('typing');
             typingIndicator.textContent = "";
         }
-    }, 500); // Reduzido para resposta mais rápida da UI
+    }, 500);
 }
 
 function chatBotStateMachine(userInput) {
@@ -117,7 +117,7 @@ function chatBotStateMachine(userInput) {
     const userInputLower = userInput.trim().toLowerCase();
     let responseMessage = "";
     let nextState = state;
-    let action = null; // Para indicar se uma ação (como fetch) deve ser tomada
+    let action = null;
 
     // Comando "recomeçar" ou "menu"
     if (["recomeçar", "reiniciar", "resetar", "começar", "menu"].includes(userInputLower)) {
@@ -125,7 +125,7 @@ function chatBotStateMachine(userInput) {
             nextState = "menu";
             responseMessage = "Você voltou ao menu principal:<br><br>(1) Agendar consulta<br>(2) Ver consultas anteriores<br>(3) Confirmar agendamento<br>(4) Remarcar consulta<br>(5) Cancelar consulta";
         } else {
-            nextState = "menu"; // Ou 'start' se preferir que diga Olá novamente
+            nextState = "menu";
             data = {};
             responseMessage = "Tudo bem! Vamos começar do zero.<br>" +
                 "Em que posso te ajudar?<br><br>" +
@@ -139,7 +139,6 @@ function chatBotStateMachine(userInput) {
         localStorage.setItem("chatbotData", JSON.stringify(data));
         return { response: responseMessage, action: null, dataToFetch: null };
     }
-
 
     switch (state) {
         case "start":
@@ -158,16 +157,8 @@ function chatBotStateMachine(userInput) {
                 nextState = "ask_name";
                 responseMessage = "Ótimo! Vamos agendar sua consulta. Qual é o seu nome completo?";
             } else if (["2", "ver", "acessar"].some(k => userInputLower.includes(k))) {
-                // Para "Ver consultas", "Confirmar", "Remarcar", "Cancelar", você AINDA precisará de um fetch
-                // se os dados não estiverem localmente ou se precisar de lógica de backend.
-                // Por ora, vamos focar no agendamento (item 1) para o "fetch no final".
-                // Se quiser implementar estes, eles podem precisar de `action: "FETCH_HISTORY"` etc.
                 nextState = "fetch_needed_for_history"; // Exemplo de estado que sinaliza necessidade de fetch
                 responseMessage = "Para ver suas consultas, preciso do seu nome completo.";
-                 // Aqui você poderia definir action = "PREPARE_FETCH_HISTORY" e o próximo estado coleta CPF
-                 // e então outro estado dispara o fetch.
-                 // Por simplicidade, vamos assumir que esta opção ainda usaria o modelo antigo de fetch por mensagem.
-                 // Ou, você constrói um objeto de dados e então retorna `action: "GET_CONSULTAS"`
             } else if (["3", "confirmar"].some(k => userInputLower.includes(k))) {
                 nextState = "confirm_name";
                 responseMessage = "Vamos confirmar o seu agendamento. Qual é o seu nome completo?";
@@ -252,21 +243,10 @@ function chatBotStateMachine(userInput) {
             break;
 
         case "ask_horario":
-            // A data/hora virá do calendário, já formatada como dd/mm/yyyy HH:MM
             try {
-                // Simples verificação se o formato é esperado (não valida a data em si profundamente aqui)
                 if (!/^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}$/.test(userInput.trim())) {
                      throw new Error("Formato inválido");
                 }
-                // Para uma validação mais robusta da data (ex: se é futura), você precisaria parseá-la
-                // Ex: const [datePart, timePart] = userInput.trim().split(' ');
-                // const [day, month, year] = datePart.split('/');
-                // const [hour, minute] = timePart.split(':');
-                // const horarioDate = new Date(year, month - 1, day, hour, minute);
-                // if (horarioDate < new Date()) {
-                //    responseMessage = "Horário já passou. Escolha uma data futura.";
-                //    break;
-                // }
                 data.horario = userInput.trim();
                 nextState = "confirmacao_agendamento";
                 responseMessage = `Você está prestes a agendar:<br>` +
@@ -282,38 +262,24 @@ function chatBotStateMachine(userInput) {
         case "confirmacao_agendamento":
             const confirmacao = verificarResposta(userInput);
             if (confirmacao === "sim") {
-                // AÇÃO DE SALVAR!
-                action = "SAVE_CONSULTA"; // Sinaliza para sendMessage fazer o fetch
+                action = "SAVE_CONSULTA";
                 responseMessage = "Agendamento confirmado! 😊<br>" +
                     "Obrigado por utilizar nosso serviço. Em breve entraremos em contato para confirmar os detalhes.";
                 nextState = "start"; // Volta ao início após salvar
-                // Os dados para o fetch serão o objeto `data` atual.
-                // `data` será limpo após o fetch bem-sucedido em `sendMessage`
             } else if (confirmacao === "não") {
                 responseMessage = "O agendamento foi cancelado. Você pode voltar ao menu a qualquer momento digitando 'menu'.";
-                nextState = "start"; // Ou "menu"
-                data = {}; // Limpa os dados coletados
+                nextState = "start";
+                data = {};
             } else {
                 responseMessage = "Desculpe, não entendi. Responda com 'sim' para confirmar ou 'não' para cancelar.";
             }
             break;
 
-        // --- OUTROS FLUXOS (Exemplo: Ver histórico - precisariam de fetch antes do final) ---
-        // Estes são exemplos. Para realmente funcionarem sem fetch a cada passo,
-        // você precisaria de uma lógica mais complexa para armazenar temporariamente
-        // as consultas buscadas, ou aceitar que eles farão fetch no meio do caminho.
-
-        case "fetch_needed_for_history": // Estado intermediário
-            // Coleta nome, depois cpf, depois define action = "FETCH_HISTORY_DATA"
-            // e a sendMessage faria o fetch.
-            // Este é um placeholder para ilustrar que nem todos os fluxos
-            // terão o fetch "apenas no final" se precisarem de dados do backend.
-            // O pedido original foca em "triagem confirmada" para o fetch,
-            // o que se aplica melhor ao agendamento.
+        case "fetch_needed_for_history":
             if (!/^[A-Za-zÀ-ÿ']+( [A-Za-zÀ-ÿ']+)+$/.test(userInput.trim())) {
                 responseMessage = "Nome inválido. Por favor, digite seu nome completo (nome e sobrenome).";
             } else {
-                data.nome_consulta = userInput.trim(); // Usar chave diferente para não conflitar
+                data.nome_consulta = userInput.trim();
                 nextState = "fetch_needed_for_history_cpf";
                 responseMessage = "Qual seu CPF para buscar o histórico?";
             }
@@ -322,25 +288,23 @@ function chatBotStateMachine(userInput) {
             const cpfHist = userInput.replace(/[^\d]+/g, '');
             if (validarCPF(cpfHist)) {
                 data.cpf_consulta = cpfHist;
-                action = "FETCH_HISTORY"; // Sinaliza para fazer fetch
-                // A resposta do bot virá APÓS o fetch ser bem sucedido em sendMessage
-                responseMessage = "Buscando seu histórico..."; // Mensagem provisória
-                // nextState será definido em sendMessage após o fetch
+                action = "FETCH_HISTORY"; 
+                responseMessage = "Buscando seu histórico...";
             } else {
                 responseMessage = "CPF inválido. Por favor, digite um CPF válido.";
             }
             break;
 
-        // Adicione os outros casos (confirmar, remarcar, cancelar) aqui.
-        // Eles provavelmente precisarão buscar dados (consultas existentes)
-        // e, portanto, terão `action`s como "FETCH_FOR_CONFIRM", "FETCH_FOR_REMARCAR"
-        // no meio do fluxo deles.
-
         default:
             console.warn('Estado desconhecido:', state);
             nextState = "start";
             data = {};
-            responseMessage = "Algo deu errado. Vamos começar de novo. Em que posso te ajudar?";
+            responseMessage = "Algo deu errado. Vamos começar de novo. Em que posso te ajudar?<br><br>" +
+                "(1) Agendar consulta<br>" +
+                "(2) Ver consultas anteriores<br>" +
+                "(3) Confirmar agendamento<br>" +
+                "(4) Remarcar consulta<br>" +
+                "(5) Cancelar consulta";
     }
 
     localStorage.setItem("chatbotState", nextState);
@@ -358,14 +322,12 @@ async function sendMessage() {
     appendMessage('Você', messageText);
     userInputElement.value = '';
     showTypingIndicator();
-
-    // `chatBotStateMachine` agora lida com toda a lógica e retorna a resposta e uma possível ação
-    const botTurn = chatBotStateMachine(messageText);
-
     hideTypingIndicator();
+    
+    const botTurn = chatBotStateMachine(messageText);
+    
     appendMessage('PsicoSoft', botTurn.response);
 
-    // Se a state machine indicou uma ação de FETCH (para salvar ou buscar dados)
     if (botTurn.action) {
         let endpoint = '/chat'; // Default endpoint
         let bodyPayload = { message: messageText, sessionData: botTurn.dataToFetch }; // Envia a mensagem original e os dados acumulados
@@ -467,11 +429,11 @@ if (calendarInputElement) {
 
             appendMessage('Você', formattedDateTime); // Mostra a data formatada na UI
             showTypingIndicator();
+            hideTypingIndicator();
 
             // Chama a state machine com o valor do calendário
             const botTurn = chatBotStateMachine(formattedDateTime);
 
-            hideTypingIndicator();
             appendMessage('PsicoSoft', botTurn.response);
 
             // Se houver uma ação de fetch (improvável aqui, mas por consistência)
@@ -495,10 +457,10 @@ function recomecarChat() {
     appendMessage('Você', 'recomeçar'); // Envia "recomeçar" para a state machine
     if (userInputElement) userInputElement.value = '';
     showTypingIndicator();
+    hideTypingIndicator();
 
     const botTurn = chatBotStateMachine('recomeçar'); // Processa o comando "recomeçar"
 
-    hideTypingIndicator();
     appendMessage('PsicoSoft', botTurn.response);
 
     // Esconde o calendário e mostra o input de texto normal
