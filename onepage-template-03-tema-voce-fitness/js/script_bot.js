@@ -103,12 +103,10 @@ function showTypingIndicator() {
 }
 
 function hideTypingIndicator() {
-    setTimeout(() => {
-        if (typingIndicator) {
-            typingIndicator.classList.remove('typing');
-            typingIndicator.textContent = "";
-        }
-    }, 500);
+    if (typingIndicator) {
+        typingIndicator.classList.remove('typing');
+        typingIndicator.textContent = "";
+    }
 }
 
 function chatBotStateMachine(userInput) {
@@ -322,9 +320,9 @@ async function sendMessage() {
     appendMessage('Você', messageText);
     userInputElement.value = '';
     showTypingIndicator();
-    hideTypingIndicator();
     
     const botTurn = chatBotStateMachine(messageText);
+    hideTypingIndicator();
     
     appendMessage('PsicoSoft', botTurn.response);
 
@@ -429,11 +427,11 @@ if (calendarInputElement) {
 
             appendMessage('Você', formattedDateTime); // Mostra a data formatada na UI
             showTypingIndicator();
-            hideTypingIndicator();
-
+            
             // Chama a state machine com o valor do calendário
             const botTurn = chatBotStateMachine(formattedDateTime);
-
+            
+            hideTypingIndicator();
             appendMessage('PsicoSoft', botTurn.response);
 
             // Se houver uma ação de fetch (improvável aqui, mas por consistência)
@@ -457,10 +455,10 @@ function recomecarChat() {
     appendMessage('Você', 'recomeçar'); // Envia "recomeçar" para a state machine
     if (userInputElement) userInputElement.value = '';
     showTypingIndicator();
-    hideTypingIndicator();
-
+    
     const botTurn = chatBotStateMachine('recomeçar'); // Processa o comando "recomeçar"
-
+    
+    hideTypingIndicator();
     appendMessage('PsicoSoft', botTurn.response);
 
     // Esconde o calendário e mostra o input de texto normal
