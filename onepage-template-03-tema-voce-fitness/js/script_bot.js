@@ -380,7 +380,11 @@ async function sendMessage() {
             };
         }
         try {
-            const response = await fetch(`${API_BASE_URL}/Consulta`, {
+            const endpoint = botTurn.action === "FETCH_HISTORY"
+                ? `${API_BASE_URL}/Consulta/HistoricoChat`  // <-- novo endpoint só para histórico
+                : `${API_BASE_URL}/Consulta`;               // <-- rota de agendamento padrão
+
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(bodyPayload)
