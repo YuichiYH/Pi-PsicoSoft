@@ -23,7 +23,9 @@ body {
     margin: 0;
 
 }
-
+.groupo {
+  margin-bottom: 15px;
+}
 /* menu*/
 
 .menu1 {
@@ -1606,7 +1608,14 @@ CELULARES >=576PX sm// */
     }
   }
 
-
+.container2 {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+}
 
   /*estrela*/
 

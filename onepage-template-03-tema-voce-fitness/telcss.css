@@ -1,25 +1,50 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+@font-face {
+    font-family: titulo;
+    src: url(css/fonts-icones/Comme-Heavy.ttf);
+
+}
+
+@font-face {
+    font-family: subtitulo;
+    src: url(css/fonts-icones/JupiteroidBold-9YgLj.ttf);
+}
+
+@font-face {
+    font-family: argen;
+    src: url(css/fonts-icones/ArgentumSans-Medium.otf);
+}
+
+@font-face {
+    font-family: subtitulo2;
+    src: url(css/fonts-icones/ArgentumSans-ThinItalic.otf);
+}
+
   
   body {
-    background-color: #121212;
-    color: #fff;
+    background-color: #2bbdce;
+    
     font-family: 'Segoe UI', sans-serif;
-    display: flex;
+    margin: 0px;
     justify-content: center;
     align-items: center;
     height: 100vh;
   }
+
+
+
+  .video {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 90vh;
+  }
   
   .video-call-container {
     position: relative;
-    width: 90%;
-    max-width: 1000px;
+    width: 100%;
+    max-width: 1400px;
     height: 80vh;
-    background-color: #1f1f1f;
     border-radius: 12px;
     overflow: hidden;
     display: flex;
@@ -27,173 +52,75 @@
     justify-content: space-between;
   }
   
-  .main-video {
-    position: relative;
-    flex: 1;
-    background: #000;
+  .menu1 {
+    background-color: blue;
     display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .main-img {
-    width: 100%;
+    justify-content: space-around;
+    position: sticky;
+    z-index: 2;
+    top: 0;
+    background-color: white;
+    box-shadow: 0.2px 0.2px 20px rgba(95, 95, 95, 0.575);
     
+}
+
+.logotipo {
+    width: 120px;
+}
+
+.ul_menu1 {
+    display: flex;
+    list-style-type: none;
     
-  }
-  
-  .user-thumbnail {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    width: 180px;
-    height: 120px;
-    border: 2px solid #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    background-color: #333;
-  }
-  
-  .thumbnail-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .controls {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    padding: 20px;
-    background-color: #181818;
-  }
-  
-  .mic {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: none;
-    background-color: #3a3a3a;
-    cursor: pointer;
-    position: relative;
-  }
-  
-  .mic::before {
-    content: "";
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-  
-  .mic.mic::before {
-    background-image: url('https://img.icons8.com/ios-filled/50/ffffff/microphone.png');
-  }
-  
-  .mic.camera::before {
-    background-image: url('https://img.icons8.com/ios-filled/50/ffffff/video-camera.png');
-  }
-  
-  .mic.end-call {
-    background-color: #e53935;
-  }
-  
-  .mic.end-call::before {
-    background-image: url('https://img.icons8.com/ios-filled/50/ffffff/phone.png');
-  }
-  
+}
 
-
-
-  /*BUTTON*/
-
-  /* From Uiverse.io by vinodjangid07 */ 
-.Btn {
-    display: flex;
+.li_menu1 {
+    
+    height: 32px;
     align-items: center;
-    justify-content: flex-start;
-    width: 50px;
-    height: 50px;
-    border: none;
-    border-radius: 50%;
+    font-size: 15px;
+    display: inline-block;
+    outline: 0;
+    border: 0;
     cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition-duration: .3s;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
-    background-color: rgb(255, 65, 65);
-  }
-  
-  /* plus sign */
-  .sign {
-    width: 100%;
-    transition-duration: .3s;
+    will-change: box-shadow,transform;
+    background: #2bbdce;
+    box-shadow: 0px 0.01em 0.01em rgb(45 35 66 / 40%), 0px 0.3em 0.7em -0.01em rgb(45 35 66 / 30%), inset 0px -0.01em 0px rgb(58 65 111 / 50%);
+    padding: 0 2em;
+    border-radius: 0.3em;
+    text-decoration: none;
+    padding: 10px;
+    font-family: argen;
+    margin-left: 10px;
+    text-shadow: 0 1px 0 rgb(0 0 0 / 40%);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+
+.li_menu1:hover{
+    box-shadow: 0px 0.1em 0.2em rgb(45 35 66 / 40%), 0px 0.4em 0.7em -0.3em rgb(45 35 66 / 30%), inset 0px -0.3em 0px #259faf;
+    transform: translateY(-0.1em);
+
+}
+.li_menu1:active{
+    box-shadow: inset 0px 0.1em 0.6em rgb(44, 44, 44);
+    transform: translateY(0.1em);
+}
+
+.logotipo {
+    width: 120px;
+}
+
+
+.ul_menu1 {
     display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .sign svg {
-    width: 17px;
-  }
-  
-  .sign svg path {
-    fill: white;
-  }
-  /* text */
-  .text {
-    position: absolute;
-    right: 0%;
-    width: 0%;
-    opacity: 0;
+    list-style-type: none;
+    
+}
+a {
+    text-decoration: none;
     color: white;
-    font-size: 1.2em;
-    font-weight: 600;
-    transition-duration: .3s;
-  }
-  /* hover effect on button width */
-  .Btn:hover {
-    width: 125px;
-    border-radius: 40px;
-    transition-duration: .3s;
-  }
-  
-  .Btn:hover .sign {
-    width: 30%;
-    transition-duration: .3s;
-    padding-left: 20px;
-  }
-  /* hover effect button's text */
-  .Btn:hover .text {
-    opacity: 1;
-    width: 70%;
-    transition-duration: .3s;
-    padding-right: 10px;
-  }
-  /* button click effect*/
-  .Btn:active {
-    transform: translate(2px ,2px);
-  }
+    
 
+}
 
-  /*camera*/
-
-  /* From Uiverse.io by andrew-demchenk0 */ 
-.camera {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 50px;
-    height: 50px;
-    border-radius: 100%;
-    border: none;
-    background-color: #30C04F;
-  }
-  
-  .camera:hover {
-    background-color: #2bac47;
-  }
