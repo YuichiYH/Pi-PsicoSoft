@@ -46,6 +46,30 @@ function onRegister(){
     // }
 
     localStorage.setItem(values[2], JSON.stringify(values));
+
+const url = https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta';
+const data = { key1: 'value1', key2: 'value2' }; // Dados a enviar
+
+fetch(url, {
+    method: 'POST', // Método da requisição
+    headers: {
+        'Content-Type': 'application/json' // Tipo de conteúdo
+    },
+    body: JSON.stringify((values) // Corpo da requisição (dados convertidos para JSON)
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error('Erro na requisição'); // Lança um erro se a resposta não for bem-sucedida
+    }
+    return response.json(); // Retorna os dados da resposta (se for JSON)
+})
+.then(responseData => {
+    console.log('Resposta da API:', responseData); // Processa os dados da resposta
+})
+.catch(error => {
+    console.error('Erro:', error); // Processa erros
+});
+
     /* window.location.href = "login.html" */
 }
 
