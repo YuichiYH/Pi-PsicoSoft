@@ -125,7 +125,7 @@ function chatBotStateMachine(userInput) {
     if (["recomeçar", "reiniciar", "resetar", "começar", "menu"].includes(userInputLower)) {
         if (userInputLower === "menu") {
             nextState = "menu";
-            responseMessage = "Você voltou ao menu principal:<br><br>(1) Agendar consulta<br>(2) Ver consultas anteriores<br>(3) Confirmar agendamento<br>(4) Remarcar consulta<br>(5) Cancelar consulta";
+            responseMessage = "Você voltou ao menu principal:<br><br>(1) Agendar consulta<br>(2) Ver consultas anteriores<br>(3) Remarcar consulta<br>(4) Cancelar consulta";
         } else {
             nextState = "menu";
             data = {};
@@ -133,9 +133,8 @@ function chatBotStateMachine(userInput) {
                 "Em que posso te ajudar?<br><br>" +
                 "(1) Agendar consulta<br>" +
                 "(2) Ver consultas anteriores<br>" +
-                "(3) Confirmar agendamento<br>" +
-                "(4) Remarcar consulta<br>" +
-                "(5) Cancelar consulta";
+                "(3) Remarcar consulta<br>" +
+                "(4) Cancelar consulta";
         }
         localStorage.setItem("chatbotState", nextState);
         localStorage.setItem("chatbotData", JSON.stringify(data));
@@ -149,9 +148,8 @@ function chatBotStateMachine(userInput) {
                 "Em que posso te ajudar hoje?<br><br>" +
                 "(1) Agendar consulta<br>" +
                 "(2) Ver consultas anteriores<br>" +
-                "(3) Confirmar agendamento<br>" +
-                "(4) Remarcar consulta<br>" +
-                "(5) Cancelar consulta";
+                "(3) Remarcar consulta<br>" +
+                "(4) Cancelar consulta";
             break;
 
         case "menu":
@@ -161,22 +159,18 @@ function chatBotStateMachine(userInput) {
             } else if (["2", "ver", "acessar"].some(k => userInputLower.includes(k))) {
                 nextState = "fetch_needed_for_history"; // Exemplo de estado que sinaliza necessidade de fetch
                 responseMessage = "Para ver suas consultas, preciso do seu nome completo.";
-            } else if (["3", "confirmar"].some(k => userInputLower.includes(k))) {
-                nextState = "confirm_name";
-                responseMessage = "Vamos confirmar o seu agendamento. Qual é o seu nome completo?";
-            } else if (["4", "remarcar"].some(k => userInputLower.includes(k))) {
+            } else if (["3", "remarcar"].some(k => userInputLower.includes(k))) {
                 nextState = "ask_remarcar_name"; // Renomeado para não conflitar com ask_name de agendamento
                 responseMessage = "Vamos remarcar a sua consulta. Qual é o seu nome completo?";
-            } else if (["5", "cancelar"].some(k => userInputLower.includes(k))) {
+            } else if (["4", "cancelar"].some(k => userInputLower.includes(k))) {
                 nextState = "cancelar_name";
                 responseMessage = "Certo! Vamos cancelar sua consulta. Qual é o seu nome completo?";
             } else {
                 responseMessage = "Desculpe, não entendi. Por favor escolha uma opção válida:<br><br>" +
                     "(1) Agendar consulta<br>" +
                     "(2) Ver consultas anteriores<br>" +
-                    "(3) Confirmar agendamento<br>" +
-                    "(4) Remarcar consulta<br>" +
-                    "(5) Cancelar consulta";
+                    "(3) Remarcar consulta<br>" +
+                    "(4) Cancelar consulta";
             }
             break;
 
@@ -317,14 +311,13 @@ function chatBotStateMachine(userInput) {
 
         default:
             console.warn('Estado desconhecido:', state);
-            nextState = "start";
+            nextState = "menu";
             data = {};
             responseMessage = "Algo deu errado. Vamos começar de novo. Em que posso te ajudar?<br><br>" +
                 "(1) Agendar consulta<br>" +
                 "(2) Ver consultas anteriores<br>" +
-                "(3) Confirmar agendamento<br>" +
-                "(4) Remarcar consulta<br>" +
-                "(5) Cancelar consulta";
+                "(3) Remarcar consulta<br>" +
+                "(4) Cancelar consulta";
     }
 
     localStorage.setItem("chatbotState", nextState);
