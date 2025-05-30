@@ -17,7 +17,7 @@ body {
 
 /* Sidebar */
 .sidebar {
-    width: 300px; /* você pode ajustar para 280 ou 320 se quiser */
+    width: 300px; 
     background-color: #ffffff;
     border-right: 1px solid #d3d3d3;
     display: flex;
@@ -72,13 +72,13 @@ body {
     font-weight: bold;
     color: #004aad;
     border-bottom: 1px solid #ccc;
-    text-align: center; /* se quiser centralizar como na sidebar */
+    text-align: center; 
 }
 
-/* Caixa de detalhes */
 .info-box {
-    width: 60%; /* ou 600px se preferir fixo */
-    margin: 30px auto 0 auto; /* centraliza horizontalmente e dá espaço do topo */
+    max-width: 800px;
+    width: 90%;
+    margin: 30px auto 0 auto;
     padding: 20px;
     background-color: white;
     border-radius: 12px;
@@ -86,4 +86,13 @@ body {
     font-size: 16px;
     color: #333;
     line-height: 1.6;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
+
+.info-box p {
+    margin-bottom: 10px;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
