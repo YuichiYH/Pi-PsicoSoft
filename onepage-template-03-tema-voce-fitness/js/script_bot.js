@@ -272,7 +272,7 @@ function chatBotStateMachine(userInput) {
             if (confirmacao === "sim") {
                 action = "SAVE_CONSULTA";
                 responseMessage = "Agendamento confirmado! 😊<br>" +
-                    "Obrigado por utilizar nosso serviço. Em breve entraremos em contato para confirmar os detalhes.";
+                    "Obrigado por utilizar nosso serviço. Em breve entraremos em contato para confirmar os detalhes. Digite 'menu' para voltar ao menu principal.";
                 nextState = "start"; // Volta ao início após salvar
             } else if (confirmacao === "não") {
                 responseMessage = "O agendamento foi cancelado. Você pode voltar ao menu a qualquer momento digitando 'menu'.";
