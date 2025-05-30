@@ -1,6 +1,8 @@
 async function carregarConsultas() {
     try {
-        const response = await fetch(`https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta`);
+        const funcionarioId = "psicosoft_dr@gmail.com"; 
+        const response = await fetch(`https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta?FuncionarioId=${encodeURIComponent(funcionarioId)}`);
+
         
         if (!response.ok) {
             throw new Error(`Erro ao carregar consultas: ${response.status}`);
