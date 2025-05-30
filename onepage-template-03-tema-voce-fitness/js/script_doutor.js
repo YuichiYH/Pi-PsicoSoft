@@ -1,6 +1,6 @@
 async function carregarConsultas() {
     try {
-        const response = await fetch(`https://6blopd43v4.execute-api.us-east-1.amazonaws.com/dev/Consulta`);
+        const response = await fetch(`https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta`);
         
         if (!response.ok) {
             throw new Error(`Erro ao carregar consultas: ${response.status}`);
