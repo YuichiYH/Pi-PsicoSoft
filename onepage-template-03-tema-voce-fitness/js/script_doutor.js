@@ -1,60 +1,39 @@
-// --- NOVO: Configuração da API ---
-const API_BASE_URL_DOUTOR = 'https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha'; // Mesma base da API
-// ----------------------------------
-
 async function carregarConsultas() {
-    const lista = document.getElementById('consultas-lista');
-    if (!lista) return;
-
     try {
-        const response = await fetch(`${API_BASE_URL_DOUTOR}/consultas`); 
+        const response = await fetch(`https://6blopd43v4.execute-api.us-east-1.amazonaws.com/dev/Consulta`);
+        
         if (!response.ok) {
-            const errData = await response.json().catch(() => ({})); // Tenta ler o erro
-            throw new Error(errData.error || `Erro ${response.status} ao buscar consultas`);
+            throw new Error(`Erro ao carregar consultas: ${response.status}`);
         }
 
         const consultas = await response.json();
+        const lista = document.getElementById('consultas-lista');
+        lista.innerHTML = ''; // Limpa antes de preencher
 
-        lista.innerHTML = ''; // Limpar lista antes de adicionar
-        if (consultas && consultas.length > 0) {
-            consultas.forEach((consulta) => {
-                const item = document.createElement('div');
-                item.className = 'consult-item';
-                // Ajuste os campos conforme o que sua Lambda /consultas retorna
-                item.innerHTML = `<strong>${consulta.nome || 'N/A'}</strong><br><small>${consulta.especialidade || 'N/A'} - ${consulta.horario || 'N/A'}</small>`;
-                item.onclick = () => mostrarDetalhes(consulta);
-                lista.appendChild(item);
-            });
-        } else {
-            lista.innerHTML = '<p>Nenhuma consulta encontrada.</p>';
-        }
+        consultas.forEach((consulta) => {
+            const item = document.createElement('div');
+            item.className = 'consult-item';
+            item.innerHTML = `<strong>${consulta.nome}</strong><br><small>${consulta.especialidade}</small>`;
+            item.onclick = () => mostrarDetalhes(consulta);
+            lista.appendChild(item);
+        });
     } catch (error) {
-        console.error('Erro ao carregar consultas:', error);
-        if (lista) {
-            lista.innerHTML = `<p>Erro ao carregar consultas: ${error.message}</p>`;
-        }
+        console.error('Erro ao buscar consultas:', error);
+        alert('Erro ao carregar consultas. Tente novamente mais tarde.');
     }
 }
 
 function mostrarDetalhes(consulta) {
-    const tituloConsulta = document.getElementById('titulo-consulta');
-    const detalhesConsulta = document.getElementById('detalhes-consulta');
-
-    if (tituloConsulta) {
-        tituloConsulta.innerText = `Atendimento de ${consulta.nome || 'N/A'}`;
-    }
-    if (detalhesConsulta) {
-        detalhesConsulta.innerHTML = `
-            <p><strong>Nome:</strong> ${consulta.nome || 'N/A'}</p>
-            <p><strong>CPF:</strong> ${consulta.cpf || 'N/A'}</p> <!-- Adicionado CPF -->
-            <p><strong>Idade:</strong> ${consulta.idade || 'N/A'}</p>
-            <p><strong>Especialidade:</strong> ${consulta.especialidade || 'N/A'}</p>
-            <p><strong>Forma:</strong> ${consulta.forma || 'N/A'}</p>
-            <p><strong>Motivo:</strong> ${consulta.motivo || 'N/A'}</p>
-            <p><strong>Horário:</strong> ${consulta.horarioOriginalString || consulta.horario || 'N/A'}</p> <!-- Preferir horarioOriginalString -->
-            <p><strong>Status:</strong> ${consulta.status || 'AGENDADA'}</p> <!-- Adicionado Status -->
-        `;
-    }
+    document.getElementById('titulo-consulta').innerText = `Atendimento de ${consulta.nome}`;
+    const detalhes = document.getElementById('detalhes-consulta');
+    detalhes.innerHTML = `
+        <p><strong>Idade:</strong> ${consulta.idade}</p>
+        <p><strong>Especialidade:</strong> ${consulta.especialidade}</p>
+        <p><strong>Forma:</strong> ${consulta.forma}</p>
+        <p><strong>Motivo:</strong> ${consulta.motivo}</p>
+        <p><strong>Horário:</strong> ${consulta.horario}</p>
+        <p><strong>Link da Consulta:</strong> <a href="${consulta.meet_url}" target="_blank">Acessar Sala</a></p>
+    `;
 }
 
 window.onload = carregarConsultas;
