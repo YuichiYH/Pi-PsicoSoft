@@ -158,8 +158,8 @@ function chatBotStateMachine(userInput) {
                 nextState = "fetch_needed_for_history"; // Exemplo de estado que sinaliza necessidade de fetch
                 responseMessage = "Para ver suas consultas, preciso do seu nome completo.";
             } else if (["3", "cancelar"].some(k => userInputLower.includes(k))) {
-                nextState = "cancelar_name";
-                responseMessage = "Certo! Vamos cancelar sua consulta. Qual é o seu nome completo?";
+                nextState = "ask_cancel_order_id";
+                responseMessage = "Entendido. Para cancelar sua consulta, por favor, informe o código da consulta.";
             } else {
                 responseMessage = "Desculpe, não entendi. Por favor escolha uma opção válida:<br><br>" +
                     "(1) Agendar consulta<br>" +
@@ -302,6 +302,32 @@ function chatBotStateMachine(userInput) {
                 responseMessage = "CPF inválido. Por favor, digite um CPF válido.";
             }
             break;
+        
+        case "ask_cancel_order_id":
+            const orderIdInput = userInput.trim();
+            // Validação simples para o OrderId (ex: não pode ser vazio e ter um tamanho mínimo)
+            if (orderIdInput && orderIdInput.length >= 5) { 
+                data.order_id_to_cancel = orderIdInput; // Armazena o OrderId
+                nextState = "confirm_cancel_consulta";
+                responseMessage = `Você deseja realmente cancelar a consulta com o código: <b>${orderIdInput}</b>? (sim/não)`;
+            } else {
+                responseMessage = "Código da consulta inválido. Por favor, digite um código válido (mínimo 5 caracteres).";
+            }
+            break;
+
+        case "confirm_cancel_consulta":
+            const confirmacaoCancelamento = verificarResposta(userInput);
+            if (confirmacaoCancelamento === "sim") {
+                action = "CANCEL_CONSULTA"; // Define a ação para cancelar
+                responseMessage = "Processando o cancelamento da sua consulta...";
+            } else if (confirmacaoCancelamento === "não") {
+                responseMessage = "O cancelamento foi abortado. Você pode voltar ao menu digitando 'menu'.";
+                nextState = "menu";
+                delete data.order_id_to_cancel; // Limpa o OrderId se o cancelamento for abortado
+            } else {
+                responseMessage = "Desculpe, não entendi. Responda com 'sim' para confirmar o cancelamento ou 'não' para abortar.";
+            }
+            break;
 
         default:
             console.warn('Estado desconhecido:', state);
@@ -336,10 +362,9 @@ async function sendMessage() {
 
     if (botTurn.action) {
         let bodyPayload = {}; // Inicializa o payload que será enviado
+        const collectedData = botTurn.dataToFetch;
 
         if (botTurn.action === "SAVE_CONSULTA") {
-            const collectedData = botTurn.dataToFetch;
-
             bodyPayload = {
                 ClienteId: collectedData.cpf, // Opção: usar CPF
                 FuncionarioId: "psicosoft_dr@gmail.com",
@@ -365,36 +390,71 @@ async function sendMessage() {
                 cpf: botTurn.dataToFetch.cpf_consulta
             };
         }
+        else if (botTurn.action === "CANCEL_CONSULTA") {
+            if (!collectedData.order_id_to_cancel) {
+                hideTypingIndicator();
+                appendMessage('PsicoSoft', "Código da consulta não encontrado para cancelamento.");
+                localStorage.setItem("chatbotState", "ask_cancel_order_id");
+                return;
+            }
+            bodyPayload = {
+                OrderId: collectedData.order_id_to_cancel
+            };
+            console.log("Payload para CANCEL_CONSULTA:", JSON.stringify(bodyPayload, null, 2));
+        }
         try {
-            const endpoint = botTurn.action === "FETCH_HISTORY"
-                ? `${API_BASE_URL}/Consulta/HistoricoChat`  // <-- novo endpoint só para histórico
-                : `${API_BASE_URL}/Consulta`;               // <-- rota de agendamento padrão
+            let targetApiUrl = '';
 
-            const response = await fetch(endpoint, {
+            if (botTurn.action === "SAVE_CONSULTA") {
+                targetApiUrl = `${API_BASE_URL}/Consulta`;
+            } else if (botTurn.action === "FETCH_HISTORY") {
+                targetApiUrl = `${API_BASE_URL}/Consulta/HistoricoChat`;
+            } else if (botTurn.action === "CANCEL_CONSULTA") {
+                targetApiUrl = `${API_BASE_URL}/Consulta/CancelarConsulta`;
+            }
+
+            const response = await fetch(targetApiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(bodyPayload)
             });
 
             if (!response.ok) {
-                const errData = await response.json().catch(() => ({ error: `Erro ${response.status} do servidor` }));
-                throw new Error(errData.error || `Erro ${response.status} do servidor`);
+                const errData = await response.json().catch(() => ({ error: `Erro ${response.status}` }));
+                const detailedError = errData.response || errData.message || errData.error || `Erro ${response.status}`;
+                throw new Error(detailedError);
             }
 
             const dataFromLambda = await response.json();
             hideTypingIndicator();
 
-            if (botTurn.action === "FETCH_HISTORY" && dataFromLambda.response) {
+            if (dataFromLambda && dataFromLambda.response) {
                 appendMessage('PsicoSoft', dataFromLambda.response);
-                localStorage.setItem("chatbotState", dataFromLambda.nextState || "menu");
-            } else if (botTurn.action === "SAVE_CONSULTA" && dataFromLambda.response) {
+            } else if (botTurn.action === "SAVE_CONSULTA" && response.ok) {
+                console.log("Agendamento salvo. Resposta da Lambda:", dataFromLambda);
+            } else {
+                appendMessage('PsicoSoft', "Operação concluída.");
+            }
+
+            if (response.ok) {
+                if (botTurn.action === "SAVE_CONSULTA") {
+                    localStorage.removeItem("chatbotData");
+                    localStorage.setItem("chatbotState", "start");
+                } else if (botTurn.action === "FETCH_HISTORY") {
+                    localStorage.setItem("chatbotState", dataFromLambda.nextState || "menu");
+                } else if (botTurn.action === "CANCEL_CONSULTA") {
+                    let tempData = JSON.parse(localStorage.getItem("chatbotData")) || {};
+                    delete tempData.order_id_to_cancel;
+                    localStorage.setItem("chatbotData", JSON.stringify(tempData));
+                    localStorage.setItem("chatbotState", dataFromLambda.nextState || "menu");
+                }
             }
 
         } catch (error) {
             hideTypingIndicator();
             console.error(`Erro ao executar ação ${botTurn.action}:`, error);
-            appendMessage('PsicoSoft', `Desculpe, ocorreu um erro ao processar sua solicitação: ${error.message}`);
-            localStorage.setItem("chatbotState", "menu"); // Volta ao menu em caso de erro de fetch
+            appendMessage('PsicoSoft', `Desculpe, ocorreu um erro: ${error.message}`);
+            localStorage.setItem("chatbotState", "menu");
         }
     }
 }
