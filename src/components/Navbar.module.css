@@ -24,6 +24,12 @@
   align-items: center;
 }
 
+.logo img {
+  width: auto;
+  height: 50px;
+  object-fit: contain;
+}
+
 .menuItems {
   display: flex;
   align-items: center;

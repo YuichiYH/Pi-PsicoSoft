@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
 import styles from './Navbar.module.css';
+import { Button } from '@mui/material';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -17,7 +18,7 @@ const Navbar = () => {
       <div className={styles.container}>
         <Link href="/" className={styles.logo}>
           <Image 
-            src="/next.svg" 
+            src="/images/logo.png" 
             alt="PsicoSoft Logo" 
             width={150} 
             height={40}
@@ -33,21 +34,18 @@ const Navbar = () => {
         </button>
 
         <div className={`${styles.menuItems} ${isMenuOpen ? styles.active : ''}`}>
-          <Link href="/" className={styles.navLink}>
+          <Button href="/" className={styles.navLink}>
             Home
-          </Link>
-          <Link href="/services" className={styles.navLink}>
-            Services
-          </Link>
-          <Link href="/about" className={styles.navLink}>
-            About
-          </Link>
-          <Link href="/contact" className={styles.navLink}>
-            Contact
-          </Link>
-          <Link href="/login" className={styles.navButton}>
+          </Button>
+          <Button href="/cadastro" className={styles.navLink}>
+            Cadastro
+          </Button>
+          <Button href="/agendar" className={styles.navLink}>
+            Agendar
+          </Button>
+          <Button href="/login" variant="contained" color="primary">
             Login
-          </Link>
+          </Button>
         </div>
       </div>
     </nav>
