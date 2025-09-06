@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import styles from "../page.module.css";
+import Button from '@mui/material/Button';
 
 export default function Page1() {
   return (
@@ -8,6 +9,7 @@ export default function Page1() {
       <main className={styles.main}>
         <h1>Page 1</h1>
         <p>This is your new subpage created with Next.js App Router.</p>
+        <Button variant="contained">Hello World</Button>
         
         <div className={styles.ctas}>
           <Link href="/" className={styles.secondary}>
