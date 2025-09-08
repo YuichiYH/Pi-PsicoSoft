@@ -35,7 +35,7 @@ export default function Home() {
             <div className={styles.containerdescription}>
               <Container>
                 <div className={styles.cardGrid}>
-                  <Card elevation={4}>
+                  <Card elevation={3}>
                     <CardContent>
                       <Typography variant="h5" gutterBottom>
                         O PSICOSOFT é um projeto em constante evolução
@@ -50,7 +50,7 @@ export default function Home() {
                     </CardContent>
                   </Card>
 
-                  <Card elevation={4}>
+                  <Card elevation={3}>
                     <CardContent>
                       <Typography variant="h5" gutterBottom>
                         Estamos atualmente na fase final de desenvolvimento
@@ -63,20 +63,20 @@ export default function Home() {
                     </CardContent>
                   </Card>
 
-                  <Card elevation={4}>
+                  <Card elevation={3}>
                     <CardContent>
                       <Typography variant="h5" gutterBottom>
                         Nosso objetivo é simplificar o agendamento
                       </Typography>
                       <Typography variant="body1">
-                        economizar tempo e elevar os padrões de atendimento na área da saúde, 
+                        Economizar tempo e elevar os padrões de atendimento na área da saúde, 
                         oferecendo uma experiência mais ágil tanto para os profissionais 
                         quanto para os pacientes.
                       </Typography>
                     </CardContent>
                   </Card>
 
-                  <Card elevation={4}>
+                  <Card elevation={3}>
                     <CardContent>
                       <Typography variant="h5" gutterBottom>
                         Seguimos aperfeiçoando o projeto
