@@ -1,0 +1,128 @@
+/* [project]/src/components/Navbar.module.css [app-client] (css) */
+.Navbar-module__cJzEcG__navbar {
+  z-index: 1000;
+  background-color: #fff;
+  width: 100%;
+  height: 70px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .1);
+}
+
+.Navbar-module__cJzEcG__container {
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+}
+
+.Navbar-module__cJzEcG__logo {
+  align-items: center;
+  display: flex;
+}
+
+.Navbar-module__cJzEcG__logo img {
+  object-fit: contain;
+  width: auto;
+  height: 50px;
+}
+
+.Navbar-module__cJzEcG__menuItems {
+  align-items: center;
+  gap: 30px;
+  display: flex;
+}
+
+.Navbar-module__cJzEcG__navLink {
+  color: #333;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color .3s;
+}
+
+.Navbar-module__cJzEcG__navLink:hover {
+  color: #4a6cf7;
+}
+
+.Navbar-module__cJzEcG__navButton {
+  color: #fff;
+  background-color: #4a6cf7;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color .3s;
+}
+
+.Navbar-module__cJzEcG__navButton:hover {
+  background-color: #3a5ce6;
+}
+
+.Navbar-module__cJzEcG__menuButton {
+  cursor: pointer;
+  background: none;
+  border: none;
+  display: none;
+}
+
+.Navbar-module__cJzEcG__menuIcon {
+  background-color: #333;
+  width: 25px;
+  height: 3px;
+  transition: background-color .3s;
+  display: block;
+  position: relative;
+}
+
+.Navbar-module__cJzEcG__menuIcon:before, .Navbar-module__cJzEcG__menuIcon:after {
+  content: "";
+  background-color: #333;
+  width: 25px;
+  height: 3px;
+  transition: transform .3s;
+  position: absolute;
+}
+
+.Navbar-module__cJzEcG__menuIcon:before {
+  top: -8px;
+}
+
+.Navbar-module__cJzEcG__menuIcon:after {
+  top: 8px;
+}
+
+@media (max-width: 768px) {
+  .Navbar-module__cJzEcG__menuButton {
+    z-index: 2000;
+    display: block;
+  }
+
+  .Navbar-module__cJzEcG__menuItems {
+    background-color: #fff;
+    flex-direction: column;
+    justify-content: center;
+    width: 250px;
+    height: 100vh;
+    padding: 80px 20px 20px;
+    transition: right .3s;
+    position: fixed;
+    top: 0;
+    right: -100%;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, .1);
+  }
+
+  .Navbar-module__cJzEcG__menuItems.Navbar-module__cJzEcG__active {
+    right: 0;
+  }
+
+  .Navbar-module__cJzEcG__navButton {
+    margin-top: 20px;
+  }
+}
+
+/*# sourceMappingURL=src_components_Navbar_module_css_bad6b30c._.single.css.map*/
