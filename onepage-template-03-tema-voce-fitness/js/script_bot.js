@@ -12,12 +12,11 @@ const restartButton = document.querySelector('.restart-button');
 //  CONFIGURAÇÃO PRINCIPAL
 // ==============================================================================
 
-// A URL do seu novo backend que chamará a API do Gemini.
-// Lembre-se de substituir pela URL real do seu servidor.
-const GEMINI_BACKEND_URL = 'http://localhost:3000/chat'; // Exemplo: para um servidor local
-
-// URL da sua API Gateway original para ações específicas (salvar, cancelar, etc.)
+// A URL de invocação da API, que será usada como base.
 const API_GATEWAY_BASE_URL = 'https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha';
+
+// Ela concatena a base com o novo recurso /chat:
+const GEMINI_BACKEND_URL = API_GATEWAY_BASE_URL + '/chat';
 
 // Armazena o histórico da conversa para manter o contexto
 let conversationHistory = [];
