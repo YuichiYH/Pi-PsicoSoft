@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-const ClientProfile = ({ appointment }) => {
+const ClientProfile = ({ appointment }) => { 
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
