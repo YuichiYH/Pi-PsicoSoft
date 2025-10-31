@@ -116,19 +116,103 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // [COLE ESTAS DUAS NOVAS FUNÇÕES NO LUGAR]
+
     /**
      * Processa a resposta recebida da API.
+     * Esta função agora separa o texto (response) da ação (apiCall).
      */
     function processApiResponse(data) {
         hideTypingIndicator();
         
-        const botResponse = data.response;
-        conversationHistory.push({ role: 'model', parts: [{ text: botResponse }] });
+        const botResponseText = data.response; // Ex: "Perfeito, estou processando..."
+        const apiCallString = data.apiCall;     // Ex: "[API_CALL:POST|...]" ou null
 
-        if (data.action) {
-            handleApiAction(data.action, data.parameters);
-        } else {
-            appendMessage(botResponse, 'bot-message');
+        // 1. Sempre exibe a resposta de texto do bot
+        if (botResponseText) {
+            appendMessage(botResponseText, 'bot-message');
+            // Adiciona a resposta *de texto* do bot ao histórico
+            conversationHistory.push({ role: 'model', parts: [{ text: botResponseText }] });
+        }
+
+        // 2. Se houver uma apiCall, executa ela
+        if (apiCallString) {
+            console.log("Ação de API detectada:", apiCallString);
+            // Chama a função para executar a chamada de API real
+            executeApiCall(apiCallString);
+        }
+    }
+
+    /**
+     * Parseia a string [API_CALL:...] e executa a chamada fetch real.
+     * @param {string} apiCallString - A string no formato [API_CALL:METODO|URL|BODY_JSON]
+     */
+    async function executeApiCall(apiCallString) {
+        // Ex: [API_CALL:POST|https://.../Consulta|{nome:"...", ...}]
+        
+        try {
+            // 1. Parse da string
+            // Remove "[API_CALL:" (10 chars) e "]" (último char)
+            const innerString = apiCallString.substring(10, apiCallString.length - 1);
+            
+            const parts = innerString.split('|');
+            if (parts.length < 3) {
+                 throw new Error('Formato da API_CALL inválido. Esperava 3 partes separadas por |');
+            }
+            
+            const method = parts[0].trim(); // POST
+            const url = parts[1].trim();    // https://...
+            const bodyString = parts.slice(2).join('|'); // Pega o resto, caso o JSON tenha '|'
+            
+            const body = JSON.parse(bodyString); // Converte a string do body em objeto JSON
+
+            console.log(`Executando API Call: ${method} para ${url}`, body);
+            showTypingIndicator(); // Mostra "digitando" de novo enquanto a API real processa
+
+            // 2. Executa a chamada de API real (para agendar, cancelar, etc.)
+            const apiResponse = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+
+            hideTypingIndicator();
+            
+            // Tenta ler a resposta como JSON
+            let responseData;
+            try {
+                 responseData = await apiResponse.json();
+            } catch (e) {
+                // Se a API de agendamento não retornar JSON (ex: só um 200 OK)
+                if (!apiResponse.ok) {
+                    throw new Error(`Erro ${apiResponse.status}: ${apiResponse.statusText}`);
+                }
+                // Se deu OK mas não era JSON, simulamos uma resposta de sucesso
+                responseData = { message: "Sua solicitação foi processada com sucesso!" };
+            }
+
+            if (!apiResponse.ok) {
+                // Se a API de agendamento der erro (ex: "horário indisponível")
+                throw new Error(responseData.message || 'Erro ao processar a solicitação.');
+            }
+
+            // 3. Mostra a resposta final da API (ex: "Agendamento confirmado!")
+            const successMessage = responseData.message || "Sua solicitação foi processada com sucesso!";
+            appendMessage(successMessage, 'bot-message');
+            
+            // Adiciona a resposta final ao histórico para o bot saber que concluiu
+            conversationHistory.push({ role: 'model', parts: [{ text: successMessage }] });
+
+        } catch (error) {
+            console.error("Erro ao executar API_CALL:", error);
+            hideTypingIndicator();
+            
+            // Informa o usuário que a *ação* falhou
+            const errorMessage = `Houve um problema ao processar sua solicitação. Por favor, tente novamente.`;
+            appendMessage(errorMessage, 'bot-message');
+            
+            // Adiciona o erro ao histórico para o bot ter contexto
+            conversationHistory.push({ role: 'model', parts: [{ text: errorMessage }] });
         }
     }
 
