@@ -151,23 +151,32 @@ document.addEventListener('DOMContentLoaded', () => {
         // Ex: [API_CALL:POST|https://.../Consulta|{nome:"...", ...}]
         
         try {
-           // 1. Parse da string
+            // 1. Parse da string (LÓGICA ATUALIZADA E MAIS ROBUSTA)
             // Remove "[API_CALL:" (10 chars) e "]" (último char) e remove espaços
             const innerString = apiCallString.substring(10, apiCallString.length - 1).trim();
             
-            const parts = innerString.split('|');
-            
+            // Procura o primeiro pipe
+            const firstPipeIndex = innerString.indexOf('|');
+            // Procura o segundo pipe (começando *depois* do primeiro)
+            const secondPipeIndex = innerString.indexOf('|', firstPipeIndex + 1);
+
             // Validação
-            if (parts.length < 3) {
-                // Log de debug para sabermos exatamente o que deu errado
+            if (firstPipeIndex === -1 || secondPipeIndex === -1) {
                 console.error("String da API_CALL malformada recebida:", apiCallString);
                 console.error("InnerString (após substring/trim):", innerString);
-                throw new Error(`Formato da API_CALL inválido. Esperava 3 partes, mas recebi ${parts.length}.`);
+                throw new Error(`Formato da API_CALL inválido. Não foi possível encontrar os 2 pipes divisores.`);
             }
-            
-            const method = parts[0].trim(); // POST
-            const url = parts[1].trim();    // https://...
-            const bodyString = parts.slice(2).join('|'); // Pega o resto, caso o JSON tenha '|'
+
+            // Extrai as 3 partes com base nos índices
+            const method = innerString.substring(0, firstPipeIndex).trim();
+            const url = innerString.substring(firstPipeIndex + 1, secondPipeIndex).trim();
+            const bodyString = innerString.substring(secondPipeIndex + 1).trim(); // Pega TUDO até o final
+
+            // Validação final do Body
+            if (bodyString.charAt(0) !== '{' || bodyString.charAt(bodyString.length - 1) !== '}') {
+                console.error("String do Body extraída parece inválida:", bodyString);
+                throw new Error('O corpo (payload) da API_CALL não é um JSON válido.');
+            }
             
             const body = JSON.parse(bodyString); // Converte a string do body em objeto JSON
 
@@ -202,7 +211,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // 3. Mostra a resposta final da API (ex: "Agendamento confirmado!")
-            const successMessage = responseData.message || "Sua solicitação foi processada com sucesso!";
+            // 🔧 ATENÇÃO: Verifique o nome real do campo que sua API de agendamento retorna
+            const successMessage = responseData.message || responseData.Message || "Sua solicitação foi processada com sucesso!";
             appendMessage(successMessage, 'bot-message');
             
             // Adiciona a resposta final ao histórico para o bot saber que concluiu
@@ -213,7 +223,8 @@ document.addEventListener('DOMContentLoaded', () => {
             hideTypingIndicator();
             
             // Informa o usuário que a *ação* falhou
-            const errorMessage = `Houve um problema ao processar sua solicitação. Por favor, tente novamente.`;
+            // 🔧 Mensagem de erro melhorada
+            const errorMessage = `Houve um problema ao processar sua solicitação. Detalhe: ${error.message}`;
             appendMessage(errorMessage, 'bot-message');
             
             // Adiciona o erro ao histórico para o bot ter contexto
