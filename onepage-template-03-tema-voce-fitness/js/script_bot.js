@@ -151,13 +151,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // Ex: [API_CALL:POST|https://.../Consulta|{nome:"...", ...}]
         
         try {
-            // 1. Parse da string
-            // Remove "[API_CALL:" (10 chars) e "]" (último char)
-            const innerString = apiCallString.substring(10, apiCallString.length - 1);
+           // 1. Parse da string
+            // Remove "[API_CALL:" (10 chars) e "]" (último char) e remove espaços
+            const innerString = apiCallString.substring(10, apiCallString.length - 1).trim();
             
             const parts = innerString.split('|');
+            
+            // Validação
             if (parts.length < 3) {
-                 throw new Error('Formato da API_CALL inválido. Esperava 3 partes separadas por |');
+                // Log de debug para sabermos exatamente o que deu errado
+                console.error("String da API_CALL malformada recebida:", apiCallString);
+                console.error("InnerString (após substring/trim):", innerString);
+                throw new Error(`Formato da API_CALL inválido. Esperava 3 partes, mas recebi ${parts.length}.`);
             }
             
             const method = parts[0].trim(); // POST
