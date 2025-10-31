@@ -16,12 +16,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearChat = document.getElementById('clear-chat');
     const restartChat = document.getElementById('restart-chat');
 
-    // =============================================================================
+    // ==============================================================================
     //  CONFIGURAÇÃO PRINCIPAL
-    // =============================================================================
+    // ==============================================================================
 
-    // A URL do seu backend que chama a API do Gemini.
-    const GEMINI_BACKEND_URL = 'http://localhost:3000/chat'; // CONFIRME SE ESTA URL ESTÁ CORRETA
+    // A URL de invocação da API, que será usada como base.
+    const API_GATEWAY_BASE_URL = 'https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha';
+
+    // Ela concatena a base com o novo recurso /chat:
+    const GEMINI_BACKEND_URL = API_GATEWAY_BASE_URL + '/chat';
 
     // Armazena o histórico da conversa para manter o contexto
     let conversationHistory = [];
