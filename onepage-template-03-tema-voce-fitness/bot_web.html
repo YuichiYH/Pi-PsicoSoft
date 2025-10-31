@@ -1,36 +1,54 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-BR" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PisicoSoft Chat</title>
+    <title>Psic Chat</title>
     <link rel="stylesheet" href="css/style_chat.css">
 </head>
 <body>
-    <div class="chat-container">
-        <div class="chat-header">
-            <div class="header-content">
-                <img src="img/pisicosoft_logo.png" alt="Logo da Pisicosoft" class="logo"> 
-                <span>Chat Pisicosoft</span>
-                <div class="header-buttons">
-                    <button class="restart-button">🔄 Recomeçar</button>
-                    <button id="close-chat"><img src="img/close.png" alt="Fechar"></button>
-                </div>
-                <p>Agende suas consultas, acesse seu histórico, confirme atendimentos e conte com a gente em cada etapa do seu cuidado. 💙</p>
-            </div>
-        </div>
-        <div id="chatbox" class="chatbox"></div>
 
-        <div class="input-area">
-            <div id="typing-indicator" class="typing-indicator"></div>
-            <div class="message-input">
-                <input id="userInput" type="text" placeholder="Digite sua mensagem..." />
-                <input type="datetime-local" id="calendarInput" style="display:none;" />
-                <button id="send-button"><img src="img/message.png" alt="Enviar"></button>
+    <div class="chat-container">
+        
+        <div class="chat-header">
+            <div class="profile">
+                <img src="/img/pisc_logo.png" alt="Bot Profile" class="profile-pic"> 
+                <span class="header-title">PsicIA</span>
             </div>
+            <button id="menu-toggle" class="menu-toggle" aria-label="Menu">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                </svg>
+            </button>
         </div>
+
+        <div id="chat-menu" class="chat-menu">
+            <button id="theme-toggle" class="menu-button">Alternar Tema</button>
+            <button id="clear-chat" class="menu-button">Limpar Conversa</button>
+            <button id="restart-chat" class="menu-button">Reiniciar Chat</button>
+        </div>
+
+        <div id="chatbox" class="chatbox">
+            </div>
+
+        <div id="typing-indicator" class="typing-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        
+        <div class="input-area">
+            <textarea id="userInput" rows="1" placeholder="Digite sua mensagem"></textarea>
+            <button id="send-button" aria-label="Enviar">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+            </button>
+        </div>
+
     </div>
 
     <script src="js/script_bot.js" defer></script>
+
 </body>
 </html>
