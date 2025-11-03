@@ -23,12 +23,12 @@ const ClientProfile = ({ appointment }) => {
   };
 
   const handleConfirm = () => {
-    // Aqui você chamaria a API para confirmar a presença
+    // chamaria a API para confirmar a presença
     setConfirmed(true);
     setConfirmationOpen(false);
     setShowSuccess(true);
     
-    // Esconde a mensagem de sucesso após 3 segundos
+    // esconde a mensagem de sucesso após 3 segundos
     setTimeout(() => {
       setShowSuccess(false);
     }, 3000);
@@ -79,7 +79,7 @@ const ClientProfile = ({ appointment }) => {
         </CardContent>
       </Card>
 
-      {/* Diálogo de confirmação */}
+      {/* diálogo de confirmação */}
       <Dialog open={confirmationOpen} onClose={handleCancel}>
         <DialogTitle>Confirmar Presença</DialogTitle>
         <DialogContent>

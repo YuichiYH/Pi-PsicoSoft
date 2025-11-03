@@ -33,7 +33,7 @@ const PersonalInfo = () => {
   };
 
   const handleSave = () => {
-    // Aqui você implementaria a chamada à API para salvar os dados
+    // implementar a chamada à API para salvar os dados
     setIsEditing(false);
     setShowSuccess(true);
   };

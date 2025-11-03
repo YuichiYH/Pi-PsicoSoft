@@ -22,7 +22,7 @@ const AppointmentHistory = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  // Dados de exemplo - seriam substituídos por dados reais da API
+  // dados de exemplo - substituir por dados reais da API
   const appointments = [
     {
       id: 1,
@@ -51,8 +51,7 @@ const AppointmentHistory = () => {
       type: 'Retorno',
       payment: 'Confirmado'
     },
-    // Adicione mais consultas conforme necessário
-  ];
+      ];
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
@@ -118,14 +117,14 @@ const AppointmentHistory = () => {
                       <IconButton
                         size="small"
                         title="Reagendar"
-                        onClick={() => {/* Implementar reagendamento */}}
+                        onClick={() => {/* implementar reagendamento */}}
                       >
                         <EventIcon />
                       </IconButton>
                       <IconButton
                         size="small"
                         title="Ver recibo"
-                        onClick={() => {/* Implementar visualização de recibo */}}
+                        onClick={() => {/* implementar visualização de recibo */}}
                       >
                         <ReceiptIcon />
                       </IconButton>

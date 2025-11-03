@@ -17,7 +17,7 @@ function Profile() {
         setActiveTab(newValue);
     };
 
-    // Dados de exemplo para o ClientProfile
+    // dados de exemplo para o ClientProfile
     const sampleAppointment = {
         date: '28/10/2025',
         time: '14:30',

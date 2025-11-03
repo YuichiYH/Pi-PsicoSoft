@@ -7,14 +7,14 @@ function App() {
   return (
     <Router>
       <div className="App">
-        {/* Botão para navegar para o perfil */}
+        {/* botão para navegar para o perfil */}
         <Link to="/profile" style={{ textDecoration: 'none' }}>
           <Button variant="contained" color="primary" sx={{ m: 2 }}>
             Ir para Perfil
           </Button>
         </Link>
 
-        {/* Configuração das rotas */}
+        {/* configuração das rotas */}
         <Routes>
           <Route path="/" element={<div>Página Inicial</div>} />
           <Route path="/profile" element={<Profile />} />
