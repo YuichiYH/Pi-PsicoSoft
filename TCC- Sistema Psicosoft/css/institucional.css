@@ -236,3 +236,67 @@
         max-width: 300px; /* 1 card */
     }
 }
+
+
+/*
+ * Adicione este código ao seu arquivo 'css/institucional.css'
+ */
+
+.team-slider-container {
+    /* Esconde o conteúdo que transborda */
+    overflow: hidden; 
+    
+    /* Opcional: Adiciona um "fade" suave nas laterais para
+       o efeito ficar ainda melhor */
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+}
+
+.team-slider-track {
+    display: flex; /* Coloca os cards lado a lado */
+    
+    /* * Duração da animação.
+     * Ajuste '30s' para mais (lento) ou menos (rápido).
+     * 'linear' mantém a velocidade sempre constante.
+    */
+    animation: slide-infinite 30s linear infinite;
+}
+
+/* Pausa a animação quando o mouse estiver sobre o carrossel */
+.team-slider-container:hover .team-slider-track {
+    animation-play-state: paused;
+}
+
+/* * Garante que os cards tenham um tamanho fixo e não
+ * sejam "espremidos" pelo flexbox.
+*/
+.team-card {
+    /* * Ajuste estes valores se o tamanho/espaçamento 
+     * dos seus cards for diferente.
+     * Vamos supor 300px de largura + 30px de margem.
+    */
+    width: 300px; 
+    margin-right: 30px; 
+    flex-shrink: 0; /* Isso é muito importante! */
+}
+
+/* * A Animação Mágica
+ *
+ * O 'transform' move o track para a esquerda no valor
+ * exato do tamanho dos 4 cards ORIGINAIS.
+ *
+ * Cálculo: (Largura do card + margem) * 4
+ * Exemplo: (300px + 30px) * 4 = 1320px
+ *
+ * Se você mudar o tamanho do card ou a margem, 
+ * você DEVE recalcular este valor.
+*/
+@keyframes slide-infinite {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        /* Move o track para a esquerda pelo tamanho exato dos 4 cards originais */
+        transform: translateX(-1320px); 
+    }
+}

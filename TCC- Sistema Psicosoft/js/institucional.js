@@ -26,45 +26,19 @@ document.addEventListener("DOMContentLoaded", function() {
     const sliderTrack = document.querySelector('.team-slider-track');
     const cards = document.querySelectorAll('.team-card');
 
-    if (sliderContainer && sliderTrack) {
+    if (sliderContainer && sliderTrack && cards.length > 0) {
         
-        // Lógica para destacar o card central (opcional, mas melhora o efeito)
-        // Esta função é mais complexa. O CSS puro com :hover já dá um bom efeito.
+        // NOVO: Duplica os cards para o loop infinito
+        // Pega todos os cards existentes e clona eles,
+        // adicionando os clones ao final do 'track'.
+        cards.forEach((card) => {
+            const clone = card.cloneNode(true);
+            sliderTrack.appendChild(clone);
+        });
 
-        // Por enquanto, o CSS @keyframes "slide-infinite" 
-        // e o ":hover" no container já cuidam da animação e da pausa,
-        // e os cards individuais destacam com :hover.
-        
-        // Se precisar de controles manuais (botões < >), 
-        // a lógica abaixo seria necessária.
-        
-        /*
-        let currentIndex = 0;
-        const totalSlides = cards.length;
-        const slideWidth = cards[0].offsetWidth + 30; // Largura + margin
-
-        function updateSlidePosition() {
-            sliderTrack.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
-            
-            // Lógica de fade
-            cards.forEach((card, index) => {
-                if (index === currentIndex) {
-                    card.classList.add('active');
-                } else {
-                    card.classList.remove('active');
-                }
-            });
-        }
-
-        // Intervalo para trocar os slides
-        setInterval(() => {
-            currentIndex++;
-            if (currentIndex >= totalSlides) {
-                currentIndex = 0;
-            }
-            updateSlidePosition();
-        }, 3000); // Troca a cada 3 segundos
-        */
+        // O resto da mágica (animação e pausa no hover)
+        // é feito 100% no CSS.
     }
 
 });
+// A chave '}' extra que estava aqui foi removida.
