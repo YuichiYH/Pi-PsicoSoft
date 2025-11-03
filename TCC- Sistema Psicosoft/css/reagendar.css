@@ -1,0 +1,463 @@
+/*
+ * reagendar.css
+ * Estilo para a página de reagendamento (usa a paleta oficial).
+ */
+
+/* --- 1. Variáveis Globais e Reset --- */
+:root {
+    /* Paleta Oficial Psicosoft */
+    --primary: #7A7EBF;       /* Roxo/Azul Principal */
+    --primary-light: #A9ABD9; /* Roxo/Azul Claro */
+    --accent-1: #8BC3D9;       /* Azul Claro */
+    --accent-2: #5BA6A6;       /* Verde/Azul Água */
+    --background: #F2F1F0;    /* Fundo Off-white */
+    --card-bg: #FFFFFF;
+    --text-dark: #1A202C;       
+    --text-light: #718096;      
+    --border-color: #E2E8F0;  
+    --status-green: var(--accent-2);  
+    --status-pending: var(--accent-1);
+    
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.07), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Lato', sans-serif;
+    background-color: var(--background);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+h1, h2, h3, h4, h5 {
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+h1 { font-size: 2.2rem; }
+h3 { font-size: 1.25rem; }
+h4 { font-size: 1.1rem; color: var(--text-dark); }
+p { font-size: 1rem; color: var(--text-light); margin-bottom: 1rem; }
+a { text-decoration: none; color: var(--primary); }
+
+/* --- 2. Header (Copiado de dashboard.css) --- */
+.dashboard-header {
+    background-color: var(--card-bg);
+    box-shadow: var(--shadow-sm);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--primary);
+    text-decoration: none;
+}
+.main-nav ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+.main-nav a {
+    color: var(--text-light);
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+}
+.main-nav a:hover,
+.main-nav a.active {
+    color: var(--primary);
+}
+.btn-logout {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    color: var(--text-light);
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+.btn-logout:hover {
+    background-color: var(--background);
+    color: var(--primary);
+}
+.btn-logout svg { width: 18px; height: 18px; }
+
+.menu-toggle { display: none; background: none; border: none; cursor: pointer; }
+.menu-toggle .bar {
+    width: 25px; height: 3px; background-color: var(--text-dark);
+    margin: 5px 0; transition: all 0.3s ease;
+}
+
+/* --- 3. Layout de Reagendamento --- */
+main {
+    padding-top: 3rem;
+    padding-bottom: 4rem;
+}
+.reschedule-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.welcome-header { margin-bottom: 2rem; }
+.welcome-header .subtitle { font-size: 1.25rem; }
+
+hr.divider {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 2rem 0;
+}
+
+/* Esconde a Etapa 2 por padrão */
+.step-hidden {
+    display: none;
+}
+.step-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+.step-number {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--primary);
+    color: var(--card-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+.step-header h4 { margin-bottom: 0; }
+
+
+/* --- 4. Lista de Consultas (Etapa 1) --- */
+.appointment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.appointment-item {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+/* Estilo do item selecionado */
+.appointment-item.selected {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-sm);
+}
+
+
+/* 1. REGRA ATUALIZADA (O container da data) */
+.appointment-item .date-box {
+    background-color: var(--primary-light);
+    color: var(--primary);
+    border-radius: 8px;
+    width: 55px;
+    height: 55px;
+    font-weight: 700;
+    /* line-height: 1.2;  <-- REMOVIDO */
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0; /* <-- Garantir que não tem padding */
+}
+
+/* 2. REGRA ATUALIZADA (O mês) */
+.appointment-item .date-box .month {
+    font-size: 0.8rem;
+    display: block;
+    text-transform: uppercase;
+    line-height: 1; /* <-- AJUSTADO */
+}
+
+/* 3. REGRA ATUALIZADA (O dia) */
+.appointment-item .date-box .day {
+    font-size: 1.6rem;
+    display: block;
+    line-height: 1.2; /* <-- AJUSTADO */
+}
+.appointment-item .appointment-details {
+    flex-grow: 1;
+}
+.appointment-details h5 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+}
+.appointment-details p {
+    font-size: 0.9rem;
+    margin: 0;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+.appointment-details p svg { width: 16px; height: 16px; }
+.status-confirmado { color: var(--status-green); }
+.status-pendente { color: var(--status-pending); }
+
+.action-wrapper {
+    flex-shrink: 0;
+}
+.btn-reschedule {
+    background-color: var(--primary);
+    color: var(--card-bg);
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.btn-reschedule:hover {
+    background-color: #6a6eac;
+}
+
+/* --- 5. Calendário (Etapa 2) --- */
+.calendar-container { margin-bottom: 2rem; }
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+.cal-month-year {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+.cal-arrow {
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    color: var(--primary);
+    border-radius: 50%;
+}
+.cal-arrow:hover { background-color: var(--primary-light); }
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.day-name {
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+}
+.day {
+    padding: 0.75rem;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 50%;
+    font-weight: 700;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.day.prev-month,
+.day.next-month {
+    color: #ccc;
+    cursor: not-allowed;
+}
+.day.current-day {
+    border: 2px solid var(--accent-1);
+}
+.day:not(.prev-month):not(.next-month):hover {
+    background-color: var(--primary-light);
+}
+.day.selected {
+    background-color: var(--primary);
+    color: var(--card-bg);
+}
+.day.disabled {
+    color: #ccc;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+/* --- 6. Horários (Etapa 2) --- */
+.time-slots-wrapper { margin-bottom: 2rem; }
+.time-slots-wrapper h4 { margin-bottom: 1rem; }
+.time-slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.75rem;
+}
+.time-slot {
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: 'Lato', sans-serif;
+    border: 2px solid var(--primary-light);
+    border-radius: 8px;
+    background: var(--card-bg);
+    color: var(--primary);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+.time-slot:hover {
+    border-color: var(--primary);
+    background: var(--primary-light);
+}
+.time-slot.selected {
+    background-color: var(--primary);
+    color: var(--card-bg);
+    border-color: var(--primary);
+}
+.time-slot.disabled {
+    background-color: var(--background);
+    border-color: var(--border-color);
+    color: #aaa;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+/* --- 7. Botão de Confirmação (Etapa 2) --- */
+.booking-confirm {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.btn-confirm {
+    border: none;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    background-color: var(--accent-2); /* Verde Água */
+    color: var(--card-bg);
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+.btn-confirm:hover {
+    background-color: #4a8d8d; /* Tom mais escuro de --accent-2 */
+    transform: translateY(-2px);
+}
+.btn-secondary {
+    border: 2px solid var(--border-color);
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    background-color: var(--card-bg);
+    color: var(--text-light);
+    border-radius: 8px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+.btn-secondary:hover {
+    background-color: var(--background);
+    border-color: #ccc;
+}
+
+
+/* --- 8. Chatbot FAB --- */
+.chat-fab {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    background-color: var(--primary);
+    color: var(--card-bg);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-lg);
+    cursor: pointer;
+    z-index: 100;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.chat-fab:hover {
+    transform: scale(1.05) translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+.chat-fab svg { width: 30px; height: 30px; }
+
+
+/* --- 9. Responsividade --- */
+@media (max-width: 768px) {
+    /* Header */
+    .menu-toggle { display: block; }
+    .main-nav {
+        position: absolute; top: 68px; left: 0;
+        width: 100%; background-color: var(--card-bg);
+        box-shadow: var(--shadow-md); max-height: 0;
+        overflow: hidden; transition: max-height 0.4s ease-out;
+    }
+    .main-nav.active { max-height: 300px; }
+    .main-nav ul { flex-direction: column; padding: 1rem; align-items: stretch; }
+    .main-nav li { border-bottom: 1px solid var(--border-color); }
+    .main-nav a { display: block; padding: 0.8rem; }
+    .btn-logout { padding: 0.8rem; justify-content: center; }
+    .menu-toggle.active .bar:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+    .menu-toggle.active .bar:nth-child(2) { opacity: 0; }
+    .menu-toggle.active .bar:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
+
+    /* Página */
+    .reschedule-container { padding: 1.5rem; }
+    h1 { font-size: 1.8rem; }
+    .day { padding: 0.5rem; }
+    .time-slots-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
+    
+    .appointment-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    .action-wrapper {
+        width: 100%;
+    }
+    .btn-reschedule {
+        width: 100%;
+    }
+}

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancelar Consulta - Psicosoft</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/cancelar.css">
+</head>
+<body>
+
+    <header class="dashboard-header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">Psicosoft</a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="dashboard.html">Meu Painel</a></li> 
+                    
+                    <li><a href="historico.html">Histórico</a></li>
+                    
+                    <li><a href="#">Perfil</a></li>
+                    <li><a href="index.html" class="btn-logout">
+                        <i data-lucide="log-out"></i> Sair
+                    </a></li> 
+                </ul>
+            </nav>
+            <button id="menu-toggle" class="menu-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="cancel-container">
+                
+                <section class="welcome-header">
+                    <h1>Cancelar Consultas</h1>
+                    <p class="subtitle">Selecione a consulta que você não poderá comparecer.</p>
+                </section>
+
+                <div class="cancel-list">
+
+                    <div class="cancel-item">
+                        <div class="date-box">
+                            <span class="month">NOV</span>
+                            <span class="day">10</span>
+                        </div>
+                        <div class="appointment-details">
+                            <h5>Consulta com Dr. André</h5>
+                            <p class="status-confirmado">
+                                <i data-lucide="check-circle"></i> Confirmada - 14:30
+                            </p>
+                        </div>
+                        <div class="action-wrapper">
+                            <button class="btn-cancel">Cancelar</button>
+                        </div>
+                    </div>
+
+                    <div class="cancel-item">
+                        <div class="date-box">
+                            <span class="month">NOV</span>
+                            <span class="day">28</span>
+                        </div>
+                        <div class="appointment-details">
+                            <h5>Retorno com Dra. Beatriz</h5>
+                            <p class="status-pendente">
+                                <i data-lucide="clock"></i> Aguardando Confirmação
+                            </p>
+                        </div>
+                        <div class="action-wrapper">
+                            <button class="btn-cancel">Cancelar</button>
+                        </div>
+                    </div>
+                    
+                </div> <div class="back-link">
+                    <a href="dashboard.html">
+                        <i data-lucide="arrow-left"></i> Voltar ao Painel
+                    </a>
+                </div>
+
+            </div> </div> </main>
+
+    <div id="confirm-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="modal-icon"><i data-lucide="alert-triangle"></i></span>
+            <h4>Confirmar Cancelamento</h4>
+            <p>Tem certeza que deseja cancelar esta consulta? Esta ação não pode ser desfeita.</p>
+            <div class="modal-actions">
+                <button id="modal-btn-no" class="btn-modal-secondary">Não, voltar</button>
+                <button id="modal-btn-yes" class="btn-modal-danger">Sim, cancelar</button>
+            </div>
+        </div>
+    </div>
+
+
+    <button id="open-chat-bot" class="chat-fab" aria-label="Abrir chat de ajuda">
+        <i data-lucide="bot"></i>
+    </button>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      lucide.createIcons(); // Ativa os ícones
+    </script>
+    
+    <script src="js/cancelar.js"></script>
+</body>
+</html>

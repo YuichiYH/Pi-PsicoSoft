@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reagendar Consulta - Psicosoft</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/reagendar.css">
+</head>
+<body>
+
+    <header class="dashboard-header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">Psicosoft</a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="dashboard.html">Meu Painel</a></li> 
+                    
+                    <li><a href="historico.html">Histórico</a></li>
+                    
+                    <li><a href="#">Perfil</a></li>
+                    <li><a href="index.html" class="btn-logout">
+                        <i data-lucide="log-out"></i> Sair
+                    </a></li> 
+                </ul>
+            </nav>
+            <button id="menu-toggle" class="menu-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="reschedule-container">
+                
+                <section id="step-1-select">
+                    <section class="welcome-header">
+                        <h1>Reagendar Consulta</h1>
+                        <p class="subtitle">Selecione a consulta que você deseja alterar a data ou horário.</p>
+                    </section>
+
+                    <div class="appointment-list">
+                        <div class="appointment-item">
+                            <div class="date-box">
+                                <span class="month">NOV</span>
+                                <span class="day">10</span>
+                            </div>
+                            <div class="appointment-details">
+                                <h5>Consulta com Dr. André</h5>
+                                <p class="status-confirmado">
+                                    <i data-lucide="check-circle"></i> Confirmada - 14:30
+                                </p>
+                            </div>
+                            <div class="action-wrapper">
+                                <button class="btn-reschedule">Reagendar</button>
+                            </div>
+                        </div>
+
+                        <div class="appointment-item">
+                            <div class="date-box">
+                                <span class="month">NOV</span>
+                                <span class="day">28</span>
+                            </div>
+                            <div class="appointment-details">
+                                <h5>Retorno com Dra. Beatriz</h5>
+                                <p class="status-pendente">
+                                    <i data-lucide="clock"></i> Aguardando Confirmação
+                                </p>
+                            </div>
+                            <div class="action-wrapper">
+                                <button class="btn-reschedule">Reagendar</button>
+                            </div>
+                        </div>
+                    </div>
+                </section> 
+                
+                <hr class="divider">
+
+                <section id="step-2-reschedule" class="step-hidden">
+                    
+                    <div class="step-header">
+                        <span class="step-number">2</span>
+                        <h4>Selecione uma nova data e horário</h4>
+                    </div>
+
+                    <div class="calendar-container">
+                        <div class="calendar-header">
+                            <button id="prev-month" class="cal-arrow" aria-label="Mês anterior">
+                                <i data-lucide="chevron-left"></i>
+                            </button>
+                            <span id="month-year" class="cal-month-year"></span>
+                            <button id="next-month" class="cal-arrow" aria-label="Próximo mês">
+                                <i data-lucide="chevron-right"></i>
+                            </button>
+                        </div>
+                        <div class="calendar-weekdays">
+                            <div class="day-name">Dom</div>
+                            <div class="day-name">Seg</div>
+                            <div class="day-name">Ter</div>
+                            <div class="day-name">Qua</div>
+                            <div class="day-name">Qui</div>
+                            <div class="day-name">Sex</div>
+                            <div class="day-name">Sáb</div>
+                        </div>
+                        <div id="calendar-days-grid" class="calendar-days">
+                            </div>
+                    </div>
+                
+                    <div class="time-slots-wrapper">
+                        <h4 id="time-slot-header">Escolha um horário</h4>
+                        <div class="time-slots-grid">
+                            <button class="time-slot">09:00</button>
+                            <button class="time-slot">09:30</button>
+                            <button class="time-slot">10:00</button>
+                            <button class="time-slot disabled">11:00</button>
+                            <button class="time-slot">14:00</button>
+                            <button class="time-slot">15:00</button>
+                        </div>
+                    </div>
+
+                    <div class="booking-confirm">
+                        <button class="btn-confirm">Confirmar Reagendamento</button>
+                        <button id="cancel-reschedule" class="btn-secondary">Cancelar Alteração</button>
+                    </div>
+
+                </section> 
+            </div> 
+        </div>
+    </main>
+
+    <button id="open-chat-bot" class="chat-fab" aria-label="Abrir chat de ajuda">
+        <i data-lucide="bot"></i>
+    </button>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      lucide.createIcons(); // Ativa os ícones
+    </script>
+    
+    <script src="js/reagendar.js"></script>
+</body>
+</html>

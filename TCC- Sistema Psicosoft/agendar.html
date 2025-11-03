@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendar Consulta - Psicosoft</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/agendar.css">
+</head>
+<body>
+
+    <header class="dashboard-header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">Psicosoft</a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="dashboard.html">Meu Painel</a></li> 
+                    
+                    <li><a href="historico.html">Histórico</a></li>
+                    
+                    <li><a href="#">Perfil</a></li>
+                    <li><a href="index.html" class="btn-logout">
+                        <i data-lucide="log-out"></i> Sair
+                    </a></li> 
+                </ul>
+            </nav>
+            <button id="menu-toggle" class="menu-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="booking-container">
+                
+                <section class="welcome-header">
+                    <h1>Agendar Nova Consulta</h1>
+                    <p class="subtitle">Siga os passos para encontrar o melhor horário para você.</p>
+                </section>
+
+                <div class="booking-step">
+                    <div class="step-header">
+                        <span class="step-number">1</span>
+                        <h4>Escolha a especialidade e o profissional</h4>
+                    </div>
+                    <div class="form-filters">
+                        <div class="form-group">
+                            <label for="especialidade">Especialidade</label>
+                            <select id="especialidade" name="especialidade">
+                                <option value="">Selecione a especialidade</option>
+                                <option value="psicologia">Psicologia</option>
+                                <option value="psiquiatria">Psiquiatria</option>
+                                <option value="terapia">Terapia de Casal</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="profissional">Profissional (Opcional)</label>
+                            <select id="profissional" name="profissional">
+                                <option value="">Qualquer profissional</option>
+                                <option value="dr_andre">Dr. André</option>
+                                <option value="dra_beatriz">Dra. Beatriz</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="booking-step">
+                    <div class="step-header">
+                        <span class="step-number">2</span>
+                        <h4>Selecione uma data</h4>
+                    </div>
+                    <div class="calendar-container">
+                        <div class="calendar-header">
+                            <button id="prev-month" class="cal-arrow" aria-label="Mês anterior">
+                                <i data-lucide="chevron-left"></i>
+                            </button>
+                            <span id="month-year" class="cal-month-year"></span>
+                            <button id="next-month" class="cal-arrow" aria-label="Próximo mês">
+                                <i data-lucide="chevron-right"></i>
+                            </button>
+                        </div>
+                        <div class="calendar-weekdays">
+                            <div class="day-name">Dom</div>
+                            <div class="day-name">Seg</div>
+                            <div class="day-name">Ter</div>
+                            <div class="day-name">Qua</div>
+                            <div class="day-name">Qui</div>
+                            <div class="day-name">Sex</div>
+                            <div class="day-name">Sáb</div>
+                        </div>
+                        <div id="calendar-days-grid" class="calendar-days">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="booking-step">
+                    <div class="step-header">
+                        <span class="step-number">3</span>
+                        <h4 id="time-slot-header">Escolha um horário</h4>
+                    </div>
+                    <div class="time-slots-grid">
+                        <button class="time-slot">09:00</button>
+                        <button class="time-slot">09:30</button>
+                        <button class="time-slot">10:00</button>
+                        <button class="time-slot">10:30</button>
+                        <button class="time-slot disabled">11:00</button>
+                        <button class="time-slot">14:00</button>
+                        <button class="time-slot">14:30</button>
+                        <button class="time-slot">15:00</button>
+                    </div>
+                </div>
+
+                <div class="booking-confirm">
+                    <button class="btn-confirm">Confirmar Agendamento</button>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <button id="open-chat-bot" class="chat-fab" aria-label="Abrir chat de ajuda">
+        <i data-lucide="bot"></i>
+    </button>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      lucide.createIcons(); // Ativa os ícones
+    </script>
+    
+    <script src="js/agendar.js"></script>
+</body>
+</html>

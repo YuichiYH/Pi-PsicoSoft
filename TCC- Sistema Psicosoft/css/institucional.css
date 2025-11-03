@@ -1,0 +1,238 @@
+/*
+ * institucional.css
+ * Estilos para a página "Sobre o Psicosoft".
+ * Este arquivo é carregado APÓS o style_lanpag.css
+ */
+
+/* 1. Hero da Página (Sobre) */
+.page-hero {
+    background-color: var(--card-bg); /* Fundo branco */
+    padding: 3rem 0;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.page-hero h1 {
+    color: var(--primary); /* Roxo/Azul Principal */
+    font-size: 2.8rem;
+}
+
+.page-hero .subtitle {
+    font-size: 1.3rem;
+    color: #666;
+    margin-bottom: 0;
+}
+
+/* 2. Seção de Conteúdo Principal (Texto + Imagem) */
+.content-section {
+    padding: 4rem 0;
+    background-color: var(--card-bg);
+}
+
+.content-layout {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+}
+
+.content-text {
+    flex: 6; /* 60% */
+}
+
+.content-text h2 {
+    color: var(--text-dark);
+    font-size: 2rem;
+    border-bottom: 3px solid var(--primary-light);
+    padding-bottom: 0.5rem;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+}
+
+.content-text p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #555;
+    margin-bottom: 1.5rem;
+}
+
+.content-image {
+    flex: 4; /* 40% */
+}
+
+.content-image img {
+    border-radius: 12px;
+    box-shadow: var(--shadow-hover);
+    width: 100%;
+}
+
+/* 3. Seção da Equipe (Carrossel) */
+.team-section {
+    padding: 4rem 0;
+    background-color: var(--background); /* Fundo cinza claro */
+}
+
+.team-section h2 {
+    font-size: 2.2rem;
+}
+
+/* Container do Carrossel */
+.team-slider-container {
+    max-width: 900px; /* Largura máxima do carrossel (3 cards) */
+    margin: 3rem auto 0;
+    overflow: hidden; /* Essencial para o carrossel */
+    position: relative;
+}
+
+/* Faixa que se move */
+.team-slider-track {
+    display: flex;
+    /* Animação de slide infinito */
+    animation: slide-infinite 20s linear infinite;
+    width: calc(300px * 5); /* (Largura Card + Gap) * Qtd Slides (4 + 1 duplicado) */
+}
+
+/* Animação de slide */
+@keyframes slide-infinite {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        /* Move 4 cards (o 5º é a duplicata do 1º para o loop) */
+        transform: translateX(calc(-300px * 4)); 
+    }
+}
+
+.team-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    
+    display: flex;
+    flex-direction: column; 
+    align-items: center;     
+    text-align: center;      
+    gap: 1rem;
+
+    flex-shrink: 0;
+    width: 270px; /* Largura fixa do card */
+    margin-right: 30px; /* Espaçamento (gap) */
+
+    /* Efeito de fade (transição de opacidade) */
+    opacity: 0.7;
+    transform: scale(0.95);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* O carrossel irá pausar e destacar o card central */
+.team-slider-container:hover .team-slider-track {
+    animation-play-state: paused;
+}
+
+.team-slider-container .team-card:hover {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: var(--shadow-hover);
+}
+
+
+/* Estilo da Imagem da Equipe */
+.team-card .team-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%; /* Foto redonda */
+    object-fit: cover; 
+    flex-shrink: 0;
+    border: 4px solid var(--card-bg);
+    box-shadow: 0 0 0 5px var(--primary-light);
+    background-color: var(--primary-light); 
+}
+
+.team-card h3 {
+    font-size: 1.15rem;
+    color: var(--text-dark);
+    font-weight: 700;
+    margin-bottom: 0;
+    line-height: 1.3;
+}
+
+.team-card .team-role {
+    font-size: 0.95rem;
+    color: var(--text-dark); /* <-- COR ATUALIZADA AQUI */
+    font-weight: 400;
+    margin-bottom: 0;
+    line-height: 1.4;
+}
+
+/* 4. Seção de Agradecimento (FAM) */
+.gratitude-section {
+    padding: 4rem 0;
+    background-color: var(--card-bg);
+}
+
+.gratitude-section blockquote {
+    border-left: 5px solid var(--primary);
+    padding: 1.5rem 2rem;
+    background-color: #fcfcff;
+    border-radius: 0 8px 8px 0;
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    box-shadow: var(--shadow);
+}
+
+.gratitude-section .fa-graduation-cap {
+    font-size: 2rem;
+    color: var(--primary-light);
+    position: absolute;
+    top: 1.5rem;
+    right: 2rem;
+    opacity: 0.5;
+}
+
+.gratitude-section blockquote p {
+    font-size: 1.1rem;
+    color: #555;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+}
+.gratitude-section blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+/* 5. Frase de Impacto Final (CTA) */
+.final-cta {
+    background-color: var(--secondary); /* Verde/Azul Água */
+    padding: 3rem 0;
+}
+
+.final-cta h2 {
+    color: var(--text-light);
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0;
+}
+
+
+/* 6. Responsividade */
+@media (max-width: 992px) {
+    .team-slider-container {
+        max-width: 600px; /* 2 cards */
+    }
+    .team-slider-track {
+        /* (270+30) * 5 = 1500px */
+        width: 1500px; 
+    }
+}
+
+@media (max-width: 768px) {
+    .content-layout {
+        flex-direction: column-reverse; /* Imagem primeiro */
+    }
+    
+    .team-slider-container {
+        max-width: 300px; /* 1 card */
+    }
+}

@@ -1,0 +1,331 @@
+/*
+ * historico.css
+ * Estilo para a página de histórico de consultas (usa a paleta oficial).
+ */
+
+/* --- 1. Variáveis Globais e Reset --- */
+:root {
+    /* Paleta Oficial Psicosoft */
+    --primary: #7A7EBF;       /* Roxo/Azul Principal */
+    --primary-light: #A9ABD9; /* Roxo/Azul Claro */
+    --accent-1: #8BC3D9;       /* Azul Claro */
+    --accent-2: #5BA6A6;       /* Verde/Azul Água */
+    --background: #F2F1F0;    /* Fundo Off-white */
+    --card-bg: #FFFFFF;
+    --text-dark: #1A202C;       
+    --text-light: #718096;      
+    --border-color: #E2E8F0;  
+    
+    /* Cores de Status */
+    --status-green: var(--accent-2);  /* Confirmada */
+    --status-pending: var(--accent-1);/* Pendente */
+    --status-realizada: #334155;      /* Cinza escuro p/ Realizada */
+    --status-cancelada: #E57373;      /* Vermelho suave p/ Cancelada */
+
+    /* Sombras (Neutras) */
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.07), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Lato', sans-serif;
+    background-color: var(--background);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+h1, h2, h3, h4, h5 {
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+h1 { font-size: 2.2rem; }
+h3 { font-size: 1.25rem; }
+h4 { font-size: 1.1rem; color: var(--text-dark); }
+p { font-size: 1rem; color: var(--text-light); margin-bottom: 0; } /* p sem margem p/ detalhes */
+a { text-decoration: none; color: var(--primary); }
+
+/* --- 2. Header (Copiado de dashboard.css) --- */
+.dashboard-header {
+    background-color: var(--card-bg);
+    box-shadow: var(--shadow-sm);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--primary);
+    text-decoration: none;
+}
+.main-nav ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+.main-nav a {
+    color: var(--text-light);
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+}
+.main-nav a:hover,
+.main-nav a.active {
+    color: var(--primary);
+}
+.btn-logout {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    color: var(--text-light);
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+.btn-logout:hover {
+    background-color: var(--background);
+    color: var(--primary);
+}
+.btn-logout svg { width: 18px; height: 18px; }
+
+.menu-toggle { display: none; background: none; border: none; cursor: pointer; }
+.menu-toggle .bar {
+    width: 25px; height: 3px; background-color: var(--text-dark);
+    margin: 5px 0; transition: all 0.3s ease;
+}
+
+/* --- 3. Layout do Histórico --- */
+main {
+    padding-top: 3rem;
+    padding-bottom: 4rem;
+}
+.history-container {
+    max-width: 900px; /* Um pouco mais largo que o de cancelamento */
+    margin: 0 auto;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.welcome-header { margin-bottom: 2rem; }
+.welcome-header .subtitle { font-size: 1.25rem; }
+
+/* --- 4. Abas de Filtro --- */
+.filter-tabs {
+    display: flex;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 2rem;
+}
+.tab-item {
+    font-family: 'Lato', sans-serif;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    background: none;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: color 0.3s ease, border-bottom 0.3s ease;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px; /* Alinha a borda com a borda do container */
+}
+.tab-item:hover {
+    color: var(--text-dark);
+}
+.tab-item.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+/* --- 5. Lista de Histórico --- */
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: opacity 0.3s ease; /* Para o filtro */
+}
+
+/* Estilo copiado de 'reagendar.css' para consistência */
+.history-item .date-box {
+    background-color: var(--primary-light);
+    color: var(--primary);
+    border-radius: 8px;
+    width: 55px;
+    height: 55px;
+    font-weight: 700;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.history-item .date-box .month {
+    font-size: 0.8rem;
+    display: block;
+    text-transform: uppercase;
+    line-height: 1;
+}
+.history-item .date-box .day {
+    font-size: 1.6rem;
+    display: block;
+    line-height: 1.2;
+}
+
+.history-item .appointment-details {
+    flex-grow: 1;
+}
+.appointment-details h5 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+}
+.appointment-details p {
+    font-size: 0.95rem;
+    color: var(--text-light);
+    font-weight: 400;
+}
+
+/* --- 6. Tags de Status --- */
+.status-tag {
+    flex-shrink: 0;
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.status-tag svg {
+    width: 16px;
+    height: 16px;
+}
+
+.status-confirmada {
+    background-color: #E6F6F6; /* Fundo de 'status-green' */
+    color: var(--status-green);
+}
+.status-pendente {
+    background-color: #EBF7FC; /* Fundo de 'status-pending' */
+    color: var(--status-pending);
+}
+.status-realizada {
+    background-color: #F1F5F9; /* Fundo de 'status-realizada' */
+    color: var(--status-realizada);
+}
+.status-cancelada {
+    background-color: #FEEEEE; /* Fundo de 'status-cancelada' */
+    color: var(--status-cancelada);
+}
+
+/* Estilos para itens desabilitados (cancelados) */
+.history-item[data-status="canceladas"] .date-box-disabled {
+    background-color: #F1F5F9;
+    color: #94A3B8;
+}
+.history-item[data-status="canceladas"] .text-disabled {
+    color: #94A3B8;
+    text-decoration: line-through;
+}
+
+
+/* --- 7. Chatbot FAB (Copiado de dashboard.css) --- */
+.chat-fab {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    background-color: var(--primary);
+    color: var(--card-bg);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-lg);
+    cursor: pointer;
+    z-index: 100;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.chat-fab:hover {
+    transform: scale(1.05) translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+.chat-fab svg { width: 30px; height: 30px; }
+
+
+/* --- 8. Responsividade --- */
+@media (max-width: 768px) {
+    /* Header */
+    .menu-toggle { display: block; }
+    .main-nav {
+        position: absolute; top: 68px; left: 0;
+        width: 100%; background-color: var(--card-bg);
+        box-shadow: var(--shadow-md); max-height: 0;
+        overflow: hidden; transition: max-height 0.4s ease-out;
+    }
+    .main-nav.active { max-height: 300px; }
+    .main-nav ul { flex-direction: column; padding: 1rem; align-items: stretch; }
+    .main-nav li { border-bottom: 1px solid var(--border-color); }
+    .main-nav a { display: block; padding: 0.8rem; }
+    .btn-logout { padding: 0.8rem; justify-content: center; }
+    .menu-toggle.active .bar:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+    .menu-toggle.active .bar:nth-child(2) { opacity: 0; }
+    .menu-toggle.active .bar:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
+
+    /* Página */
+    .history-container { padding: 1.5rem; }
+    h1 { font-size: 1.8rem; }
+    
+    .filter-tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+        -ms-overflow-style: none;  /* IE e Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+    .filter-tabs::-webkit-scrollbar { display: none; } /* Chrome, Safari */
+    .tab-item { padding: 0.75rem 1rem; }
+
+    .history-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    .status-tag {
+        align-self: flex-start;
+    }
+    .appointment-details p {
+        font-size: 0.9rem;
+    }
+}

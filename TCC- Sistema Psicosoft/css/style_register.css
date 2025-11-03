@@ -1,0 +1,401 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat' , 'sans-serif';
+}
+
+/* --- CORREÇÃO 1: Fundo do Body --- */
+body{
+    background-color: #e9e9f2; /* Cor de fundo da imagem */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.container {
+    background-color: #fff;
+    /* --- CORREÇÃO 2: Raio da borda mais sutil --- */
+    border-radius: 15px; 
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+    position: relative;
+    overflow: hidden;
+    width: 768px;
+    max-width: 100%;
+    min-height: 480px;
+}
+
+.container p {
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0.3px;
+    margin: 20px 0;
+}
+
+.container span {
+    font-size: 12px;
+}
+
+.container a{
+    /* --- CORREÇÃO 3: Cor do link --- */
+    color:#333; 
+    font-size: 13px;
+    text-decoration: none;
+    margin: 15px 0 10px;
+}
+
+.container button {
+    /* --- CORREÇÃO 4: Cor principal (verde-escuro) --- */
+    background-color: #A9ABD9; 
+    color: #fff;
+    font-size: 12px;
+    padding: 10px 45px;
+    border: 1px solid transparent;
+    border-radius: 8px; /* Adicionado para combinar com a imagem */
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+/* --- CORREÇÃO 5: Botão "fantasma" (Sign Up) --- */
+.container button.hidden {
+    background-color: transparent; /* Fundo transparente */
+    border-color: #fff; /* Borda branca */
+}
+
+.container form {
+    background-color: #fff; /* Fundo branco, não cinza */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 40px;
+    height: 100%;
+}
+
+.container input {
+    background-color: #eee; 
+    border: none;
+    margin: 8px 0; /* Margem correta */
+    padding: 10px 15px;
+    font-size: 13px;
+    border-radius: 8px;
+    width: 100%; /* Largura total */
+    outline: none;
+    
+} 
+
+.form-container {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    transition: all 0.6s ease-in-out;
+}
+
+.sign-in{ 
+    left: 0;
+    width: 50%;
+    z-index: 2;
+}
+
+.container.active .sign-in {
+    transform: translateX(100%);
+}
+
+.sign-up { 
+    left: 0;
+    width: 50%;
+    opacity: 0;
+    z-index: 1;
+}
+
+.container.active .sign-up {
+    transform: translateX(100%);
+    opacity: 1;
+    z-index: 5;
+    animation: move 0.6s;
+}
+
+@keyframes move {
+    0%,
+    49.99%{
+        opacity: 0;
+        z-index: 1;
+    }
+    50%,
+    100%{
+        opacity: 1;
+        z-index: 5;
+    }
+}
+
+/* --- CORREÇÃO 8: Erro de digitação (incons -> icons) --- */
+.social-icons {
+    margin: 20px 0;
+}
+
+.social-icons a {
+    border: 1px solid #F2F1F0;
+    border-radius: 20%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 3px;
+    width: 40px;
+    height: 40px;
+    color: #7A7EBF;
+}
+
+.toggle-container {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    transition: all 0.6s ease-in-out;
+    border-radius: 150px 0 0 150px; 
+    z-index: 1000; 
+}
+
+.container.active .toggle-container {
+    transform: translateX(-100%);
+    border-radius: 0 150px 150px 0;
+}
+
+.toggle {
+    background-color: #7A7EBF; /* Cor principal */
+    height: 100%;
+    background: linear-gradient(to right, #7A7EBF,#A9ABD9); /* Gradiente suave como na imagem */
+    color: #fff;
+    position: relative;
+    left: -100%;
+    height: 100%;
+    width: 200%;
+    transform: translateX(0);
+    transition: all 0.6s ease-in-out;
+}
+
+.container.active .toggle {
+    transform: translateX(50%);
+}
+
+.toggle-panel {
+    position: absolute; /* Mudado de relative */
+    width: 50%;
+    height: 100%; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding:  0 30px;
+    text-align: center;
+    top: 0;
+    transform: translateX(0);
+    transition: all 0.6s ease-in-out;
+}
+
+.toggle-left {
+    transform: translateX(-200%);
+}
+
+.container.active .toggle-left{
+    transform: translateX(0);
+}
+
+.toggle-right{
+    right: 0;
+    transform: translateX(0);
+}
+
+.container.active .toggle-right{
+    transform: translateX(200%);
+}
+
+/* --- INÍCIO DA NOVA SEÇÃO RESPONSIVA (COM ANIMAÇÃO VERTICAL) --- */
+
+/* 1. Estilo dos links de troca no celular */
+.form-toggle-mobile {
+    display: none; /* Escondido no desktop por padrão */
+    margin-top: 20px;
+}
+.form-toggle-mobile p {
+    font-size: 14px;
+    color: #333;
+}
+.form-toggle-mobile a {
+    font-weight: bold;
+    color: #7A7EBF; /* Cor principal do seu tema roxo */
+    cursor: pointer;
+    font-size: 14px;
+    margin: 0;
+}
+
+/* 2. Media Query para telas de celular (abaixo de 768px) */
+@media (max-width: 767px) {
+    body {
+        height: auto;
+        padding: 20px 0;
+    }
+
+    .container {
+        width: 95%;
+        max-width: 450px;
+        min-height: auto;
+        height: auto;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        /* IMPORTANTE: Esconde os painéis deslizando */
+        overflow: hidden; 
+    }
+
+    /* Esconde o painel roxo lateral (não será usado no mobile) */
+    .toggle-container {
+        display: none;
+    }
+
+    /* Mostra os links de troca de texto */
+    .form-toggle-mobile {
+        display: block;
+    }
+
+    /* Prepara os formulários para a animação */
+    .form-container {
+        position: relative; /* Mudado de absolute */
+        width: 100%;
+        height: auto;
+        padding: 40px 30px;
+        /* Habilita a animação de slide vertical */
+        transition: transform 0.6s ease-in-out;
+        z-index: 1;
+        
+        /* Reseta propriedades do desktop */
+        left: auto;
+        top: auto;
+        animation: none;
+    }
+
+    .sign-in {
+        /* Painel de Login começa na posição normal */
+        transform: translateY(0);
+        z-index: 2; /* Fica na frente */
+    }
+
+    .sign-up {
+        /* Painel de Cadastro começa ABSOLUTO e "embaixo" da tela */
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 1; /* Garante que está visível */
+        transform: translateY(100%);
+        z-index: 1; /* Fica atrás */
+    }
+
+    /* --- A MÁGICA DA ANIMAÇÃO --- */
+    
+    .container.active .sign-in {
+        /* Desliza o Login para CIMA e para fora */
+        transform: translateY(-100%);
+        z-index: 1;
+    }
+
+    .container.active .sign-up {
+        /* Desliza o Cadastro para a posição (de baixo para o meio) */
+        transform: translateY(0);
+        z-index: 5; /* Traz para frente */
+    }
+}
+
+/* --- NOVO: Estilização para a faixa de animação mobile --- */
+
+.mobile-toggle-bg {
+    display: none; /* Escondido por padrão no desktop */
+    position: fixed; /* Fixado na tela */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Cor de fundo roxa, igual ao toggle-container do desktop */
+    background: linear-gradient(to right, #7A7EBF, #A9ABD9);
+    z-index: 0; /* Fica atrás do .container */
+    /* Garante que o container esteja acima */
+    pointer-events: none; /* Não bloqueia cliques */
+
+    /* Propriedades para a animação */
+    transform: translateY(100%); /* Começa embaixo, fora da tela */
+    transition: transform 0.6s ease-in-out;
+}
+
+/* --- Ajustes dentro do @media para telas de celular --- */
+
+@media (max-width: 767px) {
+    body {
+        /* Garante que o body não tem overflow-x escondido que impediria a faixa */
+        overflow-x: hidden; 
+    }
+
+    .container {
+        /* Z-index maior que a faixa de fundo para ficar por cima */
+        z-index: 1; 
+        position: relative; /* Precisa ser relativo para o z-index funcionar */
+        margin-top: 50px; /* Adiciona um espaço superior para a faixa roxa aparecer */
+        margin-bottom: 50px; /* Adiciona um espaço inferior */
+    }
+
+    /* Mostra a faixa roxa no mobile */
+    .mobile-toggle-bg {
+        display: block;
+    }
+
+    /* Estado inicial: faixa roxa para a tela de login (embaixo) */
+    .mobile-toggle-bg {
+        transform: translateY(50%); /* Ajusta para começar cobrindo a parte de baixo */
+        height: 100%; /* Garante que cubra a tela */
+    }
+
+    /* Quando a classe 'active' é adicionada (indo para Criar Conta) */
+    .container.active + .mobile-toggle-bg {
+        transform: translateY(-50%); /* Faz a faixa roxa subir */
+    }
+
+    /* Ajustes para os formulários no mobile, já com a animação vertical */
+    .form-container {
+        position: relative; 
+        width: 100%;
+        height: auto;
+        transition: transform 0.6s ease-in-out;
+        z-index: 1;
+        left: auto;
+        top: auto;
+        animation: none;
+    }
+
+    .sign-in {
+        transform: translateY(0);
+        z-index: 2;
+    }
+
+    .sign-up {
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 1;
+        transform: translateY(100%);
+        z-index: 1;
+    }
+    
+    .container.active .sign-in {
+        transform: translateY(-100%);
+        z-index: 1;
+    }
+
+    .container.active .sign-up {
+        transform: translateY(0);
+        z-index: 5;
+    }
+}

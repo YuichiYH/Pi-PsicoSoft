@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Painel - Psicosoft</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+    <header class="dashboard-header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">Psicosoft</a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="dashboard.html" class="active">Meu Painel</a></li>
+                    
+                    <li><a href="historico.html">Histórico</a></li>
+                    
+                    <li><a href="#">Perfil</a></li>
+                    <li><a href="index.html" class="btn-logout">
+                        <i data-lucide="log-out"></i> Sair
+                    </a></li> 
+                </ul>
+            </nav>
+            <button id="menu-toggle" class="menu-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="container dashboard-container">
+            
+            <div class="dashboard-main">
+                <section class="welcome-header">
+                    <h1>Olá, [Nome do Paciente] 👋</h1>
+                    <p class="subtitle">
+                        Bem-vindo(a) à sua área de gerenciamento.
+                    </p>
+                </section>
+
+                <section class="action-grid">
+                    <a href="agendar.html" class="action-card">
+                        <div class="card-icon">
+                            <i data-lucide="calendar-plus"></i>
+                        </div>
+                        <h3>Agendar Consulta</h3>
+                        <p>Encontre novos horários disponíveis.</p>
+                    </a>
+
+                    <a href="cancelar.html" class="action-card">
+                        <div class="card-icon">
+                            <i data-lucide="calendar-x"></i>
+                        </div>
+                        <h3>Cancelar Consulta</h3>
+                        <p>Não pode comparecer? Avise-nos aqui.</p>
+                    </a>
+
+                    <a href="reagendar.html" class="action-card">
+                        <div class="card-icon">
+                            <i data-lucide="history"></i>
+                        </div>
+                        <h3>Reagendar Consulta</h3>
+                        <p>Precisa trocar seu horário? Faça aqui.</p>
+                    </a>
+
+                    <a href="historico.html" class="action-card">
+                        <div class="card-icon">
+                            <i data-lucide="clipboard-list"></i>
+                        </div>
+                        <h3>Histórico de Consultas</h3>
+                        <p>Veja todos os seus agendamentos.</p>
+                    </a>
+                </section>
+            </div>
+
+            <aside class="dashboard-sidebar">
+                
+                <div class="sidebar-widget">
+                    <h4>Suas Próximas Consultas</h4>
+                    <ul class="appointment-list">
+                        <li class="appointment-item">
+                            <div class="date-box">
+                                <span class="month">NOV</span>
+                                <span class="day">10</span>
+                            </div>
+                            <div class="info">
+                                <h5>Consulta com Dr. André</h5>
+                                <p class="status status-confirmado">
+                                    <i data-lucide="check-circle"></i> Confirmada - 14:30
+                                </p>
+                            </div>
+                        </li>
+                        
+                        <li class="appointment-item">
+                            <div class="date-box">
+                                <span class="month">NOV</span>
+                                <span class="day">28</span>
+                            </div>
+                            <div class="info">
+                                <h5>Retorno com Dra. Beatriz</h5>
+                                <p class="status status-pendente">
+                                    <i data-lucide="clock"></i> Aguardando Confirmação
+                                </p>
+                            </div>
+                        </li>
+
+                        <li class="no-appointments">
+                            <i data-lucide="calendar-search"></i>
+                            <p>Nenhuma consulta futura agendada.</p>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-widget">
+                    <h4>Acesso Rápido</h4>
+                    <ul class="quick-links">
+                        <li><a href="#"><i data-lucide="bell"></i> Lembretes e Confirmações</a></li>
+                        <li><a href="#"><i data-lucide="sparkles"></i> Dicas de Bem-Estar</a></li>
+                        <li><a href="#"><i data-lucide="life-buoy"></i> Falar com Suporte</a></li>
+                    </ul>
+                </div>
+
+            </aside>
+        </div>
+    </main>
+    
+    <button id="open-chat-bot" class="chat-fab" aria-label="Abrir chat de ajuda">
+        <i data-lucide="bot"></i>
+    </button>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      lucide.createIcons(); // Ativa os ícones
+    </script>
+    
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

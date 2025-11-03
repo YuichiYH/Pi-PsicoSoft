@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico de Consultas - Psicosoft</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/historico.css">
+</head>
+<body>
+
+    <header class="dashboard-header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">Psicosoft</a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="dashboard.html">Meu Painel</a></li> 
+                    
+                    <li><a href="historico.html" class="active">Histórico</a></li>
+                    
+                    <li><a href="#">Perfil</a></li>
+                    <li><a href="index.html" class="btn-logout">
+                        <i data-lucide="log-out"></i> Sair
+                    </a></li> 
+                </ul>
+            </nav>
+            <button id="menu-toggle" class="menu-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="history-container">
+                
+                <section class="welcome-header">
+                    <h1>Histórico de Consultas</h1>
+                    <p class="subtitle">Veja todos os seus agendamentos, passados e futuros.</p>
+                </section>
+
+                <nav class="filter-tabs">
+                    <button class="tab-item active" data-filter="todas">Todas</button>
+                    <button class="tab-item" data-filter="proximas">Próximas</button>
+                    <button class="tab-item" data-filter="realizadas">Realizadas</button>
+                    <button class="tab-item" data-filter="canceladas">Canceladas</button>
+                </nav>
+
+                <div class="history-list">
+                    </div> 
+                
+            </div> 
+        </div>
+    </main>
+
+    <button id="open-chat-bot" class="chat-fab" aria-label="Abrir chat de ajuda">
+        <i data-lucide="bot"></i>
+    </button>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      lucide.createIcons(); // Ativa os ícones
+    </script>
+    
+    <script src="js/historico.js"></script>
+</body>
+</html>
