@@ -10,7 +10,7 @@ import ClientProfile from '../../components/ClientProfile'
 import PersonalInfo from './components/PersonalInfo/PersonalInfo'
 import AppointmentHistory from './components/AppointmentHistory/AppointmentHistory'
 
-const Profile = () => {
+function Profile() {
     const [selectedTab, setSelectedTab] = useState(0);
 
     return (
