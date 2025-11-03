@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // *** CORREÇÃO APLICADA AQUI ***
                 // Redireciona para o painel, não para a landing page
-                window.location.href = "dashboard.html"; 
+                window.location.href = "register.html"; 
             })
             .catch(error => {
                 console.error('Erro:', error);
