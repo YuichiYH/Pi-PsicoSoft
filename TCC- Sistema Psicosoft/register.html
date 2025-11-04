@@ -27,8 +27,11 @@
                 <input type="text" placeholder="CPF" name="cpf">
                 <input type="tel" placeholder="Telefone" name="telefone">
                 <input type="email" placeholder="Email" name="email">
-                <input type="password" placeholder="Senha" name="password">
                 
+                <div class="password-wrapper">
+                    <input type="password" placeholder="Senha" name="password" id="register-password">
+                    <i class="fa-solid fa-eye" id="toggleRegisterPassword"></i>
+                </div>
                 <button type="submit">Cadastre-se</button>
 
                 <div class="form-toggle-mobile">
@@ -49,8 +52,11 @@
                 <span>ou use seu e-mail e senha</span>
                 
                 <input type="email" placeholder="Email" id="login-email">
-                <input type="password" placeholder="Senha" id="login-password">
                 
+                <div class="password-wrapper">
+                    <input type="password" placeholder="Senha" id="login-password">
+                    <i class="fa-solid fa-eye" id="toggleLoginPassword"></i>
+                </div>
                 <a href="#">Esqueceu sua senha?</a>
 
                 <p id="login-error" style="color: red; font-size: 0.9em;"></p>

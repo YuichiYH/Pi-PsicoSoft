@@ -399,3 +399,34 @@ body{
         z-index: 5;
     }
 }
+
+
+/* --- INÍCIO DAS NOVAS REGRAS (ÍCONE DE SENHA) --- */
+
+.password-wrapper {
+  position: relative;
+  /* Garante que o wrapper ocupe a largura total, assim como o input fazia */
+  width: 100%; 
+}
+
+/* A regra '.container input' que você já tem garantirá que o input
+  dentro do wrapper tenha 100% de largura.
+*/
+
+.password-wrapper i {
+  /* Posiciona o ícone */
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  
+  /* Ajusta a posição vertical */
+  transform: translateY(-50%);
+  
+  /* Muda o cursor para indicar que é clicável */
+  cursor: pointer;
+  
+  /* Uma cor suave para o ícone */
+  color: #777;
+}
+
+/* --- FIM DAS NOVAS REGRAS --- */
