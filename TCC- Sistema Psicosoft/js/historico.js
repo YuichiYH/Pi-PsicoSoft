@@ -73,8 +73,11 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
        
-        // A URL deve apontar para o recurso que busca consultas por ID de cliente
-        const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta?ClienteId=${pacienteCPF}`;
+        // --- INÍCIO DA CORREÇÃO ---
+        // A URL deve apontar para o recurso que busca o HISTÓRICO COMPLETO
+        // (com 'consultas' no plural, que retorna os campos 'status', 'data', etc.)
+        const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/consultas/${idCliente}`;
+        // --- FIM DA CORREÇÃO ---
         
 
         try {
@@ -84,6 +87,8 @@ document.addEventListener("DOMContentLoaded", function() {
             const response = await fetch(url);
             
             if (!response.ok) {
+                // Se esta API também der erro de CORS, ela precisará do mesmo
+                // ajuste no backend que a API /Consulta precisou.
                 throw new Error(`Erro ${response.status}: Não foi possível buscar os dados.`);
             }
             
@@ -99,8 +104,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // Passo 4: Criar o HTML dinamicamente para cada consulta
             consultas.forEach(consulta => {
-                // 'consulta' aqui é o item vindo do DynamoDB/Lambda
-                // Ex: { "id_cliente": "123...", "data": "2025-11-10T14:30:00", "profissional": "Dr. André", "status": "proximas" }
+                // A função formatarConsulta (abaixo) espera campos como
+                // 'data', 'status', 'profissional', 'confirmada'
                 
                 const dadosFormatados = formatarConsulta(consulta);
                 const itemHtml = criarItemHistoricoHTML(dadosFormatados);
