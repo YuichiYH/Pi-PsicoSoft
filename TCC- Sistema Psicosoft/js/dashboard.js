@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // Mostra feedback de carregamento
         appointmentList.innerHTML = '<li style="padding: 1rem; color: #718096;">Carregando consultas...</li>';
         
-        const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta/HistoricoChat${pacienteCPF}`;
+        const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta/HistoricoChat/${pacienteCPF}`;
 
         try {
             const response = await fetch(url);
