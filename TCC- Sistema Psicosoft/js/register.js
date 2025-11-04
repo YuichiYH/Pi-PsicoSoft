@@ -66,7 +66,7 @@ if (loginForm) {
             return;
         }
 
-        const data = { id: email, password: password, empresa: "PSICOSOFT" };
+        const data = { email: email, password: password, empresa: "PSICOSOFT" };
         console.log("Enviando login:", data); // DEBUG
 
         try {
