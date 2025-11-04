@@ -88,4 +88,56 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+
+// --- NOVA LÓGICA DE LOGIN ---
+    
+    const loginForm = document.getElementById('login-form');
+    const loginEmailInput = document.getElementById('login-email');
+    const loginPasswordInput = document.getElementById('login-password');
+    const loginError = document.getElementById('login-error');
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', async function(event) {
+            event.preventDefault(); // Impede o recarregamento da página
+            loginError.textContent = ""; // Limpa erros antigos
+
+            const email = loginEmailInput.value;
+            const senha = loginPasswordInput.value;
+
+            // !!! SUBSTITUA PELA URL DA SUA NOVA API DE LOGIN
+            const urlLogin = 'https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/login'; 
+
+            try {
+                const response = await fetch(urlLogin, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: email, // O e-mail/CPF que o usuário digitou
+                        senha: senha  // A senha que o usuário digitou
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    // Se a API retornou 401 ou 400, 'data.message' terá o erro
+                    throw new Error(data.message || 'Erro ao tentar fazer login.');
+                }
+
+                // SUCESSO!
+                console.log('Sucesso (Login):', data);
+                
+                // *** ETAPA CRÍTICA: Salvar o ID do paciente (CPF) ***
+                // Assumindo que a Lambda retorna { "cpf": "123..." }
+                localStorage.setItem('paciente_cpf', data.cpf); 
+                
+                // Redireciona para o painel
+                window.location.href = "dashboard.html";
+
+            } catch (error) {
+                console.error('Erro (Login):', error);
+                loginError.textContent = error.message; // Mostra o erro (ex: "Usuário ou senha incorretos.")
+            }
+        });
+    }
 });
