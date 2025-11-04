@@ -40,7 +40,6 @@ if (loginMobileBtn) {
 document.addEventListener('DOMContentLoaded', function() {
 
     // --- LÓGICA DE CADASTRO (SEU CÓDIGO ATUAL) ---
-    // (Esta parte já estava no seu arquivo)
     const formulario = document.getElementById('formulario');
     if (formulario) {
         formulario.addEventListener('submit', function(event) {
@@ -71,7 +70,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Cadastro realizado com sucesso!');
                 
                 // Salva o CPF no localStorage após o cadastro
-                // (Assumindo que o campo de CPF no formulário tem name="cpf")
                 localStorage.setItem('paciente_cpf', jsonData.cpf); 
                 window.location.href = "dashboard.html"; 
             })
@@ -83,7 +81,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- NOVA LÓGICA DE LOGIN (BASEADA NO SEU "YOSHI SCRIPT") ---
-    // (Esta parte estava faltando no seu arquivo)
     
     // 1. Encontra o formulário de login pelo ID "login-form"
     const loginForm = document.getElementById('login-form');
@@ -132,8 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     alert(`Login bem-sucedido! \nBem-vindo(a) ${data.client.name}`);
                     
                     // 6. ETAPA CRÍTICA: Salva o CPF/ID no navegador
-                    // Sua Lambda de login precisa retornar o CPF do usuário
-                    // (Vou assumir que o 'email' usado para logar é o CPF)
+                    // (Assumindo que o 'email' usado para logar é o CPF)
                     localStorage.setItem('paciente_cpf', email); 
                     
                     // 7. Redireciona para o painel de controle
