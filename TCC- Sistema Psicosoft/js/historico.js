@@ -6,7 +6,19 @@
 
 document.addEventListener("DOMContentLoaded", function() {
 
-    // --- 1. Controle do Menu Mobile ---
+    // --- 1. NOVO: Script de Proteção de Rota (Guard) ---
+    const idCliente = localStorage.getItem('paciente_cpf'); // Pega o CPF
+
+    if (!idCliente) {
+        // Se não houver CPF salvo, o usuário não está logado.
+        alert("Acesso negado. Por favor, faça login para continuar.");
+        window.location.href = "register.html";
+        return; // Impede que o restante do script seja executado
+    }
+    // --- Fim do Script de Proteção ---
+
+
+    // --- 2. Controle do Menu Mobile ---
     const menuToggle = document.getElementById('menu-toggle');
     const mainNav = document.querySelector('.main-nav');
 
@@ -17,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // --- 2. Controle do Chat Bot ---
+    // --- 3. Controle do Chat Bot ---
     const chatButton = document.getElementById('open-chat-bot');
                 
     if (chatButton) {
@@ -30,7 +42,20 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
     
-    // --- 3. NOVO: Carregamento de Dados da API ---
+    // --- 4. NOVO: Lógica de Logout ---
+    const logoutButton = document.querySelector('.btn-logout');
+
+    if (logoutButton) {
+        logoutButton.addEventListener('click', function(event) {
+            event.preventDefault(); 
+            localStorage.removeItem('paciente_nome');
+            localStorage.removeItem('paciente_cpf');
+            window.location.href = "index.html"; 
+        });
+    }
+    // --- Fim da Lógica de Logout ---
+
+    // --- 5. Carregamento de Dados da API ---
         
     const historyList = document.querySelector('.history-list');
 
@@ -39,10 +64,10 @@ document.addEventListener("DOMContentLoaded", function() {
      */
     async function carregarHistorico() {
         
-        // Passo 1: Pegar o ID do cliente (CPF) que foi salvo no login
-        const idCliente = localStorage.getItem('paciente_cpf'); 
+        // Passo 1: O ID do cliente (CPF) já foi verificado pela Guarda de Rota
         
         if (!idCliente) {
+            // (Esta verificação é redundante por causa da Guarda, mas é uma boa prática)
             historyList.innerHTML = `<p style="padding: 1rem 0; color: red;">Erro: Paciente não identificado. Faça login novamente.</p>`;
             return;
         }
@@ -185,7 +210,7 @@ document.addEventListener("DOMContentLoaded", function() {
         `;
     }
 
-    // --- 4. Lógica das Abas de Filtro (MODIFICADA) ---
+    // --- 6. Lógica das Abas de Filtro (MODIFICADA) ---
     // Esta função agora é chamada *depois* que os dados são carregados
     
     function setupFiltros() {

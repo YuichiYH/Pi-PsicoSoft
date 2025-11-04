@@ -83,7 +83,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- 3. FORMULÁRIO DE LOGIN (login-form) ---
-    // (Movido para dentro do DOMContentLoaded)
     
     console.log("--- 3. Procurando formulário de LOGIN ---");
     const loginForm = document.getElementById('login-form');
@@ -121,14 +120,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 const responseData = await res.json();
                 console.log("Resposta login:", responseData);
-                // alert(JSON.stringify(responseData)); // <-- REMOVIDO (debug)
-
-                if (responseData.success) {
-                    // alert(`Login bem-sucedido! Bem-vindo(a) ${responseData.client.name}`); // <-- REMOVIDO (sucesso)
-                    window.location.href = "dashboard.html";
+                
+                // --- INÍCIO DA ATUALIZAÇÃO ---
+                if (responseData.success && responseData.client) {
+                    
+                    // Salva os dados do paciente no localStorage para iniciar a sessão
+                    localStorage.setItem('paciente_nome', responseData.client.name);
+                    localStorage.setItem('paciente_cpf', responseData.client.cpf); 
+                    
+                    window.location.href = "dashboard.html"; // Redireciona para o painel
                 } else {
                     throw new Error(responseData.message || "Login falhou.");
                 }
+                // --- FIM DA ATUALIZAÇÃO ---
 
             } catch (err) {
                 console.error("Erro (Login):", err);
@@ -139,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error("--- ERRO: Não foi possível encontrar o 'login-form'. Verifique o ID no HTML. ---");
     }
 
-    // --- 4. NOVO CÓDIGO: MOSTRAR/ESCONDER SENHA ---
+    // --- 4. CÓDIGO: MOSTRAR/ESCONDER SENHA ---
     
     /**
      * Função genérica para alternar a visibilidade de um campo de senha.
@@ -157,7 +161,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 passwordInput.setAttribute('type', type);
                 
                 // Muda o ícone (olho aberto / olho fechado)
-                // O Font Awesome 6 alterna automaticamente entre 'fa-eye' e 'fa-eye-slash'
                 this.classList.toggle('fa-eye');
                 this.classList.toggle('fa-eye-slash');
             });

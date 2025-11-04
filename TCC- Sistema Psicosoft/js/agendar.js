@@ -5,7 +5,18 @@
 
 document.addEventListener("DOMContentLoaded", function() {
 
-    // --- 1. Controle do Menu Mobile ---
+    // --- 1. NOVO: Script de Proteção de Rota (Guard) ---
+    const pacienteCPF = localStorage.getItem('paciente_cpf');
+
+    if (!pacienteCPF) {
+        // Se não houver CPF salvo, o usuário não está logado.
+        alert("Acesso negado. Por favor, faça login para continuar.");
+        window.location.href = "register.html";
+        return; // Impede que o restante do script seja executado
+    }
+    // --- Fim do Script de Proteção ---
+
+    // --- 2. Controle do Menu Mobile ---
     const menuToggle = document.getElementById('menu-toggle');
     const mainNav = document.querySelector('.main-nav');
 
@@ -16,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // --- 2. Controle do Chat Bot ---
+    // --- 3. Controle do Chat Bot ---
     const chatButton = document.getElementById('open-chat-bot');
                 
     if (chatButton) {
@@ -29,7 +40,20 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
     
-    // --- 3. Lógica do Calendário Dinâmico ---
+    // --- 4. NOVO: Lógica de Logout ---
+    const logoutButton = document.querySelector('.btn-logout');
+
+    if (logoutButton) {
+        logoutButton.addEventListener('click', function(event) {
+            event.preventDefault(); 
+            localStorage.removeItem('paciente_nome');
+            localStorage.removeItem('paciente_cpf');
+            window.location.href = "index.html"; 
+        });
+    }
+    // --- Fim da Lógica de Logout ---
+
+    // --- 5. Lógica do Calendário Dinâmico ---
     const monthYearEl = document.getElementById('month-year');
     const calendarGridEl = document.getElementById('calendar-days-grid');
     const prevMonthBtn = document.getElementById('prev-month');
@@ -130,7 +154,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // --- 4. Interatividade do Agendamento (Horários) ---
+    // --- 6. Interatividade do Agendamento (Horários) ---
 
     function addTimeSlotClickHandlers() {
         const timeSlots = document.querySelectorAll('.time-slot:not(.disabled)');
@@ -144,7 +168,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // --- 5. Event Listeners dos Botões (Navegação do Calendário) ---
+    // --- 7. Event Listeners dos Botões (Navegação do Calendário) ---
 
     prevMonthBtn.addEventListener('click', () => {
         currentDate.setMonth(currentDate.getMonth() - 1);
