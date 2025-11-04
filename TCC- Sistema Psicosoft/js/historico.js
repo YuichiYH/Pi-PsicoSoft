@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
        
         // A URL deve apontar para o recurso que busca consultas por ID de cliente
-        const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/consultas/${idCliente}`;
+        const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta?ClienteId=${pacienteCPF}`;
         
 
         try {
