@@ -57,12 +57,11 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             jsonData["Empresas"] = "PSICOSOFT";
-            jsonData["id"] = jsonData["email"];
 
             const url = 'https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/paciente';
 
             fetch(url, {
-                method: 'PUT',
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
