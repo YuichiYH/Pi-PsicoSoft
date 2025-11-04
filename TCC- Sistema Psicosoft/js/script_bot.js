@@ -210,14 +210,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(responseData.message || 'Erro ao processar a solicitação.');
             }
 
-            // 3. Mostra a resposta final da API (ex: "Agendamento confirmado!")
-            // 🔧 ATENÇÃO: Verifique o nome real do campo que sua API de agendamento retorna
-            const successMessage = responseData.message || responseData.Message || "Sua solicitação foi processada com sucesso!";
-            appendMessage(successMessage, 'bot-message');
-            
-            // Adiciona a resposta final ao histórico para o bot saber que concluiu
-            conversationHistory.push({ role: 'model', parts: [{ text: successMessage }] });
+            // 3. Mostra a resposta final da API (ex: "Agendamento confirmado!" ou Histórico)
+            // Prioriza o campo 'response' da Lambda de Histórico.
+            const finalContent = responseData.response || responseData.message || responseData.Message || "Sua solicitação foi processada com sucesso!";
 
+            // O seu histórico usa tags <b> e <br>, então é necessário usar innerHTML.
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', 'bot-message');
+            messageDiv.innerHTML = finalContent; // Usa innerHTML para processar o HTML formatado
+            chatbox.appendChild(messageDiv);
+            chatbox.scrollTop = chatbox.scrollHeight;
+
+            // Adiciona a resposta final ao histórico para o bot saber que concluiu
+            // Adiciona o texto puro ou uma versão simplificada para o histórico
+            const historyText = responseData.response ? "Histórico de consultas enviado ao usuário." : finalContent;
+            conversationHistory.push({ role: 'model', parts: [{ text: historyText }] });
+            
         } catch (error) {
             console.error("Erro ao executar API_CALL:", error);
             hideTypingIndicator();
