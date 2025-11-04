@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // --- INÍCIO DA CORREÇÃO ---
         
         // 1. URL corrigida para o endpoint POST, conforme sua instrução
-        const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta/HistoricoChat/${pacienteCPF}`;
+        const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta/HistoricoChat`;
 
         // 2. Opções da requisição POST, enviando o CPF no corpo
         const options = {
