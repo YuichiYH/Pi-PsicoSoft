@@ -243,9 +243,28 @@ a { text-decoration: none; color: var(--primary); }
     margin-bottom: 1rem;
 }
 
+/* Opcional: Estiliza a nova barra de rolagem */
+.appointment-list::-webkit-scrollbar {
+    width: 6px;
+}
+.appointment-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+.appointment-list::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 10px;
+}
+.appointment-list::-webkit-scrollbar-thumb:hover {
+    background: var(--text-light);
+}
+
 /* Lista de Agendamentos */
 .appointment-list {
     list-style: none;
+    max-height: 350px; /* Define uma altura máxima (ajuste se preferir) */
+    overflow-y: auto;  /* Adiciona a barra de rolagem vertical SE precisar */
+    padding-right: 8px; /* Espaço para a barra de rolagem não colar no texto */
+
 }
 .appointment-item {
     display: flex;
