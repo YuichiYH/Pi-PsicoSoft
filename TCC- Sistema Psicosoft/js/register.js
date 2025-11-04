@@ -70,8 +70,8 @@ if (loginForm) {
             });
 
             const responseData = await res.json();
-            console.log("Resposta login:", responseData);
-            alert(JSON.stringify(responseData)); // 👈 veja o que vem da API
+            console.log("🔹 Resposta login:", responseData);
+            alert(JSON.stringify(responseData)); // debug
 
             if (responseData.success) {
                 alert(`Login bem-sucedido! Bem-vindo(a) ${responseData.client.name}`);
