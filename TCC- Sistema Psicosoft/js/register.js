@@ -1,35 +1,34 @@
-const container = document.getElementById('container');
+/*
+ * register.js
+ * Contém a lógica para:
+ * 1. Animação de troca de painel (Login/Cadastro)
+ * 2. Envio do formulário de CADASTRO (para /cliente)
+ * 3. Envio do formulário de LOGIN (para /login)
+ */
 
-// Botões do Desktop (do painel roxo)
+// --- 1. LÓGICA DE ANIMAÇÃO DO PAINEL ---
+const container = document.getElementById('container');
 const registerBtn = document.getElementById('register');
 const loginBtn = document.getElementById('login');
-
-// Botões para o celular (os links de texto)
 const registerMobileBtn = document.getElementById('register-mobile');
 const loginMobileBtn = document.getElementById('login-mobile');
 
-// Listener para o botão de Registrar (Desktop)
 if (registerBtn) {
     registerBtn.addEventListener('click', () => {
         container.classList.add("active");
     });
 }
-
-// Listener para o botão de Login (Desktop)
 if (loginBtn) {
     loginBtn.addEventListener('click', () => {
         container.classList.remove("active");
     });
 }
-
-// Listeners para os links do celular
 if (registerMobileBtn) {
     registerMobileBtn.addEventListener('click', (e) => {
         e.preventDefault();
         container.classList.add("active");
     });
 }
-
 if (loginMobileBtn) {
     loginMobileBtn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -37,35 +36,28 @@ if (loginMobileBtn) {
     });
 }
 
-
-
-// Aguarda o carregamento completo do HTML
+// --- 2. LÓGICA DOS FORMULÁRIOS (CADASTRO E LOGIN) ---
 document.addEventListener('DOMContentLoaded', function() {
 
+    // --- LÓGICA DE CADASTRO (SEU CÓDIGO ATUAL) ---
+    // (Esta parte já estava no seu arquivo)
     const formulario = document.getElementById('formulario');
-
-    // Verifica se o formulário existe antes de adicionar o listener
     if (formulario) {
         formulario.addEventListener('submit', function(event) {
-            event.preventDefault(); // Impede o recarregamento da página
-
+            event.preventDefault(); 
             const formData = new FormData(this);
             const jsonData = {};
-            
             formData.forEach(function(value, key) {
                 jsonData[key] = value;
             });
-
             jsonData["Empresas"] = "PSICOSOFT";
-            jsonData["id"] = jsonData["email"];
 
-            const url = 'https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/cliente';
+            // URL da sua API de CADASTRO
+            const url = 'https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/cliente'; 
 
             fetch(url, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(jsonData)
             })
             .then(response => {
@@ -75,44 +67,51 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json(); 
             })
             .then(data => {
-                console.log('Sucesso:', data);
+                console.log('Sucesso (Cadastro):', data);
                 alert('Cadastro realizado com sucesso!');
                 
-                // *** CORREÇÃO APLICADA AQUI ***
-                // Redireciona para o painel, não para a landing page
-                window.location.href = "register.html"; 
+                // Salva o CPF no localStorage após o cadastro
+                // (Assumindo que o campo de CPF no formulário tem name="cpf")
+                localStorage.setItem('paciente_cpf', jsonData.cpf); 
+                window.location.href = "dashboard.html"; 
             })
             .catch(error => {
-                console.error('Erro:', error);
+                console.error('Erro (Cadastro):', error);
                 alert(`ERRO NO CADASTRO: ${error.message}`);
             });
         });
     }
-// --- NOVA LÓGICA DE LOGIN (BASEADA NO SEU "YOSHI SCRIPT") ---
+
+    // --- NOVA LÓGICA DE LOGIN (BASEADA NO SEU "YOSHI SCRIPT") ---
+    // (Esta parte estava faltando no seu arquivo)
+    
+    // 1. Encontra o formulário de login pelo ID "login-form"
     const loginForm = document.getElementById('login-form');
     
     if (loginForm) {
+        // Encontra o parágrafo de erro
         const loginError = document.getElementById('login-error');
 
+        // 2. Adiciona o "ouvinte" de evento de "submit"
         loginForm.addEventListener('submit', function(event) {
             event.preventDefault(); // Impede o recarregamento da página
             loginError.textContent = ""; // Limpa erros antigos
 
-            // Pega os valores dos inputs de login pelos IDs que criamos
+            // 3. Pega os valores dos inputs de login pelos IDs corretos
             const email = document.getElementById("login-email").value;
             const password = document.getElementById("login-password").value;
 
-            // Prepara os dados para a sua API (exatamente como no seu script antigo)
+            // Prepara os dados para a sua API
             const data = {
                 email: email,
                 password: password,
                 empresa: "PSICOSOFT"
             };
 
-            // URL da sua API de LOGIN (do seu script antigo)
+            // 4. URL da sua API de LOGIN (do seu script antigo)
             const urlLogin = 'https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/login';
 
-            // Envia o POST request
+            // 5. Envia o POST request
             fetch(urlLogin, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -120,40 +119,34 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => {
                 if (!response.ok) {
-                    // Se a resposta não for OK (ex: 401, 500), rejeita a promessa
                     return response.json().then(err => { 
                         throw new Error(err.message || "Erro desconhecido"); 
                     });
                 }
-                return response.json(); // Converte a resposta OK para JSON
+                return response.json();
             })
             .then(data => {
-                console.log(data); // { success: true, client: { ... } }
+                console.log(data); // Ex: { success: true, client: { ... } }
 
-                // Verifica a resposta da sua API
                 if (data.success) {
                     alert(`Login bem-sucedido! \nBem-vindo(a) ${data.client.name}`);
                     
-                    // *** ETAPA CRÍTICA: SALVAR O CPF/ID NO NAVEGADOR ***
-                    // Precisamos que sua API retorne o CPF. 
-                    // Vou assumir que o CPF está em 'data.client.id' ou 'data.client.cpf'
-                    // (A tabela 'Users' tem 'Usuario' (S) que é o CPF/email. A Lambda deve retornar isso)
-                    
-                    // Trocamos 'data.client.id' pelo campo que sua API retorna (ex: data.client.cpf)
-                    // Se a API de login não retorna o CPF, ela PRECISA ser ajustada para isso.
-                    // Vou assumir que o email que o usuário usou para logar é o CPF:
+                    // 6. ETAPA CRÍTICA: Salva o CPF/ID no navegador
+                    // Sua Lambda de login precisa retornar o CPF do usuário
+                    // (Vou assumir que o 'email' usado para logar é o CPF)
                     localStorage.setItem('paciente_cpf', email); 
                     
-                    // Redireciona para o painel de controle, não para o index
+                    // 7. Redireciona para o painel de controle
                     window.location.href = "dashboard.html"; 
                 } else {
-                    // Mensagem da sua API (ex: "Usuário ou senha incorretos")
+                    // Se 'data.success' for false
                     throw new Error(data.message || "Login falhou. Verifique suas credenciais.");
                 }
             })
             .catch((error) => {
+                // 8. Mostra o erro na tela (ex: "Usuário ou senha incorretos")
                 console.error('Erro (Login):', error);
-                loginError.textContent = error.message; // Mostra o erro no HTML
+                loginError.textContent = error.message; 
             });
         });
     }
