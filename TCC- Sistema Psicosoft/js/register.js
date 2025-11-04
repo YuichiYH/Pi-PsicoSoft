@@ -37,7 +37,7 @@ if (loginMobileBtn) {
 }
 
 // --- 2. LÓGICA DOS FORMULÁRIOS (CADASTRO E LOGIN) ---
-document.addEventListener('DOMContentLoaded', function() {
+(() => {
 
     // --- LÓGICA DE CADASTRO (SEU CÓDIGO ATUAL) ---
     const formulario = document.getElementById('formulario');
