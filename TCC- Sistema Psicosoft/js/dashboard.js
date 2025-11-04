@@ -19,11 +19,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // --- 2. NOVO: Personalização do Painel ---
     // (Pega o nome salvo no login e atualiza o h1)
-    const pacienteNome = localStorage.getItem('paciente_nome');
-    const welcomeHeader = document.querySelector('.welcome-header h1'); //
+    const pacienteNomeCompleto = localStorage.getItem('paciente_nome'); // Pega o nome completo (ex: "Vagner Carvalho")
+    const welcomeHeader = document.querySelector('.welcome-header h1');
 
-    if (pacienteNome && welcomeHeader) {
-        welcomeHeader.textContent = `Olá, ${pacienteNome} 👋`;
+    if (pacienteNomeCompleto && welcomeHeader) {
+        
+        // Pega o nome completo e "quebra" no primeiro espaço.
+        const primeiroNome = pacienteNomeCompleto.split(' ')[0]; 
+        
+        // Exibe apenas o primeiro nome na saudação.
+        welcomeHeader.textContent = `Olá, ${primeiroNome} 👋`;
     }
     // --- Fim da Personalização ---
 
