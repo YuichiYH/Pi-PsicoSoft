@@ -50,7 +50,7 @@ if (loginForm) {
     console.log("Anexando 'submit' ao LOGIN"); // DEBUG
     const loginError = document.getElementById('login-error');
 
-    loginForm.addEventListener('submit_login', async event => {
+    loginForm.addEventListener('submit', async event => {
         console.log("--- EVENTO 'SUBMIT' DO LOGIN FOI DISPARADO! ---"); // DEBUG
         event.preventDefault();
         loginError.textContent = "";
