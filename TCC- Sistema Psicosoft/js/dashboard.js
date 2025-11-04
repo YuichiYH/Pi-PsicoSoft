@@ -78,10 +78,26 @@ document.addEventListener("DOMContentLoaded", function() {
         // Mostra feedback de carregamento
         appointmentList.innerHTML = '<li style="padding: 1rem; color: #718096;">Carregando consultas...</li>';
         
-        const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consultas/${pacienteCPF}`
+        // --- INÍCIO DA CORREÇÃO ---
+        
+        // 1. URL corrigida para o endpoint POST, conforme sua instrução
+        const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta/HistoricoChat`;
+
+        // 2. Opções da requisição POST, enviando o CPF no corpo
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ cpf: pacienteCPF }) // Assumindo que a API espera um JSON com a chave "cpf"
+        };
 
         try {
-            const response = await fetch(url);
+            // 3. Requisição atualizada para usar POST e as 'options'
+            const response = await fetch(url, options);
+            
+            // --- FIM DA CORREÇÃO ---
+  
             if (!response.ok) {
                 throw new Error(`Erro ${response.status}: Não foi possível buscar os dados.`);
             }
