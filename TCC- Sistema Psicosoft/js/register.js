@@ -47,7 +47,7 @@ const loginForm = document.getElementById('login-form');
 if (loginForm) {
     const loginError = document.getElementById('login-error');
 
-    loginForm.addEventListener('submit', async event => {
+    loginForm.addEventListener('submit_login', async event => {
         event.preventDefault();
         loginError.textContent = "";
 
