@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     // 6. ETAPA CRÍTICA: Salva o CPF/ID no navegador
                     // (Assumindo que o 'email' usado para logar é o CPF)
-                    localStorage.setItem('paciente_cpf', email); 
+                    localStorage.setItem('id', email); 
                     
                     // 7. Redireciona para o painel de controle
                     window.location.href = "dashboard.html"; 
