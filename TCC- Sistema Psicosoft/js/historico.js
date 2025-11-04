@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // --- INÍCIO DA CORREÇÃO ---
         // A URL deve apontar para o recurso que busca o HISTÓRICO COMPLETO
         // (com 'consultas' no plural, que retorna os campos 'status', 'data', etc.)
-        const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/consultas/${idCliente}`;
+        const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta?ClienteId=${pacienteCPF}`;
         // --- FIM DA CORREÇÃO ---
         
 
