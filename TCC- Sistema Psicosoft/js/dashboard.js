@@ -1,6 +1,9 @@
 /*
  * dashboard.js
  * Funcionalidade do menu mobile, chat bot, proteção de rota e carregamento de consultas.
+ *
+ * ATUALIZAÇÃO: Agora usa a API GET /Consulta?ClienteId=...
+ * e formata os dados com base nos campos 'horario' e 'especialidade'.
  */
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -65,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // --- Fim da Lógica de Logout ---
 
 
-    // --- 6. Carregamento das Próximas Consultas ---
+    // --- 6. Carregamento das Próximas Consultas (MODIFICADO) ---
     
     const appointmentList = document.querySelector('.appointment-list');
 
@@ -78,39 +81,30 @@ document.addEventListener("DOMContentLoaded", function() {
         // Mostra feedback de carregamento
         appointmentList.innerHTML = '<li style="padding: 1rem; color: #718096;">Carregando consultas...</li>';
         
-        // --- INÍCIO DA CORREÇÃO ---
-        
-        // 1. URL corrigida para o endpoint POST, conforme sua instrução
-        const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta/HistoricoChat`;
-
-        // 2. Opções da requisição POST, enviando o CPF no corpo
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ cpf: pacienteCPF }) // Assumindo que a API espera um JSON com a chave "cpf"
-        };
+        // --- INÍCIO DA ATUALIZAÇÃO ---
+        // 1. URL atualizada para a nova Lambda, usando 'ClienteId' como query param
+        const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta?ClienteId=${pacienteCPF}`;
 
         try {
-            // 3. Requisição atualizada para usar POST e as 'options'
-            const response = await fetch(url, options);
+            // 2. Requisição GET simples (como a Lambda espera)
+            const response = await fetch(url);
             
-            // --- FIM DA CORREÇÃO ---
-
             if (!response.ok) {
                 throw new Error(`Erro ${response.status}: Não foi possível buscar os dados.`);
             }
             
-            const todasConsultas = await response.json();
+            // 3. A resposta já é a lista de consultas futuras
+            const proximasConsultas = await response.json();
             
-            // Filtra para pegar APENAS as consultas com status "proximas"
-            const consultasProximas = todasConsultas.filter(consulta => consulta.status === 'proximas');
+            // 4. REMOVIDO: a linha .filter(consulta => consulta.status === 'proximas')
+            // pois a própria Lambda já faz esse filtro de tempo.
+            
+            // --- FIM DA ATUALIZAÇÃO ---
 
             // Limpa a lista antes de adicionar os itens
             appointmentList.innerHTML = ""; 
 
-            if (!consultasProximas || consultasProximas.length === 0) {
+            if (!proximasConsultas || proximasConsultas.length === 0) {
                 // Adiciona a mensagem de "nenhuma consulta"
                 appointmentList.innerHTML = `
                     <li class="no-appointments">
@@ -119,7 +113,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     </li>`;
             } else {
                 // Cria o HTML dinamicamente para cada consulta futura
-                consultasProximas.forEach(consulta => {
+                proximasConsultas.forEach(consulta => {
+                    // Usa a nova função de formatação adaptada
                     const dadosFormatados = formatarConsultaDashboard(consulta);
                     const itemHtml = criarItemConsultaHTML(dadosFormatados);
                     appointmentList.innerHTML += itemHtml;
@@ -136,26 +131,28 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     /**
-     * Converte os dados brutos da consulta em um formato para o HTML.
+     * (MODIFICADO) Converte os dados da Lambda /Consulta em um formato para o HTML.
      */
     function formatarConsultaDashboard(consulta) {
-        const data = new Date(consulta.data);
         const meses = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
         
-        const dia = String(data.getDate()).padStart(2, '0');
-        const mesIdx = data.getMonth();
-        const hora = data.toTimeString().substring(0, 5);
+        // A Lambda retorna um campo "horario" (ex: "10/11/2025 14:30")
+        const [dataStr, horaStr] = consulta.horario.split(' '); // ["10/11/2025", "14:30"]
+        const [dia, mesNum, ano] = dataStr.split('/');       // ["10", "11", "2025"]
 
         let dadosFormatados = {
-            mes: meses[mesIdx],
+            mes: meses[parseInt(mesNum, 10) - 1], // Pega o mês (ex: 11 -> 10)
             dia: dia,
-            titulo: `Consulta com ${consulta.profissional || 'Profissional'}`,
-            classeStatus: "",
-            iconeStatus: "",
-            textoStatus: ""
+            // Usa 'especialidade' pois 'profissional' não existe nesta Lambda
+            titulo: `Consulta de ${consulta.especialidade || 'Clínica'}`, 
+            classeStatus: "status-confirmado", // Assumindo confirmada
+            iconeStatus: "check-circle",
+            textoStatus: `Confirmada - ${horaStr}` // Exibe a hora
         };
         
-        // Define o estilo do status (Confirmada ou Pendente)
+        // Esta Lambda não parece ter o status "confirmada" (boolean).
+        // Se houver um campo (ex: consulta.confirmada), podemos re-adicionar a lógica:
+        /*
         if (consulta.confirmada === false) { 
             dadosFormatados.classeStatus = 'status-pendente';
             dadosFormatados.iconeStatus = 'clock';
@@ -163,14 +160,16 @@ document.addEventListener("DOMContentLoaded", function() {
         } else {
             dadosFormatados.classeStatus = 'status-confirmado';
             dadosFormatados.iconeStatus = 'check-circle';
-            dadosFormatados.textoStatus = `Confirmada - ${hora}`;
+            dadosFormatados.textoStatus = `Confirmada - ${horaStr}`;
         }
+        */
         
         return dadosFormatados;
     }
 
     /**
      * Cria o HTML de um item da lista de consultas.
+     * (Esta função não precisou de mudanças)
      */
     function criarItemConsultaHTML(d) {
         return `
