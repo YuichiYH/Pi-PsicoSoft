@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const url = 'https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/cliente';
 
             fetch(url, {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
