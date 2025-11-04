@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // --- Fim da Lógica de Logout ---
 
 
-    // --- 6. NOVO: Carregamento das Próximas Consultas ---
+    // --- 6. Carregamento das Próximas Consultas ---
     
     const appointmentList = document.querySelector('.appointment-list');
 
@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const response = await fetch(url, options);
             
             // --- FIM DA CORREÇÃO ---
-  
+
             if (!response.ok) {
                 throw new Error(`Erro ${response.status}: Não foi possível buscar os dados.`);
             }
