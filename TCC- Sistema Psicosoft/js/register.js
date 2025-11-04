@@ -127,11 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (data.success) {
                     alert(`Login bem-sucedido! \nBem-vindo(a) ${data.client.name}`);
-                    
-                    // 6. ETAPA CRÍTICA: Salva o CPF/ID no navegador
-                    // (Assumindo que o 'email' usado para logar é o CPF)
-                    localStorage.setItem('id', email); 
-                    
+
                     // 7. Redireciona para o painel de controle
                     window.location.href = "dashboard.html"; 
                 } else {
