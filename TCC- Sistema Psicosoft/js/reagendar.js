@@ -2,12 +2,11 @@
  * reagendar.js
  * Funcionalidades da página de Reagendamento, com fluxo de 2 etapas.
  *
- * ATUALIZAÇÃO:
- * - Etapa 1: Carrega consultas futuras via API GET /Consulta.
- * - Etapa 2: Submete o reagendamento via API PATCH /Consulta.
- * - (v2) Implementada a busca de horários disponíveis (GET).
- * - (v3) Adicionado 'FuncionarioId' ao payload do PATCH para
- * permitir a verificação de colisão no backend.
+ * ATUALIZAÇÃO (v4):
+ * - Substituídos todos os 'alert()' por um modal customizado.
+ * - Adicionada animação de calendário/relógio para sucesso.
+ * - Adicionado ícone de erro para falhas.
+ * - (v3) Adicionado 'FuncionarioId' ao payload do PATCH.
  */
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -16,18 +15,9 @@ document.addEventListener("DOMContentLoaded", function() {
     const API_URL = "https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta";
     const pacienteCPF = localStorage.getItem('paciente_cpf');
     
-    // Armazena os dados da consulta (Empresa, OrderId, FuncionarioId)
     let consultaParaReagendar = null; 
     
-    // --- 2. Script de Proteção de Rota (Guard) ---
-    if (!pacienteCPF) {
-        alert("Acesso negado. Por favor, faça login para continuar.");
-        window.location.href = "register.html";
-        return; 
-    }
-    // --- Fim do Script de Proteção ---
-
-    // --- 3. Seletores do DOM ---
+    // --- 2. Seletores do DOM ---
     const menuToggle = document.getElementById('menu-toggle');
     const mainNav = document.querySelector('.main-nav');
     const chatButton = document.getElementById('open-chat-bot');
@@ -38,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const step2Container = document.getElementById('step-2-reschedule');
     const appointmentListContainer = document.querySelector('.appointment-list');
     const cancelRescheduleBtn = document.getElementById('cancel-reschedule');
-    const confirmButton = document.querySelector('.btn-confirm'); // Botão de Confirmar
+    const confirmButton = document.querySelector('.btn-confirm'); 
     
     // Seletores do Calendário
     const monthYearEl = document.getElementById('month-year');
@@ -46,13 +36,38 @@ document.addEventListener("DOMContentLoaded", function() {
     const prevMonthBtn = document.getElementById('prev-month');
     const nextMonthBtn = document.getElementById('next-month');
     const timeSlotHeader = document.getElementById('time-slot-header');
-    const timeSlotsGrid = document.getElementById('time-slots-grid'); // ID corrigido no HTML
+    const timeSlotsGrid = document.getElementById('time-slots-grid');
     
-    let currentDate = new Date(); // Inicia com a data de hoje
+    // --- NOVO: Seletores do Modal ---
+    const modal = document.getElementById('notification-modal');
+    const modalIconWrapper = modal.querySelector('.modal-icon-wrapper');
+    const modalTitle = document.getElementById('modal-title');
+    const modalMessage = document.getElementById('modal-message');
+    const modalOkButton = document.getElementById('modal-btn-ok');
+    
+    // Controla se o 'OK' deve redirecionar
+    let isSuccessRedirect = false; 
+    
+    // Constantes de data
+    let currentDate = new Date();
     const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
     const dayNames = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
     const mesesAbv = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
 
+    // --- 3. Script de Proteção de Rota (Guard) ---
+    if (!pacienteCPF) {
+        // Mostra o modal de erro se não estiver logado
+        showNotification(false, 'Acesso Negado', 'Você precisa fazer login para reagendar uma consulta.');
+        // Desabilita os botões para segurança
+        document.querySelectorAll('.btn-reschedule, .btn-confirm').forEach(btn => {
+            if(btn) btn.disabled = true;
+        });
+        // Não continua a execução
+    } else {
+        // Se estiver logado, inicia o carregamento
+        carregarConsultasAgendadas();
+    }
+    // --- Fim do Script de Proteção ---
 
     // --- 4. Funções de UI (Menu, Chat, Logout) ---
     if (menuToggle && mainNav) {
@@ -80,7 +95,58 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // --- 5. LÓGICA DE CARREGAMENTO (ETAPA 1 - API GET) ---
+    // --- 5. LÓGICA DO MODAL ---
+    
+    /**
+     * Exibe o modal de notificação
+     * @param {boolean} isSuccess - Define o estilo (sucesso ou erro)
+     * @param {string} title - O título (ex: "Sucesso!")
+     * @param {string} message - A mensagem de detalhe
+     */
+    function showNotification(isSuccess, title, message) {
+        if (!modal) return; // Segurança caso o HTML não esteja pronto
+        
+        modal.classList.remove('modal--success', 'modal--error');
+
+        if (isSuccess) {
+            modal.classList.add('modal--success');
+            // INJETA A ANIMAÇÃO PERSONALIZADA
+            modalIconWrapper.innerHTML = `
+                <div class="animated-icon-container">
+                    <div class="calendar-icon"></div>
+                    <div class="clock-icon"></div>
+                </div>
+            `;
+            isSuccessRedirect = true;
+        } else {
+            modal.classList.add('modal--error');
+            // INJETA O ÍCONE DE ERRO (SVG do Lucide)
+            modalIconWrapper.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                    <line x1="12" x2="12" y1="9" y2="13"></line><line x1="12" x2="12.01" y1="17" y2="17"></line>
+                </svg>
+            `;
+            isSuccessRedirect = false;
+        }
+
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
+        modal.classList.add('active');
+    }
+
+    // Evento para fechar o modal
+    if (modalOkButton) {
+        modalOkButton.addEventListener('click', () => {
+            modal.classList.remove('active');
+            if (isSuccessRedirect) {
+                // Se foi sucesso, redireciona para o painel
+                window.location.href = 'dashboard.html';
+            }
+        });
+    }
+
+    // --- 6. LÓGICA DE CARREGAMENTO (ETAPA 1 - API GET) ---
     
     async function carregarConsultasAgendadas() {
         if (!appointmentListContainer) return;
@@ -133,10 +199,6 @@ document.addEventListener("DOMContentLoaded", function() {
         return new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia), parseInt(hora), parseInt(minuto));
     }
 
-    /**
-     * Formata o objeto de consulta da API para o HTML da Etapa 1.
-     * Salva o FuncionarioId.
-     */
     function formatarConsultaParaLista(consulta) {
         const dataObj = parseDataHorario(consulta.horario);
         const horaStr = consulta.horario.split(' ')[1];
@@ -148,17 +210,12 @@ document.addEventListener("DOMContentLoaded", function() {
             statusIcon: "check-circle",
             statusClass: "status-confirmado",
             statusText: `Confirmada - ${horaStr}`,
-            // Dados essenciais para o PATCH
             empresa: consulta.Empresa,
             orderId: consulta.OrderId,
             funcionarioId: consulta.FuncionarioId
         };
     }
 
-    /**
-     * Cria o HTML de um item de consulta para a Etapa 1.
-     * Adiciona o data-funcionarioid.
-     */
     function criarItemConsultaHTML(d) {
         return `
             <div class="appointment-item" 
@@ -183,12 +240,8 @@ document.addEventListener("DOMContentLoaded", function() {
         `;
     }
 
-    // --- 6. LÓGICA DAS ETAPAS DE REAGENDAMENTO ---
+    // --- 7. LÓGICA DAS ETAPAS DE REAGENDAMENTO ---
 
-    /**
-     * Adiciona os listeners aos botões "Reagendar"
-     * Armazena o funcionarioId salvo.
-     */
     function addRescheduleButtonClickHandlers() {
         const rescheduleButtons = document.querySelectorAll('.btn-reschedule');
         const appointmentItems = document.querySelectorAll('.appointment-item');
@@ -197,14 +250,12 @@ document.addEventListener("DOMContentLoaded", function() {
             button.addEventListener('click', (e) => {
                 const selectedItem = e.target.closest('.appointment-item');
                 
-                // Salva os dados da consulta que será reagendada
                 consultaParaReagendar = {
                     empresa: selectedItem.dataset.empresa,
                     orderId: selectedItem.dataset.orderid,
                     funcionarioId: selectedItem.dataset.funcionarioid
                 };
                 
-                // UI
                 appointmentItems.forEach(item => item.classList.remove('selected'));
                 selectedItem.classList.add('selected');
                 step2Container.style.display = 'block';
@@ -213,21 +264,23 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    cancelRescheduleBtn.addEventListener('click', () => {
-        step2Container.style.display = 'none';
-        consultaParaReagendar = null; // Limpa os dados
-        document.querySelectorAll('.appointment-item.selected').forEach(item => item.classList.remove('selected'));
-        step1Container.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+    if(cancelRescheduleBtn) {
+        cancelRescheduleBtn.addEventListener('click', () => {
+            step2Container.style.display = 'none';
+            consultaParaReagendar = null; 
+            document.querySelectorAll('.appointment-item.selected').forEach(item => item.classList.remove('selected'));
+            step1Container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    }
 
 
-    // --- 7. LÓGICA DE SUBMISSÃO (ETAPA 2 - API PATCH) ---
+    // --- 8. LÓGICA DE SUBMISSÃO (ETAPA 2 - API PATCH) ---
 
     async function handleConfirmarReagendamento(event) {
         event.preventDefault();
         
         if (!consultaParaReagendar) {
-            alert("Erro: Nenhum consulta selecionada. Por favor, volte à Etapa 1.");
+            showNotification(false, 'Erro', 'Nenhuma consulta selecionada. Por favor, volte à Etapa 1.');
             return;
         }
 
@@ -235,7 +288,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const selectedTimeEl = document.querySelector('.time-slot.selected');
 
         if (!selectedDayEl || !selectedTimeEl) {
-            alert("Por favor, selecione uma nova data E um novo horário.");
+            showNotification(false, 'Campos Incompletos', 'Por favor, selecione uma nova data E um novo horário.');
             return;
         }
 
@@ -245,15 +298,12 @@ document.addEventListener("DOMContentLoaded", function() {
         const hora = selectedTimeEl.textContent.trim();
         const newHorarioStr = `${dia}/${mes}/${ano} ${hora}`;
 
-        // --- ATUALIZAÇÃO (v3) ---
-        // Adiciona o FuncionarioId ao payload para verificação no backend
         const payload = {
             Empresa: consultaParaReagendar.empresa,
             OrderId: consultaParaReagendar.orderId,
             new_horario: newHorarioStr,
-            FuncionarioId: consultaParaReagendar.funcionarioId // <-- ADICIONADO
+            FuncionarioId: consultaParaReagendar.funcionarioId 
         };
-        // --- FIM DA ATUALIZAÇÃO ---
 
         console.log("Enviando Reagendamento (PATCH):", payload);
 
@@ -274,13 +324,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 throw new Error(responseData.message || 'Não foi possível reagendar.');
             }
             
-            alert("Consulta reagendada com sucesso!");
-            window.location.href = "dashboard.html"; 
+            // SUCESSO! Chama o modal com a animação
+            showNotification(true, 'Consulta Reagendada!', 'Seu agendamento foi alterado com sucesso.');
 
         } catch (error) {
             console.error('Erro ao reagendar:', error);
-            // Exibe a mensagem de erro vinda do backend (ex: "Conflito de agendamento...")
-            alert(`Erro ao reagendar: ${error.message}`);
+            // ERRO! Chama o modal de erro
+            showNotification(false, 'Erro ao Reagendar', error.message);
         
         } finally {
             confirmButton.textContent = "Confirmar Reagendamento";
@@ -288,14 +338,15 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
     
-    if (confirmButton) {
+    if (confirmButton && pacienteCPF) { // Só adiciona listener se estiver logado
         confirmButton.addEventListener('click', handleConfirmarReagendamento);
     }
 
 
-    // --- 8. LÓGICA DO CALENDÁRIO E HORÁRIOS (ETAPA 2) ---
+    // --- 9. LÓGICA DO CALENDÁRIO E HORÁRIOS (ETAPA 2) ---
 
     function renderCalendar(year, month) {
+        if (!calendarGridEl) return; // Segurança
         calendarGridEl.innerHTML = '';
         timeSlotHeader.textContent = 'Escolha um horário';
         if (timeSlotsGrid) {
@@ -308,7 +359,6 @@ document.addEventListener("DOMContentLoaded", function() {
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         const daysInPrevMonth = new Date(year, month, 0).getDate();
 
-        // Dias do mês anterior
         for (let i = firstDayOfMonth; i > 0; i--) {
             const dayEl = document.createElement('div');
             dayEl.classList.add('day', 'prev-month');
@@ -316,7 +366,6 @@ document.addEventListener("DOMContentLoaded", function() {
             calendarGridEl.appendChild(dayEl);
         }
 
-        // Dias do mês atual
         for (let i = 1; i <= daysInMonth; i++) {
             const dayEl = document.createElement('div');
             dayEl.classList.add('day');
@@ -336,7 +385,6 @@ document.addEventListener("DOMContentLoaded", function() {
             calendarGridEl.appendChild(dayEl);
         }
 
-        // Dias do próximo mês
         const totalGridCells = 42; 
         const renderedCells = firstDayOfMonth + daysInMonth;
         const remainingCells = totalGridCells - renderedCells;
@@ -351,9 +399,6 @@ document.addEventListener("DOMContentLoaded", function() {
         addDayClickHandlers();
     }
 
-    /**
-     * Esta função agora chama a API de horários.
-     */
     function addDayClickHandlers() {
         const days = document.querySelectorAll('.day:not(.prev-month):not(.next-month):not(.disabled)');
         days.forEach(day => {
@@ -369,7 +414,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 timeSlotHeader.textContent = `Escolha um horário (${dayOfWeek}, ${dayNum} de ${monthNames[monthNum]})`;
 
                 if (!consultaParaReagendar || !consultaParaReagendar.funcionarioId) {
-                    alert("Erro: Não foi possível identificar o profissional. Tente selecionar a consulta novamente.");
+                    showNotification(false, 'Erro de Etapa', 'Não foi possível identificar o profissional. Tente selecionar a consulta na Etapa 1 novamente.');
                     return;
                 }
 
@@ -379,9 +424,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    /**
-     * Função para carregar horários disponíveis.
-     */
     async function carregarHorariosDisponiveis(funcionarioId, dataSelecionada) {
         if (!timeSlotsGrid) return;
         timeSlotsGrid.innerHTML = '<p style="color: var(--text-light); grid-column: 1 / -1;">Carregando horários...</p>';
@@ -402,9 +444,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
             const horariosOcupados = new Set();
             todasConsultas.forEach(consulta => {
-                const [dataStr, horaStr] = consulta.horario.split(' ');
-                if (dataStr === dataSelecionadaStr) {
-                    horariosOcupados.add(horaStr); 
+                if (consulta.OrderId !== consultaParaReagendar.orderId) {
+                    const [dataStr, horaStr] = consulta.horario.split(' ');
+                    if (dataStr === dataSelecionadaStr) {
+                        horariosOcupados.add(horaStr); 
+                    }
                 }
             });
 
@@ -452,10 +496,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-
-    /**
-     * Função para adicionar clique aos horários.
-     */
     function addTimeSlotClickHandlers() {
         const timeSlots = document.querySelectorAll('.time-slot:not(.disabled)');
         timeSlots.forEach(slot => {
@@ -467,19 +507,23 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // Navegação do Calendário
-    prevMonthBtn.addEventListener('click', () => {
-        currentDate.setMonth(currentDate.getMonth() - 1);
-        renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
-    });
+    if(prevMonthBtn) {
+        prevMonthBtn.addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
+        });
+    }
 
-    nextMonthBtn.addEventListener('click', () => {
-        currentDate.setMonth(currentDate.getMonth() + 1);
-        renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
-    });
+    if(nextMonthBtn) {
+        nextMonthBtn.addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
+        });
+    }
 
 
-    // --- 9. Inicialização ---
-    carregarConsultasAgendadas(); // Inicia o GET da Etapa 1
-    renderCalendar(currentDate.getFullYear(), currentDate.getMonth()); // Renderiza o calendário
+    // --- 10. Inicialização ---
+    // (O carregamento das consultas agora é feito dentro da verificação do CPF)
+    renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
 
 });

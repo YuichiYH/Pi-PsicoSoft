@@ -180,8 +180,6 @@ hr.divider {
     box-shadow: var(--shadow-sm);
 }
 
-
-/* 1. REGRA ATUALIZADA (O container da data) */
 .appointment-item .date-box {
     background-color: var(--primary-light);
     color: var(--primary);
@@ -189,28 +187,25 @@ hr.divider {
     width: 55px;
     height: 55px;
     font-weight: 700;
-    /* line-height: 1.2;  <-- REMOVIDO */
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 0; /* <-- Garantir que não tem padding */
+    padding: 0;
 }
 
-/* 2. REGRA ATUALIZADA (O mês) */
 .appointment-item .date-box .month {
     font-size: 0.8rem;
     display: block;
     text-transform: uppercase;
-    line-height: 1; /* <-- AJUSTADO */
+    line-height: 1;
 }
 
-/* 3. REGRA ATUALIZADA (O dia) */
 .appointment-item .date-box .day {
     font-size: 1.6rem;
     display: block;
-    line-height: 1.2; /* <-- AJUSTADO */
+    line-height: 1.2;
 }
 .appointment-item .appointment-details {
     flex-grow: 1;
@@ -228,13 +223,6 @@ hr.divider {
     align-items: center;
     gap: 0.3rem;
 }
-/* Novo: classe para a data completa */
-.appointment-details .data-completa {
-    color: var(--text-light);
-    font-weight: 400;
-    margin-bottom: 0.25rem;
-}
-
 .appointment-details p svg { width: 16px; height: 16px; }
 .status-confirmado { color: var(--status-green); }
 .status-pendente { color: var(--status-pending); }
@@ -309,9 +297,10 @@ hr.divider {
     color: #ccc;
     cursor: not-allowed;
 }
-/* .day.current-day (Removido, pois a validação de desabilitar passados é mais importante) */
-
-.day:not(.prev-month):not(.next-month):not(.disabled):hover {
+.day.current-day {
+    border: 2px solid var(--accent-1);
+}
+.day:not(.prev-month):not(.next-month):hover {
     background-color: var(--primary-light);
 }
 .day.selected {
@@ -468,7 +457,9 @@ hr.divider {
     }
 }
 
-/* --- 10. NOVO: Estilos do Modal de Confirmação --- */
+/* --- 10. ESTILOS DO MODAL DE NOTIFICAÇÃO (Adicionado) --- */
+
+/* Base do Modal (Adaptado de agendar.css) */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -476,85 +467,154 @@ hr.divider {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.6);
-    display: flex;
+    display: none; /* Escondido por padrão */
     align-items: center;
     justify-content: center;
-    z-index: 1000;
-    visibility: hidden;
+    z-index: 1001;
     opacity: 0;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition: opacity 0.3s ease;
 }
-
 .modal-overlay.active {
-    visibility: visible;
+    display: flex;
     opacity: 1;
 }
 
 .modal-content {
-    background: var(--card-bg); /* Usa a variável */
-    padding: 2.5rem;
+    background: var(--card-bg);
+    padding: 2rem;
     border-radius: 12px;
+    max-width: 400px;
     width: 90%;
-    max-width: 450px;
     text-align: center;
-    transform: scale(0.9);
+    box-shadow: var(--shadow-lg);
+    transform: scale(0.95);
     transition: transform 0.3s ease;
 }
-
 .modal-overlay.active .modal-content {
     transform: scale(1);
 }
 
-.modal-icon {
+.modal-actions {
+    display: flex;
+    justify-content: center;
+}
+.btn-modal-primary {
+    flex: 1;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-family: 'Lato', sans-serif;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Wrapper do Ícone */
+.modal-icon-wrapper {
     width: 80px;
     height: 80px;
     border-radius: 50%;
+    margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 1.5rem auto;
+    position: relative; /* Para o ícone de SVG se sobrepor */
 }
 
-.modal-icon.success {
-    background-color: #e0f8f0; /* Fundo verde claro */
-    color: var(--status-green); /* Verde principal */
+/* --- ANIMAÇÃO PERSONALIZADA (SUCESSO) --- */
+@keyframes spin-clock-hand {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+@keyframes calendar-pop-in {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
 }
 
-.modal-icon.error {
-    background-color: #fdebee; /* Fundo vermelho claro */
-    color: #d9534f; /* Vermelho */
+/* O contêiner da animação que será injetado pelo JS */
+.animated-icon-container {
+    width: 60px;
+    height: 60px;
+    position: relative;
+    animation: calendar-pop-in 0.5s ease-out;
 }
-
-.modal-icon svg {
+.calendar-icon, .clock-icon {
+    position: absolute;
+    background: var(--status-green); /* Cor de sucesso */
+    border-radius: 4px;
+}
+.calendar-icon {
     width: 40px;
     height: 40px;
+    top: 0;
+    left: 0;
+}
+.calendar-icon::before { /* Argolas do topo */
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 8px;
+    width: 5px;
+    height: 10px;
+    background: var(--status-green);
+    border-radius: 2px;
+    box-shadow: 12px 0 0 var(--status-green);
+}
+.calendar-icon::after { /* Linhas de data */
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 6px;
+    width: 28px;
+    height: 18px;
+    border-top: 3px solid white;
+    border-bottom: 3px solid white;
+    box-shadow: 0 8px 0 0 white;
 }
 
-.modal-content h3 {
-    font-size: 1.5rem;
-    color: var(--text-dark);
-    margin-bottom: 0.5rem;
+.clock-icon {
+    width: 32px;
+    height: 32px;
+    bottom: 0;
+    right: 0;
+    border-radius: 50%;
+    border: 3px solid var(--status-green);
+    background: white;
+}
+.clock-icon::after { /* Ponteiro dos minutos */
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 13px;
+    width: 3px;
+    height: 12px;
+    background: var(--status-green);
+    transform-origin: 50% 90%;
+    border-radius: 2px;
+    animation: spin-clock-hand 1.5s linear infinite;
 }
 
-.modal-content p {
-    font-size: 1rem;
-    color: var(--text-light);
-    margin-bottom: 2rem;
+/* --- ESTADOS (SUCESSO E ERRO) --- */
+
+.modal-overlay.modal--success .modal-icon-wrapper {
+    background-color: #E6F6F6; /* Fundo de --status-green */
+}
+.modal-overlay.modal--success .btn-modal-primary {
+    background-color: var(--status-green);
+    color: white;
 }
 
-.btn-modal-close {
-    border: none;
-    cursor: pointer;
-    display: block;
-    width: 100%;
-    padding: 0.8rem;
-    font-size: 1rem;
-    font-weight: 700;
-    background-color: var(--primary);
-    color: var(--card-bg);
-    border-radius: 8px;
-    transition: background-color 0.3s ease;
+.modal-overlay.modal--error .modal-icon-wrapper {
+    background-color: #FEEEEE; /* Fundo vermelho suave */
+    color: #E57373; /* Vermelho --danger */
 }
-.btn-modal-close:hover {
-    background-color: #6a6eac;
+.modal-overlay.modal--error .btn-modal-primary {
+    background-color: #E57373;
+    color: white;
+}
+/* O SVG de erro (injetado pelo JS) */
+.modal-overlay.modal--error .modal-icon-wrapper svg {
+    width: 48px;
+    height: 48px;
 }
