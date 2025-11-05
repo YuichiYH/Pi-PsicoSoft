@@ -48,25 +48,45 @@
                 <div class="booking-step">
                     <div class="step-header">
                         <span class="step-number">1</span>
-                        <h4>Escolha a especialidade e o profissional</h4>
+                        <h4>Informe os dados da consulta</h4>
                     </div>
-                    <div class="form-filters">
+                    
+                    <div class="form-filters"> 
+                        
                         <div class="form-group">
-                            <label for="especialidade">Especialidade</label>
+                            <label for="especialidade">Especialidade *</label>
                             <select id="especialidade" name="especialidade">
                                 <option value="">Selecione a especialidade</option>
-                                <option value="psicologia">Psicologia</option>
-                                <option value="psiquiatria">Psiquiatria</option>
-                                <option value="terapia">Terapia de Casal</option>
+                                <option value="Psicologia">Psicologia</option>
+                                <option value="Psiquiatria">Psiquiatria</option>
                             </select>
                         </div>
+                        
                         <div class="form-group">
-                            <label for="profissional">Profissional (Opcional)</label>
+                            <label for="profissional">Profissional *</label>
                             <select id="profissional" name="profissional">
-                                <option value="">Qualquer profissional</option>
-                                <option value="dr_andre">Dr. André</option>
-                                <option value="dra_beatriz">Dra. Beatriz</option>
+                                <option value="">Selecione um profissional</option>
+                                <option value="psicosoft_dr@gmail.com">Dr. André</option>
+                                <option value="psicosoft_dra@gmail.com">Dra. Beatriz</option>
                             </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="forma">Forma de Atendimento *</label>
+                            <select id="forma" name="forma">
+                                <option value="Online">Online</option>
+                                <option value="Presencial">Presencial</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="idade">Idade *</label>
+                            <input type="number" id="idade" name="idade" placeholder="Sua idade" min="0" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem; background-color: var(--background); color: var(--text-dark);">
+                        </div>
+                        
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="motivo">Motivo da Consulta *</label>
+                            <textarea id="motivo" name="motivo" rows="3" placeholder="Descreva brevemente o motivo da sua consulta..." style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem; background-color: var(--background); color: var(--text-dark); font-family: 'Lato', sans-serif; resize: vertical;"></textarea>
                         </div>
                     </div>
                 </div>
@@ -105,15 +125,10 @@
                         <span class="step-number">3</span>
                         <h4 id="time-slot-header">Escolha um horário</h4>
                     </div>
-                    <div class="time-slots-grid">
-                        <button class="time-slot">09:00</button>
-                        <button class="time-slot">09:30</button>
-                        <button class="time-slot">10:00</button>
-                        <button class="time-slot">10:30</button>
-                        <button class="time-slot disabled">11:00</button>
-                        <button class="time-slot">14:00</button>
-                        <button class="time-slot">14:30</button>
-                        <button class="time-slot">15:00</button>
+                    <div class="time-slots-grid" id="time-slots-grid">
+                        <p style="color: var(--text-light); grid-column: 1 / -1;">
+                            Por favor, selecione um profissional e uma data para ver os horários disponíveis.
+                        </p>
                     </div>
                 </div>
 
