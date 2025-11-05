@@ -6,6 +6,7 @@
  * - Controla modal de confirmação (com ícone 'frown')
  * - Controla modal de notificação (sucesso/erro)
  * - Envia pedido de cancelamento (POST)
+ * - ATUALIZAÇÃO: Bloqueia cancelamento < 24h ou datas passadas.
  */
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -57,14 +58,12 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // --- 5. Seletores dos Modais ---
-    // Modal de Confirmação (o primeiro)
     const cancelModal = document.getElementById('cancel-modal');
     const confirmCancelBtn = document.getElementById('modal-btn-confirm');
     const closeModalBtn = document.getElementById('modal-btn-close');
     const cancelDetailsText = document.getElementById('modal-cancel-details');
     const cancelIconWrapper = document.querySelector('#cancel-modal .modal-icon-wrapper');
 
-    // Modal de Notificação (o segundo, de resultado)
     const notificationModal = document.getElementById('notification-modal');
     const notificationIconWrapper = notificationModal.querySelector('.modal-icon-wrapper');
     const notificationTitle = document.getElementById('modal-title');
@@ -73,12 +72,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // --- 6. Lógica do Modal de Notificação (Sucesso/Erro) ---
     
-    /**
-     * Exibe o modal de notificação
-     * @param {boolean} isSuccess - Define o estilo (sucesso ou erro)
-     * @param {string} title - O título (ex: "Sucesso!")
-     * @param {string} message - A mensagem de detalhe
-     */
     function showNotification(isSuccess, title, message) {
         notificationModal.classList.remove('modal--success', 'modal--error');
 
@@ -95,12 +88,10 @@ document.addEventListener("DOMContentLoaded", function() {
         notificationModal.classList.add('active');
     }
 
-    // Evento para fechar o modal de notificação
     notificationOkButton.addEventListener('click', () => {
         notificationModal.classList.remove('active');
     });
 
-    // Evento para fechar o modal de confirmação (botão "Voltar")
     if(closeModalBtn) {
         closeModalBtn.addEventListener('click', () => {
             cancelModal.classList.remove('active');
@@ -114,7 +105,6 @@ document.addEventListener("DOMContentLoaded", function() {
     async function loadAppointments() {
         tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">Carregando suas consultas...</td></tr>';
         
-        // A API GET /Consulta retorna TODAS. Filtramos no front-end pelo ClienteId (CPF).
         const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta?ClienteId=${pacienteCPF}`;
 
         try {
@@ -124,8 +114,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             
             const allConsultas = await response.json();
-            
-            // Filtra apenas as consultas deste cliente
             const minhasConsultas = allConsultas.filter(c => c.ClienteId === pacienteCPF);
 
             if (minhasConsultas.length === 0) {
@@ -133,10 +121,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 return;
             }
 
-            // Ordena por data (mais próximas primeiro)
             minhasConsultas.sort((a, b) => a.OrderDate - b.OrderDate);
-
-            // Renderiza a tabela
             renderTable(minhasConsultas);
 
         } catch (error) {
@@ -145,30 +130,74 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
+    /**
+     * ATUALIZADO: Converte o formato "dd/mm/aaaa hh:mm" para um objeto Date
+     */
+    function parseHorario(horarioStr) {
+        if (!horarioStr) return null;
+        // Ex: "05/11/2025 16:00"
+        const [dataStr, horaStr] = horarioStr.split(' ');
+        if (!dataStr || !horaStr) return null;
+        
+        const [dia, mes, ano] = dataStr.split('/');
+        const [hora, minuto] = horaStr.split(':');
+        
+        // Mês no JS é 0-indexado (0 = Jan, 11 = Dez)
+        return new Date(ano, mes - 1, dia, hora, minuto);
+    }
+
+
+    /**
+     * ATUALIZADO: Agora valida a data da consulta antes de habilitar o botão.
+     */
     function renderTable(consultas) {
         tbody.innerHTML = ''; // Limpa a tabela
 
         consultas.forEach(consulta => {
-            // Define o status (assume "Agendada" se não houver status)
             const status = consulta.status || "Agendada";
             const isCancelled = status.toLowerCase() === "cancelada";
+
+            // --- INÍCIO DA NOVA LÓGICA DE VALIDAÇÃO DE DATA ---
+            let isDisparada = false; // "Disparada" = Não pode mais ser alterada
+            let buttonText = "Cancelar";
+            const agora = new Date();
+            const consultaDateTime = parseHorario(consulta.horario);
+
+            // Define a regra de 24 horas (em milissegundos)
+            const H24_EM_MS = 24 * 60 * 60 * 1000;
+            
+            if (isCancelled) {
+                isDisparada = true;
+                buttonText = "Cancelada";
+            } else if (!consultaDateTime || (consultaDateTime.getTime() - agora.getTime()) < H24_EM_MS) {
+                // Se a data é inválida, ou
+                // se a consulta for em menos de 24h (ou já passou)
+                
+                isDisparada = true;
+                
+                // Muda o texto do botão para ser mais claro
+                if (consultaDateTime && consultaDateTime < agora) {
+                    // Já passou
+                    buttonText = "Concluída"; 
+                } else {
+                    // Está a menos de 24h
+                    buttonText = "Bloqueado"; 
+                }
+            }
+            // --- FIM DA NOVA LÓGICA ---
 
             const tr = document.createElement('tr');
             if (isCancelled) {
                 tr.classList.add('cancelled-row');
             }
             
-            // Coluna Profissional (usa 'FuncionarioId' se 'profissional' não existir)
-            // NOTA: O 'FuncionarioId' é o email, talvez 'profissional' (nome) não exista.
-            // Vamos extrair o nome do email para ficar mais bonito.
-            let nomeProfissional = consulta.profissional; // (Vazio no CSV)
+            // Lógica para nome do profissional
+            let nomeProfissional = consulta.profissional;
             if (!nomeProfissional && consulta.FuncionarioId) {
-                // Pega "psicosoft_dr" de "psicosoft_dr@gmail.com"
                 let emailName = consulta.FuncionarioId.split('@')[0];
-                // Troca "psicosoft_dr" por "Dr. André" (baseado em agendar.html)
                 if (emailName === 'psicosoft_dr') nomeProfissional = 'Dr. André';
                 else if (emailName === 'psicosoft_dra') nomeProfissional = 'Dra. Beatriz';
-                else nomeProfissional = emailName; // Fallback
+                else nomeProfissional = emailName;
             } else if (!nomeProfissional) {
                 nomeProfissional = "Não informado";
             }
@@ -183,8 +212,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     <button class="btn-cancel" 
                         data-order-id="${consulta.OrderId}" 
                         data-horario="${consulta.horario}"
-                        ${isCancelled ? 'disabled' : ''}>
-                        ${isCancelled ? 'Cancelada' : 'Cancelar'}
+                        ${isDisparada ? 'disabled' : ''}>
+                        ${buttonText}
                     </button>
                 </td>
             `;
@@ -198,6 +227,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // --- 8. Lógica de Cancelamento (Modal e POST) ---
 
     function attachCancelButtons() {
+        // Seleciona apenas botões que NÃO estão desabilitados
         const buttons = document.querySelectorAll('.btn-cancel:not(:disabled)');
         
         buttons.forEach(button => {
@@ -207,10 +237,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 // 1. Preenche o modal de confirmação
                 cancelDetailsText.textContent = `Consulta: ${horario}`;
-                // Adiciona o ícone "triste" (Frown)
                 cancelIconWrapper.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M16 16s-1.5-2-4-2-4 2-4 2"></path><line x1="9" x2="9.01" y1="9" y2="9"></line><line x1="15" x2="15.01" y1="9" y2="9"></line></svg>';
                 
-                // 2. Define a ação do botão "Sim, cancelar" (apenas para este clique)
+                // 2. Define a ação do botão "Sim, cancelar"
                 confirmCancelBtn.onclick = () => {
                     performCancellation(orderId);
                 };
@@ -225,7 +254,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // 1. Esconde o modal de confirmação
         cancelModal.classList.remove('active');
 
-        // 2. Mostra um estado de "carregando" (opcional, pode usar o modal de notificação)
+        // 2. Mostra um estado de "carregando"
         showNotification(false, 'Cancelando...', 'Aguarde enquanto processamos sua solicitação.');
 
         const apiUrl = 'https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta/CancelarConsulta';
@@ -236,7 +265,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                // A API espera o OrderId para saber qual item cancelar
                 body: JSON.stringify({ OrderId: orderId }) 
             });
 
