@@ -19,7 +19,9 @@
             <nav class="main-nav">
                 <ul>
                     <li><a href="dashboard.html">Meu Painel</a></li> 
+                    
                     <li><a href="historico.html">Histórico</a></li>
+                    
                     <li><a href="#">Perfil</a></li>
                     <li><a href="index.html" class="btn-logout">
                         <i data-lucide="log-out"></i> Sair
@@ -44,16 +46,8 @@
                         <p class="subtitle">Selecione a consulta que você deseja alterar a data ou horário.</p>
                     </section>
 
-                    <div id="appointment-list-loader" style="text-align: center; padding: 2rem;">
+                    <div class="appointment-list">
                         </div>
-                    
-                    <div class="appointment-list" id="appointment-list-container">
-                        </div>
-                    
-                    <div id="no-appointments-message" style="display: none; text-align: center; padding: 2rem; background: #f9f9f9; border-radius: 8px;">
-                        <p>Você não possui consultas futuras para reagendar.</p>
-                    </div>
-
                 </section> 
                 
                 <hr class="divider">
@@ -90,13 +84,16 @@
                 
                     <div class="time-slots-wrapper">
                         <h4 id="time-slot-header">Escolha um horário</h4>
-                        <div id="time-slots-grid-container" class="time-slots-grid">
-                            <p id="time-slot-loader" style="display: none;">Buscando horários...</p>
+                        
+                        <div id="time-slots-grid" class="time-slots-grid">
+                            <p style="color: var(--text-light); grid-column: 1 / -1;">
+                                Por favor, selecione uma data para ver os horários disponíveis.
+                            </p>
                         </div>
                     </div>
 
                     <div class="booking-confirm">
-                        <button id="btn-confirm-reschedule" class="btn-confirm">Confirmar Reagendamento</button>
+                        <button class="btn-confirm">Confirmar Reagendamento</button>
                         <button id="cancel-reschedule" class="btn-secondary">Cancelar Alteração</button>
                     </div>
 
@@ -104,16 +101,6 @@
             </div> 
         </div>
     </main>
-
-    <div id="confirmation-modal" class="modal-overlay">
-        <div class="modal-content">
-            <div id="modal-icon" class="modal-icon">
-                </div>
-            <h3 id="modal-title"></h3>
-            <p id="modal-message"></p>
-            <button id="modal-close-btn" class="btn-modal-close">Entendido</button>
-        </div>
-    </div>
 
     <button id="open-chat-bot" class="chat-fab" aria-label="Abrir chat de ajuda">
         <i data-lucide="bot"></i>
