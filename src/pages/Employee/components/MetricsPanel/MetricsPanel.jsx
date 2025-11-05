@@ -1,4 +1,28 @@
 import { Container, Grid } from "@mui/material";
+import MetricCard from './components/MetricCard';
+import TimeLineChart from './components/TimeLineChart';
+import BarChart from './components/BarChart';
+import PieChart from './components/PieChart';
+import DetailedMetrics from './components/DetailedMetrics';
+
+// Dados de exemplo para os gráficos
+const waitTimeData = [
+    { time: '9h', value: 12 },
+    { time: '10h', value: 15 },
+    { time: '11h', value: 18 },
+    { time: '12h', value: 20 },
+    { time: '13h', value: 15 },
+    { time: '14h', value: 10 },
+];
+
+const flowData = [
+    { time: '9h', value: 8 },
+    { time: '10h', value: 12 },
+    { time: '11h', value: 15 },
+    { time: '12h', value: 10 },
+    { time: '13h', value: 8 },
+    { time: '14h', value: 14 },
+];
 
 function MetricsPanel() {
     return (
