@@ -9,8 +9,8 @@
 document.addEventListener("DOMContentLoaded", function() {
 
     // --- 1. Script de Proteção de Rota (Guard) ---
-    // ATUALIZADO: Verificamos o 'paciente_email', que é o 'ClienteId'
-    const idCliente = localStorage.getItem('paciente_email'); // Pega o Email
+    // ATUALIZADO: Verificamos o 'paciente_cpf', que é o 'ClienteId'
+    const idCliente = localStorage.getItem('paciente_cpf'); // Pega o cpf
 
     if (!idCliente) {
         alert("Acesso negado. Por favor, faça login para continuar.");
