@@ -6,10 +6,9 @@ import {
     Tab,
     Box
 } from '@mui/material';
-// Imports temporários para teste
-const QueueManagement = () => <div>Gestão de Filas em Construção</div>;
-const MetricsPanel = () => <div>Métricas em Construção</div>;
-const Dashboard = () => <div>Dashboard em Construção</div>;
+import QueueManagement from './components/QueueManagement';
+import MetricsPanel from './components/MetricsPanel';
+import Dashboard from './components/Dashboard';
 
 function Employee() {
     const [activeTab, setActiveTab] = useState(0);
