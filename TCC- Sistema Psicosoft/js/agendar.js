@@ -5,7 +5,8 @@
  * - Adicionada lógica de SUBMISSÃO DE AGENDAMENTO (POST) para a API.
  * - Adicionada validação de horários (GET) para carregar horários reais.
  * - Adicionados novos campos (idade, motivo, forma) ao payload.
- * - CORREÇÃO: Enviando 'cpf' e 'FuncionarioId' (email) e removendo 'profissional' (texto).
+ * - CORREÇÃO: Enviando 'cpf' e 'FuncionarioId'.
+ * - CORREÇÃO 2: Campo 'email' REMOVIDO do payload a pedido.
  */
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -296,7 +297,7 @@ document.addEventListener("DOMContentLoaded", function() {
             // 2. Coletar Dados do Paciente (localStorage)
             const clienteId = pacienteCPF; // 'paciente_cpf' (CPF) é o ClienteId
             const nomePaciente = localStorage.getItem('paciente_nome');
-            const emailPaciente = localStorage.getItem('paciente_email'); // Email (corrigido pelo register.js)
+            // const emailPaciente = localStorage.getItem('paciente_email'); // NÃO SERÁ ENVIADO
 
             // 3. Validação
             if (especialidadeSelect.value === "" || profissionalSelect.value === "" || formaSelect.value === "" || idadeInput.value === "" || motivoInput.value === "") {
@@ -311,7 +312,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 alert("Por favor, selecione um horário (Etapa 3).");
                 return;
             }
-            if (!clienteId || !nomePaciente || !emailPaciente) {
+            if (!clienteId || !nomePaciente) { // Validação de email removida
                 alert("Erro: Informações do paciente não encontradas. Por favor, faça login novamente.");
                 return;
             }
@@ -325,22 +326,21 @@ document.addEventListener("DOMContentLoaded", function() {
 
             const especialidadeTexto = especialidadeSelect.options[especialidadeSelect.selectedIndex].text;
 
-            // 5. Montar o Payload (Corpo da Requisição) - CORRIGIDO
+            // 5. Montar o Payload (Corpo da Requisição) - CAMPO 'email' REMOVIDO
             const payload = {
                 ClienteId: clienteId,
-                cpf: clienteId, // CPF preenchido automaticamente (é o mesmo que o ClienteId)
+                cpf: clienteId, // CPF preenchido automaticamente
                 nome: nomePaciente,
-                email: emailPaciente, // Email (agora corrigido)
+                // email: emailPaciente, // <-- CAMPO REMOVIDO
                 especialidade: especialidadeTexto,
-                FuncionarioId: profissionalSelect.value, // Email do médico (ex: psicosoft_dr@gmail.com)
+                FuncionarioId: profissionalSelect.value, // Email do médico
                 horario: horarioFormatado,
                 idade: idadeInput.value,
                 motivo: motivoInput.value,
                 forma: formaSelect.value
-                // O campo 'profissional' (texto) foi removido
             };
 
-            console.log("Enviando agendamento (corrigido):", payload);
+            console.log("Enviando agendamento (SEM EMAIL):", payload);
 
             // 6. Enviar a Requisição POST
             const apiUrl = 'https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta';
