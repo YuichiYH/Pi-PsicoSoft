@@ -5,11 +5,9 @@
  * ATUALIZAÇÃO:
  * - Etapa 1: Carrega consultas futuras via API GET /Consulta.
  * - Etapa 2: Submete o reagendamento via API PATCH /Consulta.
- *
- * CORREÇÃO (v2):
- * - Corrigido o bug que não limpava a msg "Buscando...".
- * - Implementada a lógica de API (copiada de agendar.js) para
- * buscar horários disponíveis (GET) ao clicar em um dia.
+ * - (v2) Implementada a busca de horários disponíveis (GET).
+ * - (v3) Adicionado 'FuncionarioId' ao payload do PATCH para
+ * permitir a verificação de colisão no backend.
  */
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -48,8 +46,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const prevMonthBtn = document.getElementById('prev-month');
     const nextMonthBtn = document.getElementById('next-month');
     const timeSlotHeader = document.getElementById('time-slot-header');
-    // NOVO: Seletor para a grade de horários (copiado de agendar.js)
-    const timeSlotsGrid = document.getElementById('time-slots-grid');
+    const timeSlotsGrid = document.getElementById('time-slots-grid'); // ID corrigido no HTML
     
     let currentDate = new Date(); // Inicia com a data de hoje
     const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
@@ -110,19 +107,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 return;
             }
 
-            // --- CORREÇÃO SINTOMA 1: "Buscando..." não sumia ---
-            // 1. Cria um array para guardar o HTML
             const itemsHtml = []; 
             consultasFuturas.forEach(consulta => {
                 const dados = formatarConsultaParaLista(consulta);
-                // 2. Adiciona o HTML de cada item ao array
                 itemsHtml.push(criarItemConsultaHTML(dados));
             });
             
-            // 3. Define o HTML do container DE UMA SÓ VEZ,
-            // substituindo a mensagem "Buscando..."
             appointmentListContainer.innerHTML = itemsHtml.join('');
-            // --- FIM DA CORREÇÃO 1 ---
 
             if (window.lucide) {
                 window.lucide.createIcons();
@@ -144,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     /**
      * Formata o objeto de consulta da API para o HTML da Etapa 1.
-     * CORREÇÃO SINTOMA 2: Salva também o FuncionarioId.
+     * Salva o FuncionarioId.
      */
     function formatarConsultaParaLista(consulta) {
         const dataObj = parseDataHorario(consulta.horario);
@@ -160,13 +151,13 @@ document.addEventListener("DOMContentLoaded", function() {
             // Dados essenciais para o PATCH
             empresa: consulta.Empresa,
             orderId: consulta.OrderId,
-            funcionarioId: consulta.FuncionarioId // <--- ESSENCIAL
+            funcionarioId: consulta.FuncionarioId
         };
     }
 
     /**
      * Cria o HTML de um item de consulta para a Etapa 1.
-     * CORREÇÃO SINTOMA 2: Adiciona o data-funcionarioid.
+     * Adiciona o data-funcionarioid.
      */
     function criarItemConsultaHTML(d) {
         return `
@@ -196,7 +187,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     /**
      * Adiciona os listeners aos botões "Reagendar"
-     * CORREÇÃO SINTOMA 2: Armazena o funcionarioId salvo.
+     * Armazena o funcionarioId salvo.
      */
     function addRescheduleButtonClickHandlers() {
         const rescheduleButtons = document.querySelectorAll('.btn-reschedule');
@@ -210,7 +201,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 consultaParaReagendar = {
                     empresa: selectedItem.dataset.empresa,
                     orderId: selectedItem.dataset.orderid,
-                    funcionarioId: selectedItem.dataset.funcionarioid // <--- SALVO AQUI
+                    funcionarioId: selectedItem.dataset.funcionarioid
                 };
                 
                 // UI
@@ -254,11 +245,15 @@ document.addEventListener("DOMContentLoaded", function() {
         const hora = selectedTimeEl.textContent.trim();
         const newHorarioStr = `${dia}/${mes}/${ano} ${hora}`;
 
+        // --- ATUALIZAÇÃO (v3) ---
+        // Adiciona o FuncionarioId ao payload para verificação no backend
         const payload = {
             Empresa: consultaParaReagendar.empresa,
             OrderId: consultaParaReagendar.orderId,
-            new_horario: newHorarioStr
+            new_horario: newHorarioStr,
+            FuncionarioId: consultaParaReagendar.funcionarioId // <-- ADICIONADO
         };
+        // --- FIM DA ATUALIZAÇÃO ---
 
         console.log("Enviando Reagendamento (PATCH):", payload);
 
@@ -275,6 +270,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const responseData = await response.json();
 
             if (!response.ok) {
+                // Irá capturar o erro 409 (Conflito) da Lambda
                 throw new Error(responseData.message || 'Não foi possível reagendar.');
             }
             
@@ -283,6 +279,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         } catch (error) {
             console.error('Erro ao reagendar:', error);
+            // Exibe a mensagem de erro vinda do backend (ex: "Conflito de agendamento...")
             alert(`Erro ao reagendar: ${error.message}`);
         
         } finally {
@@ -297,12 +294,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
     // --- 8. LÓGICA DO CALENDÁRIO E HORÁRIOS (ETAPA 2) ---
-    // (Esta seção agora inclui a lógica de agendar.js)
 
     function renderCalendar(year, month) {
         calendarGridEl.innerHTML = '';
         timeSlotHeader.textContent = 'Escolha um horário';
-        // CORREÇÃO SINTOMA 2: Limpa os horários ao renderizar o calendário
         if (timeSlotsGrid) {
              timeSlotsGrid.innerHTML = '<p style="color: var(--text-light); grid-column: 1 / -1;">Selecione uma data para ver os horários.</p>';
         }
@@ -353,11 +348,11 @@ document.addEventListener("DOMContentLoaded", function() {
             calendarGridEl.appendChild(dayEl);
         }
         
-        addDayClickHandlers(); // Chama o handler atualizado
+        addDayClickHandlers();
     }
 
     /**
-     * CORREÇÃO SINTOMA 2: Esta função agora chama a API de horários.
+     * Esta função agora chama a API de horários.
      */
     function addDayClickHandlers() {
         const days = document.querySelectorAll('.day:not(.prev-month):not(.next-month):not(.disabled)');
@@ -373,22 +368,19 @@ document.addEventListener("DOMContentLoaded", function() {
                 
                 timeSlotHeader.textContent = `Escolha um horário (${dayOfWeek}, ${dayNum} de ${monthNames[monthNum]})`;
 
-                // --- LÓGICA DA API (de agendar.js) ---
                 if (!consultaParaReagendar || !consultaParaReagendar.funcionarioId) {
                     alert("Erro: Não foi possível identificar o profissional. Tente selecionar a consulta novamente.");
                     return;
                 }
 
                 const dataSelecionada = new Date(yearNum, monthNum, dayNum);
-                // Passa o ID do profissional da consulta selecionada
                 await carregarHorariosDisponiveis(consultaParaReagendar.funcionarioId, dataSelecionada);
-                // --- FIM DA LÓGICA DA API ---
             });
         });
     }
 
     /**
-     * NOVO: Função de 'agendar.js' para carregar horários disponíveis.
+     * Função para carregar horários disponíveis.
      */
     async function carregarHorariosDisponiveis(funcionarioId, dataSelecionada) {
         if (!timeSlotsGrid) return;
@@ -419,7 +411,6 @@ document.addEventListener("DOMContentLoaded", function() {
             const horariosHTML = [];
             const agora = new Date();
             
-            // Define a grade de horários (ex: das 7:00 às 17:00, de 30 em 30 min)
             for (let hora = 7; hora <= 17; hora++) {
                 for (let minuto = 0; minuto < 60; minuto += 30) {
                     
@@ -436,7 +427,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     );
 
                     let isDisabled = false;
-                    // Desabilita se o horário já passou ou se está ocupado
                     if (horariosOcupados.has(slotTimeStr) || slotDateTime < agora) {
                         isDisabled = true;
                     }
@@ -453,7 +443,7 @@ document.addEventListener("DOMContentLoaded", function() {
                  timeSlotsGrid.innerHTML = '<p style="color: var(--text-light); grid-column: 1 / -1;">Nenhum horário encontrado.</p>';
             } else {
                  timeSlotsGrid.innerHTML = horariosHTML.join('');
-                 addTimeSlotClickHandlers(); // Adiciona listeners aos novos botões
+                 addTimeSlotClickHandlers();
             }
 
         } catch (error) {
@@ -464,7 +454,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
     /**
-     * NOVO: Função de 'agendar.js' para adicionar clique aos horários.
+     * Função para adicionar clique aos horários.
      */
     function addTimeSlotClickHandlers() {
         const timeSlots = document.querySelectorAll('.time-slot:not(.disabled)');
@@ -476,7 +466,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Navegação do Calendário (sem mudanças)
+    // Navegação do Calendário
     prevMonthBtn.addEventListener('click', () => {
         currentDate.setMonth(currentDate.getMonth() - 1);
         renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
@@ -491,6 +481,5 @@ document.addEventListener("DOMContentLoaded", function() {
     // --- 9. Inicialização ---
     carregarConsultasAgendadas(); // Inicia o GET da Etapa 1
     renderCalendar(currentDate.getFullYear(), currentDate.getMonth()); // Renderiza o calendário
-    // addTimeSlotClickHandlers(); // REMOVIDO DAQUI (agora é chamado por carregarHorariosDisponiveis)
 
 });
