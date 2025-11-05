@@ -228,6 +228,13 @@ hr.divider {
     align-items: center;
     gap: 0.3rem;
 }
+/* Novo: classe para a data completa */
+.appointment-details .data-completa {
+    color: var(--text-light);
+    font-weight: 400;
+    margin-bottom: 0.25rem;
+}
+
 .appointment-details p svg { width: 16px; height: 16px; }
 .status-confirmado { color: var(--status-green); }
 .status-pendente { color: var(--status-pending); }
@@ -302,10 +309,9 @@ hr.divider {
     color: #ccc;
     cursor: not-allowed;
 }
-.day.current-day {
-    border: 2px solid var(--accent-1);
-}
-.day:not(.prev-month):not(.next-month):hover {
+/* .day.current-day (Removido, pois a validação de desabilitar passados é mais importante) */
+
+.day:not(.prev-month):not(.next-month):not(.disabled):hover {
     background-color: var(--primary-light);
 }
 .day.selected {
@@ -460,4 +466,95 @@ hr.divider {
     .btn-reschedule {
         width: 100%;
     }
+}
+
+/* --- 10. NOVO: Estilos do Modal de Confirmação --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+.modal-content {
+    background: var(--card-bg); /* Usa a variável */
+    padding: 2.5rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 450px;
+    text-align: center;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+}
+
+.modal-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem auto;
+}
+
+.modal-icon.success {
+    background-color: #e0f8f0; /* Fundo verde claro */
+    color: var(--status-green); /* Verde principal */
+}
+
+.modal-icon.error {
+    background-color: #fdebee; /* Fundo vermelho claro */
+    color: #d9534f; /* Vermelho */
+}
+
+.modal-icon svg {
+    width: 40px;
+    height: 40px;
+}
+
+.modal-content h3 {
+    font-size: 1.5rem;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+
+.modal-content p {
+    font-size: 1rem;
+    color: var(--text-light);
+    margin-bottom: 2rem;
+}
+
+.btn-modal-close {
+    border: none;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1rem;
+    font-weight: 700;
+    background-color: var(--primary);
+    color: var(--card-bg);
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+.btn-modal-close:hover {
+    background-color: #6a6eac;
 }
