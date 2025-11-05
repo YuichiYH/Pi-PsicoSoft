@@ -1,9 +1,15 @@
 /*
  * cancelar.css
  * Estilo para a página de cancelamento (usa a paleta oficial).
+ *
+ * ATUALIZADO:
+ * - Substituído o layout de "itens" por uma "tabela".
+ * - Adicionada coluna de "Status".
+ * - Adicionado modal de notificação (sucesso/erro).
+ * - Adicionado ícone de "aviso" ao modal de confirmação.
  */
 
-/* --- 1. Variáveis Globais e Reset (Copiado de dashboard.css) --- */
+/* --- 1. Variáveis Globais e Reset --- */
 :root {
     /* Paleta Oficial Psicosoft */
     --primary: #7A7EBF;       /* Roxo/Azul Principal */
@@ -54,7 +60,7 @@ h4 { font-size: 1.1rem; color: var(--text-dark); }
 p { font-size: 1rem; color: var(--text-light); margin-bottom: 1rem; }
 a { text-decoration: none; color: var(--primary); }
 
-/* --- 2. Header (Copiado de dashboard.css) --- */
+/* --- 2. Header (Padrão) --- */
 .dashboard-header {
     background-color: var(--card-bg);
     box-shadow: var(--shadow-sm);
@@ -119,7 +125,8 @@ main {
     padding-bottom: 4rem;
 }
 .cancel-container {
-    max-width: 800px;
+    /* Max-width aumentado para a tabela */
+    max-width: 900px; 
     margin: 0 auto;
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
@@ -129,69 +136,72 @@ main {
 }
 
 .welcome-header { margin-bottom: 2rem; }
-.welcome-header .subtitle { font-size: 1.25rem; }
+.welcome-header .subtitle { font-size: 1.1rem; /* Ajustado */ }
 
-.cancel-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+/* --- 4. NOVO: Estilos da Tabela de Consultas --- */
+.table-wrapper {
+    overflow-x: auto; /* Para responsividade da tabela */
     margin-bottom: 2rem;
-}
-
-.cancel-item {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 1.5rem;
     border: 1px solid var(--border-color);
     border-radius: 8px;
 }
-
-.cancel-item .date-box {
-    background-color: var(--primary-light);
-    color: var(--primary);
-    border-radius: 8px;
-    width: 55px;
-    height: 55px;
-    text-align: center;
-    font-weight: 700;
-    line-height: 1.2;
-    padding-top: 8px;
-    flex-shrink: 0;
+.schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px; /* Força a rolagem em telas pequenas */
 }
-.cancel-item .date-box .month {
-    font-size: 0.8rem;
-    display: block;
+.schedule-table th, 
+.schedule-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+    vertical-align: middle;
+}
+.schedule-table th {
+    background-color: var(--background);
+    font-size: 0.85rem;
+    color: var(--text-light);
     text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
-.cancel-item .date-box .day {
-    font-size: 1.6rem;
-    display: block;
+.schedule-table td {
+    color: var(--text-dark);
+    font-size: 0.95rem;
+}
+.schedule-table tr:last-child td {
+    border-bottom: none;
+}
+.schedule-table td:first-child {
+    font-weight: 700;
+    color: var(--text-dark);
 }
 
-.cancel-item .appointment-details {
-    flex-grow: 1;
-}
-.appointment-details h5 {
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin: 0;
-}
-.appointment-details p {
-    font-size: 0.9rem;
-    margin: 0;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-}
-.appointment-details p svg { width: 16px; height: 16px; }
-.status-confirmado { color: var(--status-green); }
-.status-pendente { color: var(--status-pending); }
+/* --- 5. NOVO: Estilos da Coluna Status e Botão --- */
 
-.action-wrapper {
-    flex-shrink: 0;
+/* Estilos de Status (Agendada / Cancelada) */
+.status-cell {
+    font-weight: 700;
+    text-transform: capitalize;
 }
+.status-cell.agendada {
+    color: var(--status-green); /* Verde */
+}
+.status-cell.cancelada {
+    color: var(--danger-dark); /* Vermelho escuro */
+}
+
+/* Linha da tabela fica opaca se já cancelada */
+.cancelled-row {
+    opacity: 0.6;
+    background-color: var(--background);
+}
+.cancelled-row .btn-cancel {
+    background-color: var(--border-color);
+    color: var(--text-light);
+    border: none;
+    cursor: not-allowed;
+}
+
 .btn-cancel {
     background-color: var(--danger);
     color: var(--card-bg);
@@ -204,34 +214,12 @@ main {
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
-.btn-cancel:hover {
+.btn-cancel:hover:not(:disabled) {
     background-color: var(--danger-dark);
 }
 
-.no-appointments {
-    text-align: center;
-    padding: 2rem 0;
-    color: var(--text-light);
-}
-.no-appointments svg {
-    width: 32px;
-    height: 32px;
-    margin-bottom: 0.5rem;
-}
-.no-appointments p { margin: 0; }
 
-.back-link a {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 700;
-    text-decoration: none;
-}
-.back-link a:hover {
-    text-decoration: underline;
-}
-
-/* --- 4. Modal de Confirmação --- */
+/* --- 6. Modal de Confirmação (ATUALIZADO com Ícone) --- */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -266,14 +254,25 @@ main {
     transform: scale(1);
 }
 
-.modal-icon {
-    color: var(--danger);
+/* NOVO: Ícone de "aviso" (triste) do modal de confirmação */
+#cancel-modal .modal-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Usando um tom de "aviso" (amarelo/laranja) */
+    background-color: #FFF3E0; /* Laranja claro */
+    color: #FFA726; /* Laranja */
     margin-bottom: 1rem;
 }
-.modal-icon svg {
+#cancel-modal .modal-icon-wrapper svg {
     width: 48px;
     height: 48px;
 }
+
 .modal-content h4 {
     font-size: 1.4rem;
     color: var(--text-dark);
@@ -317,7 +316,69 @@ main {
 }
 
 
-/* --- 5. Chatbot FAB (Copiado de dashboard.css) --- */
+/* --- 7. NOVO: Modal de Notificação (Sucesso/Erro) --- */
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(0, 0, 0, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); }
+}
+
+#notification-modal .modal-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#notification-modal .modal-icon-wrapper svg {
+    width: 48px;
+    height: 48px;
+}
+.btn-modal-primary {
+    flex: 1; 
+    padding: 0.75rem; 
+    border-radius: 8px; 
+    font-weight: 700;
+    font-size: 1rem; 
+    border: none; 
+    cursor: pointer; 
+    transition: all 0.3s ease;
+    background-color: var(--primary); 
+    color: var(--card-bg);
+}
+.btn-modal-primary:hover { 
+    background-color: #6a6eac; 
+}
+
+/* Sucesso (Verde) */
+#notification-modal.modal--success .modal-icon-wrapper {
+    background-color: #E6F6F6; 
+    color: var(--status-green);
+    animation: pulse 1.5s infinite ease-out; 
+}
+#notification-modal.modal--success .btn-modal-primary {
+    background-color: var(--status-green);
+}
+#notification-modal.modal--success .btn-modal-primary:hover {
+    background-color: #4a8d8d;
+}
+
+/* Erro (Vermelho) */
+#notification-modal.modal--error .modal-icon-wrapper {
+    background-color: #FEEEEE; 
+    color: #E57373;
+}
+#notification-modal.modal--error .btn-modal-primary {
+    background-color: #E57373;
+}
+#notification-modal.modal--error .btn-modal-primary:hover {
+    background-color: #D32F2F;
+}
+
+
+/* --- 8. Chatbot FAB (Padrão) --- */
 .chat-fab {
     position: fixed;
     bottom: 2rem;
@@ -343,7 +404,7 @@ main {
 .chat-fab svg { width: 30px; height: 30px; }
 
 
-/* --- 6. Responsividade --- */
+/* --- 9. Responsividade --- */
 @media (max-width: 768px) {
     /* Header */
     .menu-toggle { display: block; }
@@ -365,128 +426,17 @@ main {
     /* Página */
     .cancel-container { padding: 1.5rem; }
     h1 { font-size: 1.8rem; }
-
-    .cancel-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
+    
+    /* A tabela já é tratada pelo .table-wrapper (overflow-x) */
+    .schedule-table { 
+        font-size: 0.9rem; 
     }
-    .action-wrapper {
-        width: 100%;
+    .schedule-table th, 
+    .schedule-table td {
+        padding: 0.75rem;
     }
     .btn-cancel {
-        width: 100%;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
     }
 }
-
-
-
-/* =================================================================== */
-/* --- 5. Estilos da Tabela (ATUALIZADOS) --- */
-/* =================================================================== */
-
-/* ... (seus estilos de .table-wrapper, .schedule-table, th, td) ... */
-
-/* NOVO: Estilos para Status e Linhas Canceladas */
-.status-cell {
-    font-weight: 700;
-    text-transform: capitalize;
-}
-.status-cell.agendada {
-    color: var(--status-green); /* Verde (de agendar.css) */
-}
-.status-cell.cancelada {
-    color: var(--danger-dark); /* Vermelho escuro */
-}
-
-/* Linha da tabela fica opaca se já cancelada */
-.cancelled-row {
-    opacity: 0.6;
-    background-color: var(--background);
-}
-.cancelled-row .btn-cancel {
-    background-color: var(--border-color);
-    color: var(--text-light);
-    border: none;
-    cursor: not-allowed;
-}
-
-
-/* =================================================================== */
-/* --- 6. Modal de Confirmação (ATUALIZADO) --- */
-/* =================================================================== */
-
-/* ... (seus estilos .modal-overlay, .modal-content, .modal-actions, etc.) ... */
-
-/* NOVO: Estilo para o ícone de "aviso" (triste) do modal de confirmação */
-#cancel-modal .modal-icon-wrapper {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /* Usando um tom de "aviso" (amarelo/laranja) */
-    background-color: #FFF3E0; /* Laranja claro */
-    color: #FFA726; /* Laranja */
-}
-#cancel-modal .modal-icon-wrapper svg {
-    width: 48px;
-    height: 48px;
-}
-
-
-/* =================================================================== */
-/* --- 7. NOVO: Modal de Notificação (Copiado de agendar.css) --- */
-/* =================================================================== */
-@keyframes pulse {
-    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3); }
-    70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(0, 0, 0, 0); }
-    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); }
-}
-
-#notification-modal .modal-icon-wrapper {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-#notification-modal .modal-icon-wrapper svg {
-    width: 48px;
-    height: 48px;
-}
-.btn-modal-primary {
-    flex: 1; padding: 0.75rem; border-radius: 8px; font-weight: 700;
-    font-size: 1rem; border: none; cursor: pointer; transition: all 0.3s ease;
-    background-color: var(--primary); color: var(--card-bg);
-}
-.btn-modal-primary:hover { background-color: #6a6eac; }
-
-/* Sucesso (Verde) */
-#notification-modal.modal--success .modal-icon-wrapper {
-    background-color: #E6F6F6; color: var(--status-green);
-    animation: pulse 1.5s infinite ease-out; 
-}
-#notification-modal.modal--success .btn-modal-primary {
-    background-color: var(--status-green);
-}
-#notification-modal.modal--success .btn-modal-primary:hover {
-    background-color: #4a8d8d;
-}
-
-/* Erro (Vermelho) */
-#notification-modal.modal--error .modal-icon-wrapper {
-    background-color: #FEEEEE; color: #E57373;
-}
-#notification-modal.modal--error .btn-modal-primary {
-    background-color: #E57373;
-}
-#notification-modal.modal--error .btn-modal-primary:hover {
-    background-color: #D32F2F;
-}
-
-/* ... (Resto do seu CSS, como .chat-fab) ... */
