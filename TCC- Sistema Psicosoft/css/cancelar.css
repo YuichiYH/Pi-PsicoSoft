@@ -4,7 +4,7 @@
  *
  * ATUALIZADO:
  * - Substituído o layout de "itens" por uma "tabela".
- * - Adicionada coluna de "Status".
+ * - Adicionada coluna de "Status" (Agendada, Cancelada, Concluída).
  * - Adicionado modal de notificação (sucesso/erro).
  * - Adicionado ícone de "aviso" ao modal de confirmação.
  */
@@ -125,7 +125,6 @@ main {
     padding-bottom: 4rem;
 }
 .cancel-container {
-    /* Max-width aumentado para a tabela */
     max-width: 900px; 
     margin: 0 auto;
     background-color: var(--card-bg);
@@ -136,11 +135,11 @@ main {
 }
 
 .welcome-header { margin-bottom: 2rem; }
-.welcome-header .subtitle { font-size: 1.1rem; /* Ajustado */ }
+.welcome-header .subtitle { font-size: 1.1rem; }
 
 /* --- 4. NOVO: Estilos da Tabela de Consultas --- */
 .table-wrapper {
-    overflow-x: auto; /* Para responsividade da tabela */
+    overflow-x: auto; 
     margin-bottom: 2rem;
     border: 1px solid var(--border-color);
     border-radius: 8px;
@@ -148,7 +147,7 @@ main {
 .schedule-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 600px; /* Força a rolagem em telas pequenas */
+    min-width: 600px; 
 }
 .schedule-table th, 
 .schedule-table td {
@@ -176,9 +175,9 @@ main {
     color: var(--text-dark);
 }
 
-/* --- 5. NOVO: Estilos da Coluna Status e Botão --- */
+/* --- 5. ATUALIZADO: Estilos da Coluna Status e Botão --- */
 
-/* Estilos de Status (Agendada / Cancelada) */
+/* Estilos de Status (Agendada / Cancelada / Concluída) */
 .status-cell {
     font-weight: 700;
     text-transform: capitalize;
@@ -188,6 +187,10 @@ main {
 }
 .status-cell.cancelada {
     color: var(--danger-dark); /* Vermelho escuro */
+}
+/* NOVO: Status para consultas passadas */
+.status-cell.concluida {
+    color: var(--text-light); /* Cinza */
 }
 
 /* Linha da tabela fica opaca se já cancelada */
@@ -202,6 +205,18 @@ main {
     cursor: not-allowed;
 }
 
+/* NOVO: Linha da tabela fica opaca se já passou */
+.past-row {
+    opacity: 0.7;
+}
+.past-row .btn-cancel {
+    background-color: var(--border-color);
+    color: var(--text-light);
+    border: none;
+    cursor: not-allowed;
+}
+
+/* Botão de Cancelamento Padrão (Ativo) */
 .btn-cancel {
     background-color: var(--danger);
     color: var(--card-bg);
@@ -227,7 +242,7 @@ main {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.6);
-    display: none; /* Escondido por padrão */
+    display: none; 
     align-items: center;
     justify-content: center;
     z-index: 1001;
@@ -254,7 +269,7 @@ main {
     transform: scale(1);
 }
 
-/* NOVO: Ícone de "aviso" (triste) do modal de confirmação */
+/* Ícone de "aviso" (triste) do modal de confirmação */
 #cancel-modal .modal-icon-wrapper {
     width: 80px;
     height: 80px;
@@ -263,7 +278,6 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Usando um tom de "aviso" (amarelo/laranja) */
     background-color: #FFF3E0; /* Laranja claro */
     color: #FFA726; /* Laranja */
     margin-bottom: 1rem;
@@ -427,7 +441,6 @@ main {
     .cancel-container { padding: 1.5rem; }
     h1 { font-size: 1.8rem; }
     
-    /* A tabela já é tratada pelo .table-wrapper (overflow-x) */
     .schedule-table { 
         font-size: 0.9rem; 
     }

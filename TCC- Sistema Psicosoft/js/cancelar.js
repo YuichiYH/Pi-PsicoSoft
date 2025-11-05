@@ -1,12 +1,8 @@
 /*
  * cancelar.js
  * Funcionalidades da página de Cancelamento.
- * - Lista consultas do usuário (GET)
- * - Adiciona coluna de Status
- * - Controla modal de confirmação (com ícone 'frown')
- * - Controla modal de notificação (sucesso/erro)
- * - Envia pedido de cancelamento (POST)
- * - ATUALIZAÇÃO: Bloqueia cancelamento < 24h ou datas passadas.
+ * ... (outros comentários)
+ * - ATUALIZAÇÃO: Desabilita cancelamento para datas passadas.
  */
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -21,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     // --- Fim do Script de Proteção ---
 
+    
     // --- 2. Controle do Menu Mobile ---
     const menuToggle = document.getElementById('menu-toggle');
     const mainNav = document.querySelector('.main-nav');
@@ -58,12 +55,14 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // --- 5. Seletores dos Modais ---
+    // Modal de Confirmação (o primeiro)
     const cancelModal = document.getElementById('cancel-modal');
     const confirmCancelBtn = document.getElementById('modal-btn-confirm');
     const closeModalBtn = document.getElementById('modal-btn-close');
     const cancelDetailsText = document.getElementById('modal-cancel-details');
     const cancelIconWrapper = document.querySelector('#cancel-modal .modal-icon-wrapper');
 
+    // Modal de Notificação (o segundo, de resultado)
     const notificationModal = document.getElementById('notification-modal');
     const notificationIconWrapper = notificationModal.querySelector('.modal-icon-wrapper');
     const notificationTitle = document.getElementById('modal-title');
@@ -88,10 +87,12 @@ document.addEventListener("DOMContentLoaded", function() {
         notificationModal.classList.add('active');
     }
 
+    // Evento para fechar o modal de notificação
     notificationOkButton.addEventListener('click', () => {
         notificationModal.classList.remove('active');
     });
 
+    // Evento para fechar o modal de confirmação (botão "Voltar")
     if(closeModalBtn) {
         closeModalBtn.addEventListener('click', () => {
             cancelModal.classList.remove('active');
@@ -121,7 +122,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 return;
             }
 
+            // Ordena por data (OrderDate)
             minhasConsultas.sort((a, b) => a.OrderDate - b.OrderDate);
+
+            // Renderiza a tabela (função atualizada)
             renderTable(minhasConsultas);
 
         } catch (error) {
@@ -131,67 +135,52 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     /**
-     * ATUALIZADO: Converte o formato "dd/mm/aaaa hh:mm" para um objeto Date
-     */
-    function parseHorario(horarioStr) {
-        if (!horarioStr) return null;
-        // Ex: "05/11/2025 16:00"
-        const [dataStr, horaStr] = horarioStr.split(' ');
-        if (!dataStr || !horaStr) return null;
-        
-        const [dia, mes, ano] = dataStr.split('/');
-        const [hora, minuto] = horaStr.split(':');
-        
-        // Mês no JS é 0-indexado (0 = Jan, 11 = Dez)
-        return new Date(ano, mes - 1, dia, hora, minuto);
-    }
-
-
-    /**
-     * ATUALIZADO: Agora valida a data da consulta antes de habilitar o botão.
+     * ATUALIZADO: Renderiza a tabela, agora com validação de data
      */
     function renderTable(consultas) {
         tbody.innerHTML = ''; // Limpa a tabela
+        const now = new Date(); // Pega a data/hora atual *antes* do loop
 
         consultas.forEach(consulta => {
-            const status = consulta.status || "Agendada";
-            const isCancelled = status.toLowerCase() === "cancelada";
+            
+            // --- Início da Nova Lógica de Validação ---
+            
+            // 1. Converte o horário da consulta (ex: "03/06/2025 09:30") para um objeto Date
+            const [dataStr, horaStr] = (consulta.horario || "01/01/1970 00:00").split(' ');
+            const [dia, mes, ano] = dataStr.split('/');
+            const [hora, minuto] = horaStr.split(':');
+            const appointmentDate = new Date(ano, mes - 1, dia, hora, minuto); // Mês é 0-indexado
 
-            // --- INÍCIO DA NOVA LÓGICA DE VALIDAÇÃO DE DATA ---
-            let isDisparada = false; // "Disparada" = Não pode mais ser alterada
+            // 2. Verifica as condições
+            const isCancelled = (consulta.status || '').toLowerCase() === "cancelada";
+            const isPast = appointmentDate < now;
+
+            // 3. Define o Status e o Texto do Botão
+            let statusText = "Agendada";
+            let statusClass = "agendada";
             let buttonText = "Cancelar";
-            const agora = new Date();
-            const consultaDateTime = parseHorario(consulta.horario);
-
-            // Define a regra de 24 horas (em milissegundos)
-            const H24_EM_MS = 24 * 60 * 60 * 1000;
+            let isDisabled = false;
             
-            if (isCancelled) {
-                isDisparada = true;
-                buttonText = "Cancelada";
-            } else if (!consultaDateTime || (consultaDateTime.getTime() - agora.getTime()) < H24_EM_MS) {
-                // Se a data é inválida, ou
-                // se a consulta for em menos de 24h (ou já passou)
-                
-                isDisparada = true;
-                
-                // Muda o texto do botão para ser mais claro
-                if (consultaDateTime && consultaDateTime < agora) {
-                    // Já passou
-                    buttonText = "Concluída"; 
-                } else {
-                    // Está a menos de 24h
-                    buttonText = "Bloqueado"; 
-                }
-            }
-            // --- FIM DA NOVA LÓGICA ---
-
             const tr = document.createElement('tr');
+
             if (isCancelled) {
+                statusText = "Cancelada";
+                statusClass = "cancelada";
+                buttonText = "Cancelada";
+                isDisabled = true;
                 tr.classList.add('cancelled-row');
+            } else if (isPast) {
+                statusText = "Concluída";
+                statusClass = "concluida"; // Nova classe de CSS
+                buttonText = "Concluída";
+                isDisabled = true;
+                tr.classList.add('past-row'); // Nova classe de CSS
             }
             
-            // Lógica para nome do profissional
+            // --- Fim da Nova Lógica ---
+
+
+            // Coluna Profissional (lógica para extrair nome do email)
             let nomeProfissional = consulta.profissional;
             if (!nomeProfissional && consulta.FuncionarioId) {
                 let emailName = consulta.FuncionarioId.split('@')[0];
@@ -202,17 +191,17 @@ document.addEventListener("DOMContentLoaded", function() {
                 nomeProfissional = "Não informado";
             }
 
-
+            // Renderiza a linha com os dados atualizados
             tr.innerHTML = `
                 <td>${nomeProfissional}</td>
                 <td>${consulta.especialidade || 'N/A'}</td>
                 <td>${consulta.horario || 'N/A'}</td>
-                <td class="status-cell ${status.toLowerCase()}">${status}</td>
+                <td class="status-cell ${statusClass}">${statusText}</td>
                 <td>
                     <button class="btn-cancel" 
                         data-order-id="${consulta.OrderId}" 
                         data-horario="${consulta.horario}"
-                        ${isDisparada ? 'disabled' : ''}>
+                        ${isDisabled ? 'disabled' : ''}>
                         ${buttonText}
                     </button>
                 </td>
@@ -220,14 +209,15 @@ document.addEventListener("DOMContentLoaded", function() {
             tbody.appendChild(tr);
         });
 
-        // Após renderizar, anexa os eventos aos botões
+        // Anexa os eventos APENAS aos botões que NÃO estão desabilitados
         attachCancelButtons();
     }
 
     // --- 8. Lógica de Cancelamento (Modal e POST) ---
 
     function attachCancelButtons() {
-        // Seleciona apenas botões que NÃO estão desabilitados
+        // O seletor ':not(:disabled)' já garante que a lógica só se aplique
+        // aos botões "Cancelar" que estão ativos.
         const buttons = document.querySelectorAll('.btn-cancel:not(:disabled)');
         
         buttons.forEach(button => {
@@ -254,7 +244,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // 1. Esconde o modal de confirmação
         cancelModal.classList.remove('active');
 
-        // 2. Mostra um estado de "carregando"
+        // 2. Mostra estado de "carregando"
         showNotification(false, 'Cancelando...', 'Aguarde enquanto processamos sua solicitação.');
 
         const apiUrl = 'https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta/CancelarConsulta';
@@ -262,9 +252,7 @@ document.addEventListener("DOMContentLoaded", function() {
         try {
             const response = await fetch(apiUrl, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ OrderId: orderId }) 
             });
 
@@ -274,7 +262,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 throw new Error(responseData.message || 'Não foi possível cancelar a consulta.');
             }
 
-            // 3. Sucesso! Mostra notificação de sucesso
+            // 3. Sucesso!
             showNotification(true, 'Consulta Cancelada', 'Sua consulta foi cancelada com sucesso.');
 
             // 4. Recarrega a lista para atualizar o status
@@ -282,7 +270,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         } catch (error) {
             console.error('Erro ao cancelar:', error);
-            // 5. Falha! Mostra notificação de erro
+            // 5. Falha!
             showNotification(false, 'Erro ao Cancelar', error.message);
         }
     }
