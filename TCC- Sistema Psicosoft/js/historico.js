@@ -1,22 +1,23 @@
 /*
  * historico.js
  * Funcionalidades da página de Histórico de Consultas (Integrado com API).
+ * Esta versão busca os dados dinamicamente.
  *
- * ATUALIZAÇÃO: Este script foi modificado para usar a API GET /Consulta?ClienteId=...
- * que retorna apenas consultas futuras. As funções de formatação
- * foram adaptadas, mas as abas "Realizadas" e "Canceladas" não
- * exibirão dados, pois essa API não os fornece.
+ * NOTA: Este script usa a API /consultas/{cpf}, que deve retornar
+ * o histórico completo (passado, futuro, cancelado).
+ * Esta API deve ser corrigida no backend para incluir os headers de CORS.
  */
 
 document.addEventListener("DOMContentLoaded", function() {
 
-    // --- 1. Script de Proteção de Rota (Guard) ---
+    // --- 1. NOVO: Script de Proteção de Rota (Guard) ---
     const idCliente = localStorage.getItem('paciente_cpf'); // Pega o CPF
 
     if (!idCliente) {
+        // Se não houver CPF salvo, o usuário não está logado.
         alert("Acesso negado. Por favor, faça login para continuar.");
         window.location.href = "register.html";
-        return; 
+        return; // Impede que o restante do script seja executado
     }
     // --- Fim do Script de Proteção ---
 
@@ -45,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
     
-    // --- 4. Lógica de Logout ---
+    // --- 4. NOVO: Lógica de Logout ---
     const logoutButton = document.querySelector('.btn-logout');
 
     if (logoutButton) {
@@ -67,16 +68,20 @@ document.addEventListener("DOMContentLoaded", function() {
      */
     async function carregarHistorico() {
         
+        // Passo 1: O ID do cliente (CPF) já foi verificado pela Guarda de Rota
+        
         if (!idCliente) {
+            // (Esta verificação é redundante por causa da Guarda, mas é uma boa prática)
             historyList.innerHTML = `<p style="padding: 1rem 0; color: red;">Erro: Paciente não identificado. Faça login novamente.</p>`;
             return;
         }
 
        
-        // --- INÍCIO DA ATUALIZAÇÃO ---
-        // 1. Usando a API que você especificou (GET /Consulta?ClienteId=...)
-        const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta?ClienteId=${idCliente}`;
-        // --- FIM DA ATUALIZAÇÃO ---
+        // --- INÍCIO DA CORREÇÃO ---
+        // A URL deve apontar para o recurso que busca o HISTÓRICO COMPLETO
+        // (com 'consultas' no plural, que retorna os campos 'status', 'data', etc.)
+        const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/consultas/${idCliente}`;
+        // --- FIM DA CORREÇÃO ---
         
 
         try {
@@ -86,11 +91,12 @@ document.addEventListener("DOMContentLoaded", function() {
             const response = await fetch(url);
             
             if (!response.ok) {
+                // Se esta API der erro de CORS, ela precisará do
+                // ajuste no backend (API Gateway/Lambda) para adicionar os headers.
                 throw new Error(`Erro ${response.status}: Não foi possível buscar os dados.`);
             }
             
-            // 3. A API retorna a lista de consultas futuras
-            const consultas = await response.json(); 
+            const consultas = await response.json(); // Espera-se um array [ ... ]
             
             // Passo 3: Limpar o "Carregando..."
             historyList.innerHTML = ""; 
@@ -102,8 +108,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // Passo 4: Criar o HTML dinamicamente para cada consulta
             consultas.forEach(consulta => {
-                // 4. Usando a nova função 'formatarConsultaDaAPI'
-                const dadosFormatados = formatarConsultaDaAPI(consulta);
+                // A função formatarConsulta (abaixo) espera campos como
+                // 'data', 'status', 'profissional', 'confirmada'
+                
+                const dadosFormatados = formatarConsulta(consulta);
                 const itemHtml = criarItemHistoricoHTML(dadosFormatados);
                 historyList.innerHTML += itemHtml;
             });
@@ -121,42 +129,77 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     
     /**
-     * (MODIFICADO) Converte os dados da API (GET /Consulta)
-     * para o formato que o HTML da página de histórico espera.
+     * Converte os dados brutos do DynamoDB/Lambda em um formato fácil para o HTML.
+     * @param {object} consulta - O item bruto.
+     * @returns {object} - Um objeto pronto para o template.
      */
-    function formatarConsultaDaAPI(consulta) {
+    function formatarConsulta(consulta) {
+        // Assume que 'consulta.data' é um ISOString (ex: "2025-11-10T14:30:00Z")
+        const data = new Date(consulta.data); 
+        
+        // --- LÓGICA DE DATA/STATUS CORRETA ---
+        let status = consulta.status || 'proximas'; // Pega o status da API
+        
+        // Se a API não mandar o status, tentamos adivinhar pela data
+        if (!consulta.status) {
+            const agora = new Date();
+            if (data < agora) {
+                status = "realizadas";
+            } else {
+                status = "proximas";
+            }
+        }
+        // --- FIM DA LÓGICA ---
         
         const diasSemana = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
         const meses = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
         const mesesCompleto = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
-        // A Lambda retorna um campo "horario" (ex: "05/11/2025 11:00")
-        const [dataStr, horaStr] = consulta.horario.split(' '); // ["05/11/2025", "11:00"]
-        const [dia, mesNum, ano] = dataStr.split('/');       // ["05", "11", "2025"]
-        
-        // Criamos um objeto Date para descobrir o dia da semana
-        const dataObj = new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia));
-        const diaSemana = diasSemana[dataObj.getDay()];
-        const mesIdx = dataObj.getMonth();
-
-        // Como esta API SÓ retorna consultas futuras,
-        // o status será sempre "proximas"
-        const status = "proximas";
+        const dia = String(data.getDate()).padStart(2, '0');
+        const mesIdx = data.getMonth();
+        const ano = data.getFullYear();
+        const diaSemana = diasSemana[data.getDay()];
+        const hora = data.toTimeString().substring(0, 5);
 
         let dadosFormatados = {
-            dataStatus: status, // Para o filtro da aba
+            dataStatus: status, // O 'data-status' para o filtro
             mes: meses[mesIdx],
             dia: dia,
-            titulo: `Consulta de ${consulta.especialidade || 'Clínica'}`, // API retorna 'especialidade'
-            descricao: `${diaSemana}, ${dia} de ${mesesCompleto[mesIdx]} de ${ano} - ${horaStr}`,
-            classeStatus: "status-confirmada", // Assumindo confirmada
-            iconeStatus: "check-circle",
-            textoStatus: "Confirmada",
-            isCancelada: false
+            titulo: `Consulta com ${consulta.profissional || 'Profissional'}`,
+            descricao: `${diaSemana}, ${dia} de ${mesesCompleto[mesIdx]} de ${ano} - ${hora}`,
+            classeStatus: "",
+            iconeStatus: "",
+            textoStatus: "",
+            isCancelada: (status === 'canceladas')
         };
         
-        // Esta API não informa se está 'pendente' vs 'confirmada',
-        // então tratamos todas como confirmadas.
+        // Define o estilo da tag de status
+        switch (status) {
+            case 'realizadas':
+                dadosFormatados.classeStatus = 'status-realizada';
+                dadosFormatados.iconeStatus = 'history';
+                dadosFormatados.textoStatus = 'Realizada';
+                break;
+            case 'canceladas':
+                dadosFormatados.classeStatus = 'status-cancelada';
+                dadosFormatados.iconeStatus = 'x-circle';
+                dadosFormatados.textoStatus = 'Cancelada';
+                break;
+            case 'proximas':
+            default:
+                // Assume que seu item 'consulta' tem um campo 'confirmada' (boolean)
+                if (consulta.confirmada === false) { 
+                    dadosFormatados.classeStatus = 'status-pendente';
+                    dadosFormatados.iconeStatus = 'clock';
+                    dadosFormatados.textoStatus = 'Pendente';
+                } else {
+                    dadosFormatados.classeStatus = 'status-confirmada';
+                    dadosFormatados.iconeStatus = 'check-circle';
+                    dadosFormatados.textoStatus = 'Confirmada';
+                }
+                dadosFormatados.dataStatus = "proximas"; // Garante que caia na aba "Próximas"
+                break;
+        }
         
         return dadosFormatados;
     }
@@ -187,8 +230,9 @@ document.addEventListener("DOMContentLoaded", function() {
         `;
     }
 
-    // --- 6. Lógica das Abas de Filtro ---
-    // (Esta função está correta, ela vai funcionar)
+    // --- 6. Lógica das Abas de Filtro (MODIFICADA) ---
+    // Esta função agora é chamada *depois* que os dados são carregados
+    
     function setupFiltros() {
         const tabs = document.querySelectorAll('.tab-item');
         
@@ -207,19 +251,19 @@ document.addEventListener("DOMContentLoaded", function() {
                 const historyItems = document.querySelectorAll('.history-item'); 
                 
                 historyItems.forEach(item => {
-                    // O dataStatus de todos os itens será "proximas"
                     if (filter === 'todas') {
-                        item.style.display = 'flex'; // Mostra (só as próximas)
+                        item.style.display = 'flex'; // Mostra todos
                     } else if (item.dataset.status === filter) {
-                        item.style.display = 'flex'; // Mostra (só as próximas)
+                        item.style.display = 'flex'; // Mostra o item
                     } else {
-                        item.style.display = 'none'; // Esconde
+                        item.style.display = 'none'; // Esconde o item
                     }
                 });
             });
         });
 
         // Simula um clique na aba "Todas" para definir o estado inicial
+        // (Verifica se a aba existe antes de clicar)
         const abaTodas = document.querySelector('.tab-item[data-filter="todas"]');
         if (abaTodas) {
             abaTodas.click();
