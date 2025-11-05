@@ -121,18 +121,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 const responseData = await res.json();
                 console.log("Resposta login:", responseData);
                 
-                // --- INÍCIO DA ATUALIZAÇÃO ---
                 if (responseData.success && responseData.client) {
                     
-                    // Salva os dados do paciente no localStorage para iniciar a sessão
+                    // --- INÍCIO DA ATUALIZAÇÃO ---
+                    // (Assumindo que responseData.client contém 'name', 'cpf' e 'email')
+                    
+                    // Mantemos a lógica original
                     localStorage.setItem('paciente_nome', responseData.client.name);
                     localStorage.setItem('paciente_cpf', responseData.client.cpf); 
                     
+                    // ADICIONAMOS o email, que será usado como 'ClienteId'
+                    localStorage.setItem('paciente_email', responseData.client.email);
+                    // --- FIM DA ATUALIZAÇÃO ---
+
                     window.location.href = "dashboard.html"; // Redireciona para o painel
                 } else {
                     throw new Error(responseData.message || "Login falhou.");
                 }
-                // --- FIM DA ATUALIZAÇÃO ---
 
             } catch (err) {
                 console.error("Erro (Login):", err);
