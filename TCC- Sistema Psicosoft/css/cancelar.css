@@ -3,10 +3,8 @@
  * Estilo para a página de cancelamento (usa a paleta oficial).
  *
  * ATUALIZADO:
- * - Substituído o layout de "itens" por uma "tabela".
  * - Adicionada coluna de "Status" (Agendada, Cancelada, Concluída).
- * - Adicionado modal de notificação (sucesso/erro).
- * - Adicionado ícone de "aviso" ao modal de confirmação.
+ * - ATUALIZAÇÃO DE RESPONSIVIDADE: Tabela vira "Cards" no celular.
  */
 
 /* --- 1. Variáveis Globais e Reset --- */
@@ -137,17 +135,17 @@ main {
 .welcome-header { margin-bottom: 2rem; }
 .welcome-header .subtitle { font-size: 1.1rem; }
 
-/* --- 4. NOVO: Estilos da Tabela de Consultas --- */
+/* --- 4. Estilos da Tabela de Consultas --- */
 .table-wrapper {
-    overflow-x: auto; 
+    /* Remove a borda e o overflow do wrapper */
+    overflow-x: hidden; 
     margin-bottom: 2rem;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border: none;
 }
 .schedule-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 600px; 
+    /* min-width removido, não é mais necessário */
 }
 .schedule-table th, 
 .schedule-table td {
@@ -175,9 +173,7 @@ main {
     color: var(--text-dark);
 }
 
-/* --- 5. ATUALIZADO: Estilos da Coluna Status e Botão --- */
-
-/* Estilos de Status (Agendada / Cancelada / Concluída) */
+/* --- 5. Estilos da Coluna Status e Botão --- */
 .status-cell {
     font-weight: 700;
     text-transform: capitalize;
@@ -188,12 +184,11 @@ main {
 .status-cell.cancelada {
     color: var(--danger-dark); /* Vermelho escuro */
 }
-/* NOVO: Status para consultas passadas */
 .status-cell.concluida {
     color: var(--text-light); /* Cinza */
 }
 
-/* Linha da tabela fica opaca se já cancelada */
+/* Linha da tabela opaca se cancelada */
 .cancelled-row {
     opacity: 0.6;
     background-color: var(--background);
@@ -205,7 +200,7 @@ main {
     cursor: not-allowed;
 }
 
-/* NOVO: Linha da tabela fica opaca se já passou */
+/* Linha da tabela opaca se já passou */
 .past-row {
     opacity: 0.7;
 }
@@ -234,7 +229,7 @@ main {
 }
 
 
-/* --- 6. Modal de Confirmação (ATUALIZADO com Ícone) --- */
+/* --- 6. Modal de Confirmação --- */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -269,7 +264,6 @@ main {
     transform: scale(1);
 }
 
-/* Ícone de "aviso" (triste) do modal de confirmação */
 #cancel-modal .modal-icon-wrapper {
     width: 80px;
     height: 80px;
@@ -330,7 +324,7 @@ main {
 }
 
 
-/* --- 7. NOVO: Modal de Notificação (Sucesso/Erro) --- */
+/* --- 7. Modal de Notificação (Sucesso/Erro) --- */
 @keyframes pulse {
     0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3); }
     70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(0, 0, 0, 0); }
@@ -418,7 +412,9 @@ main {
 .chat-fab svg { width: 30px; height: 30px; }
 
 
-/* --- 9. Responsividade --- */
+/* ========================================================== */
+/* --- 9. ATUALIZADO: Responsividade (Formato de Card) --- */
+/* ========================================================== */
 @media (max-width: 768px) {
     /* Header */
     .menu-toggle { display: block; }
@@ -438,18 +434,96 @@ main {
     .menu-toggle.active .bar:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
 
     /* Página */
-    .cancel-container { padding: 1.5rem; }
-    h1 { font-size: 1.8rem; }
-    
-    .schedule-table { 
-        font-size: 0.9rem; 
+    .cancel-container { 
+        padding: 1rem; 
+        border: none;
+        box-shadow: none;
+        background: none;
     }
-    .schedule-table th, 
+    h1 { font-size: 1.8rem; }
+    .welcome-header { padding: 0 1rem; }
+
+    /* * Transforma a Tabela em Cards
+     */
+    .table-wrapper {
+        border: none;
+    }
+    
+    .schedule-table {
+        border: none;
+    }
+    
+    /* 1. Esconde o cabeçalho da tabela */
+    .schedule-table thead {
+        display: none;
+    }
+
+    /* 2. Transforma a linha (tr) em um card */
+    .schedule-table tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        box-shadow: var(--shadow-sm);
+        background: var(--card-bg);
+    }
+    /* Remove borda da tabela original */
     .schedule-table td {
-        padding: 0.75rem;
+        border-bottom: 1px dashed var(--border-color);
+    }
+    .schedule-table tr td:last-child {
+        border-bottom: none;
+    }
+    
+    /* 3. Transforma a célula (td) em um item de lista (key-value) */
+    .schedule-table td {
+        display: block;
+        padding: 0.75rem 1rem;
+        padding-left: 50%; /* Espaço para o "label" */
+        position: relative;
+        text-align: right; /* Valor à direita */
+    }
+
+    /* 4. Adiciona o "label" (cabeçalho) antes do conteúdo */
+    .schedule-table td::before {
+        content: "Label"; /* Será substituído abaixo */
+        position: absolute;
+        left: 1rem;
+        width: 45%;
+        padding-right: 10px;
+        text-align: left; /* Label à esquerda */
+        font-weight: 700;
+        color: var(--text-dark);
+        font-size: 0.9rem;
+    }
+
+    /* 5. Define o 'content' para cada label (cabeçalho) */
+    .schedule-table td:nth-of-type(1)::before { content: "Profissional:"; }
+    .schedule-table td:nth-of-type(2)::before { content: "Especialidade:"; }
+    .schedule-table td:nth-of-type(3)::before { content: "Data e Horário:"; }
+    .schedule-table td:nth-of-type(4)::before { content: "Status:"; }
+    
+    /* 6. Estiliza a célula da Ação (botão) */
+    .schedule-table td:nth-of-type(5) {
+        padding: 1rem; /* Mais espaço para o botão */
+        text-align: center;
+        background-color: var(--background);
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
+    .schedule-table td:nth-of-type(5)::before {
+        display: none; /* Sem label para o botão */
     }
     .btn-cancel {
-        padding: 0.5rem 0.8rem;
-        font-size: 0.85rem;
+        width: 100%; /* Botão com largura total */
+    }
+
+    /* Ajuste para linhas desabilitadas no modo card */
+    .past-row, .cancelled-row {
+        background-color: #f7f7f7;
+    }
+    .past-row td:nth-of-type(5),
+    .cancelled-row td:nth-of-type(5) {
+         background-color: #f0f0f0;
     }
 }
