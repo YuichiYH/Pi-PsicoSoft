@@ -2,8 +2,8 @@
  * dashboard.js
  * Funcionalidade do menu mobile, chat bot, proteção de rota e carregamento de consultas.
  *
- * ATUALIZAÇÃO: Agora usa a API GET /Consulta?ClienteId=...
- * e formata os dados com base nos campos 'horario' e 'especialidade'.
+ * ATUALIZAÇÃO: Adicionado filtro de data no frontend para garantir
+ * que APENAS consultas futuras sejam exibidas no painel.
  */
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -81,30 +81,44 @@ document.addEventListener("DOMContentLoaded", function() {
         // Mostra feedback de carregamento
         appointmentList.innerHTML = '<li style="padding: 1rem; color: #718096;">Carregando consultas...</li>';
         
-        // --- INÍCIO DA ATUALIZAÇÃO ---
-        // 1. URL atualizada para a nova Lambda, usando 'ClienteId' como query param
+        // 1. URL da API (GET /Consulta?ClienteId=...)
         const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta?ClienteId=${pacienteCPF}`;
 
         try {
-            // 2. Requisição GET simples (como a Lambda espera)
+            // 2. Requisição GET simples
             const response = await fetch(url);
             
             if (!response.ok) {
                 throw new Error(`Erro ${response.status}: Não foi possível buscar os dados.`);
             }
             
-            // 3. A resposta já é a lista de consultas futuras
-            const proximasConsultas = await response.json();
+            // 3. A resposta (API envia todas as consultas)
+            const todasConsultas = await response.json();
             
-            // 4. REMOVIDO: a linha .filter(consulta => consulta.status === 'proximas')
-            // pois a própria Lambda já faz esse filtro de tempo.
+            // --- INÍCIO DA CORREÇÃO (FILTRO DE DATA) ---
             
-            // --- FIM DA ATUALIZAÇÃO ---
+            const agora = new Date(); // Pega a data/hora atual
 
-            // Limpa a lista antes de adicionar os itens
+            // 4. Filtra a lista no frontend
+            const consultasFuturas = todasConsultas.filter(consulta => {
+                // A API retorna "horario" (ex: "10/11/2025 14:30")
+                const [dataStr, horaStr] = consulta.horario.split(' '); // ["10/11/2025", "14:30"]
+                const [dia, mesNum, ano] = dataStr.split('/');       // ["10", "11", "2025"]
+                const [hora, minuto] = horaStr.split(':');           // ["14", "30"]
+                
+                // Cria a data da consulta (Mês é 0-indexado, por isso mesNum - 1)
+                const dataConsulta = new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia), parseInt(hora), parseInt(minuto));
+                
+                // Retorna true APENAS se a data da consulta for maior (mais nova) que agora
+                return dataConsulta > agora;
+            });
+            // --- FIM DA CORREÇÃO ---
+
+            // Limpa a lista
             appointmentList.innerHTML = ""; 
 
-            if (!proximasConsultas || proximasConsultas.length === 0) {
+            // 5. Usa a lista filtrada 'consultasFuturas'
+            if (!consultasFuturas || consultasFuturas.length === 0) {
                 // Adiciona a mensagem de "nenhuma consulta"
                 appointmentList.innerHTML = `
                     <li class="no-appointments">
@@ -113,8 +127,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </li>`;
             } else {
                 // Cria o HTML dinamicamente para cada consulta futura
-                proximasConsultas.forEach(consulta => {
-                    // Usa a nova função de formatação adaptada
+                consultasFuturas.forEach(consulta => {
                     const dadosFormatados = formatarConsultaDashboard(consulta);
                     const itemHtml = criarItemConsultaHTML(dadosFormatados);
                     appointmentList.innerHTML += itemHtml;
@@ -150,19 +163,8 @@ document.addEventListener("DOMContentLoaded", function() {
             textoStatus: `Confirmada - ${horaStr}` // Exibe a hora
         };
         
-        // Esta Lambda não parece ter o status "confirmada" (boolean).
-        // Se houver um campo (ex: consulta.confirmada), podemos re-adicionar a lógica:
-        /*
-        if (consulta.confirmada === false) { 
-            dadosFormatados.classeStatus = 'status-pendente';
-            dadosFormatados.iconeStatus = 'clock';
-            dadosFormatados.textoStatus = `Aguardando Confirmação`;
-        } else {
-            dadosFormatados.classeStatus = 'status-confirmado';
-            dadosFormatados.iconeStatus = 'check-circle';
-            dadosFormatados.textoStatus = `Confirmada - ${horaStr}`;
-        }
-        */
+        // (Lógica de 'confirmada' vs 'pendente' omitida,
+        // pois a API /Consulta não parece fornecer esse booleano)
         
         return dadosFormatados;
     }
