@@ -1,6 +1,8 @@
 /*
  * agendar.js
  * Funcionalidades da página de Agendamento, incluindo calendário dinâmico.
+ * * ATUALIZAÇÃO: Adicionada lógica de SUBMISSÃO DE AGENDAMENTO (POST)
+ * para a API da AWS.
  */
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -48,6 +50,8 @@ document.addEventListener("DOMContentLoaded", function() {
             event.preventDefault(); 
             localStorage.removeItem('paciente_nome');
             localStorage.removeItem('paciente_cpf');
+            // Adicionado para garantir que o email também seja limpo
+            localStorage.removeItem('paciente_email'); 
             window.location.href = "index.html"; 
         });
     }
@@ -183,5 +187,118 @@ document.addEventListener("DOMContentLoaded", function() {
     // --- Inicialização ---
     renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
     addTimeSlotClickHandlers(); // Para os horários estáticos de exemplo
+
+
+    // =======================================================================
+    // --- 8. NOVO: LÓGICA DE SUBMISSÃO DE AGENDAMENTO (API POST) ---
+    // =======================================================================
+
+    const confirmButton = document.querySelector('.btn-confirm');
+    
+    if (confirmButton) {
+        confirmButton.addEventListener('click', async (event) => {
+            event.preventDefault(); // Impede o envio de formulário padrão
+
+            // 1. Coletar Dados do Formulário
+            const especialidadeSelect = document.getElementById('especialidade');
+            const profissionalSelect = document.getElementById('profissional');
+            const selectedDayEl = document.querySelector('.day.selected');
+            const selectedTimeEl = document.querySelector('.time-slot.selected');
+
+            // 2. Coletar Dados do Paciente (do localStorage)
+            // (pacienteCPF já foi pego na proteção de rota no topo)
+            const clienteId = pacienteCPF; 
+            const nomePaciente = localStorage.getItem('paciente_nome');
+            const emailPaciente = localStorage.getItem('paciente_email'); // Assumindo que o 'register.js' salva isso
+
+            // 3. Validação
+            if (especialidadeSelect.value === "") {
+                alert("Por favor, selecione uma especialidade.");
+                return;
+            }
+            if (!selectedDayEl) {
+                alert("Por favor, selecione uma data no calendário.");
+                return;
+            }
+            if (!selectedTimeEl) {
+                alert("Por favor, selecione um horário.");
+                return;
+            }
+            if (!clienteId || !nomePaciente || !emailPaciente) {
+                alert("Erro: Informações do paciente não encontradas. Por favor, faça login novamente.");
+                return;
+            }
+
+            // 4. Formatar os Dados para a API
+            
+            // Formata a data (ex: 05/11/2025)
+            const dia = selectedDayEl.dataset.day.padStart(2, '0');
+            const mes = (parseInt(selectedDayEl.dataset.month) + 1).toString().padStart(2, '0'); // +1 pois JS é 0-indexado
+            const ano = selectedDayEl.dataset.year;
+            
+            // Formata o horário (ex: 09:00)
+            const hora = selectedTimeEl.textContent.trim();
+            
+            // Combina no formato esperado pela API (visto em historico.js)
+            const horarioFormatado = `${dia}/${mes}/${ano} ${hora}`;
+
+            // Pega o texto da especialidade e profissional
+            const especialidadeTexto = especialidadeSelect.options[especialidadeSelect.selectedIndex].text;
+            const profissionalTexto = profissionalSelect.options[profissionalSelect.selectedIndex].text;
+
+            // 5. Montar o Payload (Corpo da Requisição)
+            const payload = {
+                ClienteId: clienteId,
+                nome: nomePaciente,
+                email: emailPaciente,
+                especialidade: especialidadeTexto,
+                profissional: profissionalTexto,
+                horario: horarioFormatado,
+                // Campos adicionais (como 'motivo' ou 'forma') podem ser necessários.
+                // Adicionando valores padrão com base nos outros arquivos JS.
+                forma: "Online", 
+                motivo: "Agendamento via portal" 
+            };
+
+            console.log("Enviando agendamento:", payload);
+
+            // 6. Enviar a Requisição POST
+            const apiUrl = 'https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta';
+            
+            confirmButton.textContent = "Agendando...";
+            confirmButton.disabled = true;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const responseData = await response.json();
+
+                if (!response.ok) {
+                    // Se a API retornar um erro (ex: 400, 500)
+                    throw new Error(responseData.message || 'Não foi possível completar o agendamento.');
+                }
+
+                // 7. Sucesso!
+                alert('Consulta agendada com sucesso!');
+                window.location.href = 'dashboard.html'; // Redireciona para o painel
+
+            } catch (error) {
+                // 8. Falha
+                console.error('Erro ao agendar consulta:', error);
+                alert(`Erro ao agendar: ${error.message}`);
+            
+            } finally {
+                // Restaura o botão
+                confirmButton.textContent = "Confirmar Agendamento";
+                confirmButton.disabled = false;
+            }
+        });
+    }
 
 });
