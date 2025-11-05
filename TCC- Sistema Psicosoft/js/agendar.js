@@ -5,11 +5,13 @@
  * - Adicionada lógica de SUBMISSÃO DE AGENDAMENTO (POST) para a API.
  * - Adicionada validação de horários (GET) para carregar horários reais.
  * - Adicionados novos campos (idade, motivo, forma) ao payload.
+ * - CORREÇÃO: Enviando 'cpf' e 'FuncionarioId' (email) e removendo 'profissional' (texto).
  */
 
 document.addEventListener("DOMContentLoaded", function() {
 
     // --- 1. Script de Proteção de Rota (Guard) ---
+    // (pacienteCPF é o CPF do paciente, salvo no login)
     const pacienteCPF = localStorage.getItem('paciente_cpf');
 
     if (!pacienteCPF) {
@@ -132,7 +134,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     /**
-     * (ATUALIZADO) Adiciona clique aos dias, que AGORA disparam a busca de horários.
+     * Adiciona clique aos dias, que AGORA disparam a busca de horários.
      */
     function addDayClickHandlers() {
         const days = document.querySelectorAll('.day:not(.prev-month):not(.next-month):not(.disabled)');
@@ -163,12 +165,8 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // --- 7. NOVO: LÓGICA DE VALIDAÇÃO DE HORÁRIOS (API GET) ---
+    // --- 7. LÓGICA DE VALIDAÇÃO DE HORÁRIOS (API GET) ---
 
-    /**
-     * Busca na API os horários ocupados para um médico e data,
-     * e renderiza os horários disponíveis.
-     */
     async function carregarHorariosDisponiveis(funcionarioId, dataSelecionada) {
         timeSlotsGrid.innerHTML = '<p style="color: var(--text-light); grid-column: 1 / -1;">Carregando horários disponíveis...</p>';
         
@@ -182,7 +180,6 @@ document.addEventListener("DOMContentLoaded", function() {
             
             const todasConsultas = await response.json();
             
-            // Formata a data selecionada para "dd/mm/aaaa" (padrão da API)
             const dataSelecionadaStr = dataSelecionada.toLocaleDateString('pt-BR', {
                 day: '2-digit', month: '2-digit', year: 'numeric'
             });
@@ -190,10 +187,9 @@ document.addEventListener("DOMContentLoaded", function() {
             // 1. Cria um Set (lista) de horários JÁ OCUPADOS para este dia
             const horariosOcupados = new Set();
             todasConsultas.forEach(consulta => {
-                // API retorna "horario" (ex: "10/11/2025 14:30")
                 const [dataStr, horaStr] = consulta.horario.split(' ');
                 if (dataStr === dataSelecionadaStr) {
-                    horariosOcupados.add(horaStr); // Adiciona "14:30" ao Set
+                    horariosOcupados.add(horaStr); 
                 }
             });
 
@@ -201,13 +197,12 @@ document.addEventListener("DOMContentLoaded", function() {
             const horariosHTML = [];
             const agora = new Date();
             
-            // Loop das 07:00 até 17:00 (último início às 17:30)
             for (let hora = 7; hora <= 17; hora++) {
                 for (let minuto = 0; minuto < 60; minuto += 30) {
                     
                     const horaStr = hora.toString().padStart(2, '0');
                     const minutoStr = minuto.toString().padStart(2, '0');
-                    const slotTimeStr = `${horaStr}:${minutoStr}`; // Ex: "07:30"
+                    const slotTimeStr = `${horaStr}:${minutoStr}`; 
 
                     const slotDateTime = new Date(
                         dataSelecionada.getFullYear(),
@@ -219,12 +214,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
                     let isDisabled = false;
                     
-                    // Validação 1: Está ocupado?
                     if (horariosOcupados.has(slotTimeStr)) {
                         isDisabled = true;
                     }
                     
-                    // Validação 2: Já passou? (Só verifica se for hoje)
                     if (slotDateTime < agora) {
                         isDisabled = true;
                     }
@@ -242,7 +235,6 @@ document.addEventListener("DOMContentLoaded", function() {
                  timeSlotsGrid.innerHTML = '<p style="color: var(--text-light); grid-column: 1 / -1;">Nenhum horário encontrado.</p>';
             } else {
                  timeSlotsGrid.innerHTML = horariosHTML.join('');
-                 // Adiciona os cliques aos novos botões
                  addTimeSlotClickHandlers();
             }
 
@@ -253,7 +245,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     /**
-     * (ATUALIZADO) Adiciona clique aos botões de horário (que agora são dinâmicos)
+     * Adiciona clique aos botões de horário (que agora são dinâmicos)
      */
     function addTimeSlotClickHandlers() {
         const timeSlots = document.querySelectorAll('.time-slot:not(.disabled)');
@@ -278,7 +270,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // --- Inicialização ---
     renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
-    // (addTimeSlotClickHandlers é chamado dentro de carregarHorariosDisponiveis)
 
 
     // =======================================================================
@@ -303,9 +294,9 @@ document.addEventListener("DOMContentLoaded", function() {
             const selectedTimeEl = document.querySelector('.time-slot.selected');
 
             // 2. Coletar Dados do Paciente (localStorage)
-            const clienteId = pacienteCPF; 
+            const clienteId = pacienteCPF; // 'paciente_cpf' (CPF) é o ClienteId
             const nomePaciente = localStorage.getItem('paciente_nome');
-            const emailPaciente = localStorage.getItem('paciente_email'); 
+            const emailPaciente = localStorage.getItem('paciente_email'); // Email (corrigido pelo register.js)
 
             // 3. Validação
             if (especialidadeSelect.value === "" || profissionalSelect.value === "" || formaSelect.value === "" || idadeInput.value === "" || motivoInput.value === "") {
@@ -333,22 +324,23 @@ document.addEventListener("DOMContentLoaded", function() {
             const horarioFormatado = `${dia}/${mes}/${ano} ${hora}`;
 
             const especialidadeTexto = especialidadeSelect.options[especialidadeSelect.selectedIndex].text;
-            const profissionalTexto = profissionalSelect.options[profissionalSelect.selectedIndex].text;
 
-            // 5. Montar o Payload (Corpo da Requisição) - AGORA COM OS NOVOS CAMPOS
+            // 5. Montar o Payload (Corpo da Requisição) - CORRIGIDO
             const payload = {
                 ClienteId: clienteId,
+                cpf: clienteId, // CPF preenchido automaticamente (é o mesmo que o ClienteId)
                 nome: nomePaciente,
-                email: emailPaciente,
+                email: emailPaciente, // Email (agora corrigido)
                 especialidade: especialidadeTexto,
-                profissional: profissionalTexto,
+                FuncionarioId: profissionalSelect.value, // Email do médico (ex: psicosoft_dr@gmail.com)
                 horario: horarioFormatado,
                 idade: idadeInput.value,
                 motivo: motivoInput.value,
                 forma: formaSelect.value
+                // O campo 'profissional' (texto) foi removido
             };
 
-            console.log("Enviando agendamento:", payload);
+            console.log("Enviando agendamento (corrigido):", payload);
 
             // 6. Enviar a Requisição POST
             const apiUrl = 'https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta';

@@ -124,14 +124,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (responseData.success && responseData.client) {
                     
                     // --- INÍCIO DA ATUALIZAÇÃO ---
-                    // (Assumindo que responseData.client contém 'name', 'cpf' e 'email')
-                    
-                    // Mantemos a lógica original
+                    // Salvamos os dados do paciente que vieram da API
                     localStorage.setItem('paciente_nome', responseData.client.name);
                     localStorage.setItem('paciente_cpf', responseData.client.cpf); 
                     
-                    // ADICIONAMOS o email, que será usado como 'ClienteId'
-                    localStorage.setItem('paciente_email', responseData.client.email);
+                    // CORREÇÃO: Salvamos o 'email' que o usuário USOU PARA LOGAR
+                    localStorage.setItem('paciente_email', email);
                     // --- FIM DA ATUALIZAÇÃO ---
 
                     window.location.href = "dashboard.html"; // Redireciona para o painel
