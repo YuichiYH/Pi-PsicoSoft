@@ -1,24 +1,17 @@
 /*
  * agendar.js
- * Funcionalidades da página de Agendamento, incluindo calendário dinâmico.
- * * ATUALIZAÇÃO:
- * - Adicionada lógica de SUBMISSÃO DE AGENDAMENTO (POST) para a API.
- * - Adicionada validação de horários (GET) para carregar horários reais.
- * - Adicionados novos campos (idade, motivo, forma) ao payload.
- * - CORREÇÃO: Enviando 'cpf' e 'FuncionarioId'.
- * - CORREÇÃO 2: Campo 'email' REMOVIDO do payload a pedido.
+ * Funcionalidades da página de Agendamento, incluindo calendário dinâmico
+ * e MODAL DE NOTIFICAÇÃO customizado.
  */
 
 document.addEventListener("DOMContentLoaded", function() {
 
     // --- 1. Script de Proteção de Rota (Guard) ---
-    // (pacienteCPF é o CPF do paciente, salvo no login)
     const pacienteCPF = localStorage.getItem('paciente_cpf');
 
     if (!pacienteCPF) {
-        alert("Acesso negado. Por favor, faça login para continuar.");
-        window.location.href = "register.html";
-        return; 
+        // (Usaremos o modal de erro para esta falha também)
+        console.warn("Acesso negado. CPF não encontrado no localStorage.");
     }
     // --- Fim do Script de Proteção ---
 
@@ -91,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         const daysInPrevMonth = new Date(year, month, 0).getDate();
 
-        // 1. Dias do mês anterior
+        // Dias do mês anterior
         for (let i = firstDayOfMonth; i > 0; i--) {
             const dayEl = document.createElement('div');
             dayEl.classList.add('day', 'prev-month');
@@ -99,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function() {
             calendarGridEl.appendChild(dayEl);
         }
 
-        // 2. Dias do mês atual
+        // Dias do mês atual
         for (let i = 1; i <= daysInMonth; i++) {
             const dayEl = document.createElement('div');
             dayEl.classList.add('day');
@@ -119,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function() {
             calendarGridEl.appendChild(dayEl);
         }
 
-        // 3. Dias do próximo mês
+        // Dias do próximo mês
         const totalGridCells = 42; 
         const renderedCells = firstDayOfMonth + daysInMonth;
         const remainingCells = totalGridCells - renderedCells;
@@ -130,22 +123,18 @@ document.addEventListener("DOMContentLoaded", function() {
             calendarGridEl.appendChild(dayEl);
         }
         
-        // Adiciona os eventos de clique (agora com validação)
         addDayClickHandlers();
     }
 
-    /**
-     * Adiciona clique aos dias, que AGORA disparam a busca de horários.
-     */
     function addDayClickHandlers() {
         const days = document.querySelectorAll('.day:not(.prev-month):not(.next-month):not(.disabled)');
         days.forEach(day => {
             day.addEventListener('click', async () => {
                 
-                // Validação: Exige seleção de profissional
                 const funcionarioId = profissionalSelect.value;
                 if (!funcionarioId) {
-                    alert("Por favor, selecione um profissional primeiro (Etapa 1).");
+                    // USA O NOVO MODAL PARA AVISO
+                    showNotification(false, 'Ação Necessária', 'Por favor, selecione um profissional primeiro (Etapa 1).');
                     return;
                 }
 
@@ -159,7 +148,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 
                 timeSlotHeader.textContent = `Escolha um horário (${dayOfWeek}, ${dayNum} de ${monthNames[monthNum]})`;
 
-                // Chama a nova função de busca de horários
                 const dataSelecionada = new Date(yearNum, monthNum, dayNum);
                 await carregarHorariosDisponiveis(funcionarioId, dataSelecionada);
             });
@@ -167,7 +155,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // --- 7. LÓGICA DE VALIDAÇÃO DE HORÁRIOS (API GET) ---
-
     async function carregarHorariosDisponiveis(funcionarioId, dataSelecionada) {
         timeSlotsGrid.innerHTML = '<p style="color: var(--text-light); grid-column: 1 / -1;">Carregando horários disponíveis...</p>';
         
@@ -185,7 +172,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 day: '2-digit', month: '2-digit', year: 'numeric'
             });
 
-            // 1. Cria um Set (lista) de horários JÁ OCUPADOS para este dia
             const horariosOcupados = new Set();
             todasConsultas.forEach(consulta => {
                 const [dataStr, horaStr] = consulta.horario.split(' ');
@@ -194,7 +180,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             });
 
-            // 2. Gera os horários do dia (07:00 às 18:00)
             const horariosHTML = [];
             const agora = new Date();
             
@@ -214,12 +199,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     );
 
                     let isDisabled = false;
-                    
-                    if (horariosOcupados.has(slotTimeStr)) {
-                        isDisabled = true;
-                    }
-                    
-                    if (slotDateTime < agora) {
+                    if (horariosOcupados.has(slotTimeStr) || slotDateTime < agora) {
                         isDisabled = true;
                     }
                     
@@ -231,7 +211,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             }
             
-            // 3. Renderiza os horários
             if (horariosHTML.length === 0) {
                  timeSlotsGrid.innerHTML = '<p style="color: var(--text-light); grid-column: 1 / -1;">Nenhum horário encontrado.</p>';
             } else {
@@ -245,9 +224,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    /**
-     * Adiciona clique aos botões de horário (que agora são dinâmicos)
-     */
     function addTimeSlotClickHandlers() {
         const timeSlots = document.querySelectorAll('.time-slot:not(.disabled)');
         timeSlots.forEach(slot => {
@@ -269,17 +245,78 @@ document.addEventListener("DOMContentLoaded", function() {
         renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
     });
 
-    // --- Inicialização ---
-    renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
+    // =======================================================================
+    // --- 9. NOVO: LÓGICA DO MODAL DE NOTIFICAÇÃO ---
+    // =======================================================================
+
+    const modal = document.getElementById('notification-modal');
+    const modalIconWrapper = modal.querySelector('.modal-icon-wrapper');
+    const modalTitle = document.getElementById('modal-title');
+    const modalMessage = document.getElementById('modal-message');
+    const modalOkButton = document.getElementById('modal-btn-ok');
+
+    let isSuccessRedirect = false; // Controla se o 'OK' deve redirecionar
+
+    /**
+     * Exibe o modal de notificação
+     * @param {boolean} isSuccess - Define o estilo (sucesso ou erro)
+     * @param {string} title - O título (ex: "Sucesso!")
+     * @param {string} message - A mensagem de detalhe
+     */
+    function showNotification(isSuccess, title, message) {
+        // Limpa classes antigas
+        modal.classList.remove('modal--success', 'modal--error');
+
+        if (isSuccess) {
+            modal.classList.add('modal--success');
+            // Ícone de Sucesso (Lucide Check)
+            modalIconWrapper.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+            isSuccessRedirect = true; // Prepara para redirecionar ao fechar
+        } else {
+            modal.classList.add('modal--error');
+            // Ícone de Erro (Lucide Alert Triangle)
+            modalIconWrapper.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" x2="12" y1="9" y2="13"></line><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>';
+            isSuccessRedirect = false;
+        }
+
+        // Atualiza o texto
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
+
+        // Ativa o modal
+        modal.classList.add('active');
+        
+        // (Lucide.createIcons() não é necessário aqui, pois estamos usando o innerHTML do SVG puro)
+    }
+
+    // Evento para fechar o modal
+    modalOkButton.addEventListener('click', () => {
+        modal.classList.remove('active');
+        if (isSuccessRedirect) {
+            // Se foi sucesso, redireciona para o dashboard
+            window.location.href = 'dashboard.html';
+        }
+    });
+
+    // --- 10. Checagem de Proteção de Rota (AGORA USA O MODAL) ---
+    if (!pacienteCPF) {
+        showNotification(false, 'Acesso Negado', 'Você precisa fazer login para agendar uma consulta.');
+        // Desabilita o botão de confirmar se o usuário não estiver logado
+        const confirmButton = document.querySelector('.btn-confirm');
+        if (confirmButton) {
+            confirmButton.disabled = true;
+            confirmButton.textContent = "Faça login para agendar";
+        }
+    }
 
 
     // =======================================================================
-    // --- 9. ATUALIZADO: LÓGICA DE SUBMISSÃO DE AGENDAMENTO (API POST) ---
+    // --- 11. ATUALIZADO: LÓGICA DE SUBMISSÃO (c/ Modal) ---
     // =======================================================================
 
     const confirmButton = document.querySelector('.btn-confirm');
     
-    if (confirmButton) {
+    if (confirmButton && pacienteCPF) { // Só adiciona o listener se o usuário estiver logado
         confirmButton.addEventListener('click', async (event) => {
             event.preventDefault(); 
 
@@ -295,25 +332,24 @@ document.addEventListener("DOMContentLoaded", function() {
             const selectedTimeEl = document.querySelector('.time-slot.selected');
 
             // 2. Coletar Dados do Paciente (localStorage)
-            const clienteId = pacienteCPF; // 'paciente_cpf' (CPF) é o ClienteId
+            const clienteId = pacienteCPF; 
             const nomePaciente = localStorage.getItem('paciente_nome');
-            // const emailPaciente = localStorage.getItem('paciente_email'); // NÃO SERÁ ENVIADO
-
-            // 3. Validação
+            
+            // 3. Validação (Substitui os 'alert' por 'showNotification')
             if (especialidadeSelect.value === "" || profissionalSelect.value === "" || formaSelect.value === "" || idadeInput.value === "" || motivoInput.value === "") {
-                alert("Por favor, preencha todos os campos da Etapa 1.");
+                showNotification(false, 'Campos Incompletos', 'Por favor, preencha todos os campos da Etapa 1.');
                 return;
             }
             if (!selectedDayEl) {
-                alert("Por favor, selecione uma data no calendário (Etapa 2).");
+                showNotification(false, 'Data não selecionada', 'Por favor, selecione uma data no calendário (Etapa 2).');
                 return;
             }
             if (!selectedTimeEl) {
-                alert("Por favor, selecione um horário (Etapa 3).");
+                showNotification(false, 'Horário não selecionado', 'Por favor, selecione um horário (Etapa 3).');
                 return;
             }
-            if (!clienteId || !nomePaciente) { // Validação de email removida
-                alert("Erro: Informações do paciente não encontradas. Por favor, faça login novamente.");
+            if (!clienteId || !nomePaciente) {
+                showNotification(false, 'Erro de Autenticação', 'Informações do paciente não encontradas. Por favor, faça login novamente.');
                 return;
             }
 
@@ -323,24 +359,22 @@ document.addEventListener("DOMContentLoaded", function() {
             const ano = selectedDayEl.dataset.year;
             const hora = selectedTimeEl.textContent.trim();
             const horarioFormatado = `${dia}/${mes}/${ano} ${hora}`;
-
             const especialidadeTexto = especialidadeSelect.options[especialidadeSelect.selectedIndex].text;
 
-            // 5. Montar o Payload (Corpo da Requisição) - CAMPO 'email' REMOVIDO
+            // 5. Montar o Payload (Corpo da Requisição)
             const payload = {
                 ClienteId: clienteId,
-                cpf: clienteId, // CPF preenchido automaticamente
+                cpf: clienteId, 
                 nome: nomePaciente,
-                // email: emailPaciente, // <-- CAMPO REMOVIDO
                 especialidade: especialidadeTexto,
-                FuncionarioId: profissionalSelect.value, // Email do médico
+                FuncionarioId: profissionalSelect.value, 
                 horario: horarioFormatado,
                 idade: idadeInput.value,
                 motivo: motivoInput.value,
                 forma: formaSelect.value
             };
 
-            console.log("Enviando agendamento (SEM EMAIL):", payload);
+            console.log("Enviando agendamento (c/ Modal):", payload);
 
             // 6. Enviar a Requisição POST
             const apiUrl = 'https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta';
@@ -351,9 +385,7 @@ document.addEventListener("DOMContentLoaded", function() {
             try {
                 const response = await fetch(apiUrl, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
 
@@ -363,14 +395,19 @@ document.addEventListener("DOMContentLoaded", function() {
                     throw new Error(responseData.message || 'Não foi possível completar o agendamento.');
                 }
 
-                // 7. Sucesso!
-                alert('Consulta agendada com sucesso!');
-                window.location.href = 'dashboard.html'; // Redireciona para o painel
+                // 7. Sucesso! (Usa o novo modal)
+                showNotification(true, 'Consulta Agendada!', 'Seu agendamento foi confirmado com sucesso. Você será redirecionado para o painel.');
+                // O redirecionamento acontece ao clicar "OK"
 
             } catch (error) {
-                // 8. Falha
+                // 8. Falha! (Usa o novo modal)
                 console.error('Erro ao agendar consulta:', error);
-                alert(`Erro ao agendar: ${error.message}`);
+                // Exibe uma mensagem de erro mais amigável se for um conflito de horário
+                const errorMsg = error.message.includes('Horário indisponível')
+                    ? 'O horário selecionado não está mais disponível. Por favor, atualize a página e tente outro.'
+                    : `Não foi possível agendar: ${error.message}`;
+                
+                showNotification(false, 'Erro no Agendamento', errorMsg);
             
             } finally {
                 // Restaura o botão
@@ -379,4 +416,8 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
+
+    // --- Inicialização ---
+    renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
+
 });

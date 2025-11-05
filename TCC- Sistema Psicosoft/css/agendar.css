@@ -366,3 +366,122 @@ main {
     .day { padding: 0.5rem; }
     .time-slots-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
 }
+
+/* =================================================================== */
+/* --- 10. NOVO: Estilos do Modal de Notificação (Adicionar ao final) --- */
+/* =================================================================== */
+
+/* Base do Modal (adaptado de cancelar.css) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: none; /* Escondido por padrão */
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+}
+
+/* Botão "Entendido" (Primário) */
+.btn-modal-primary {
+    flex: 1;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-family: 'Lato', sans-serif;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: var(--primary); /* Cor principal */
+    color: var(--card-bg);
+}
+.btn-modal-primary:hover {
+    background-color: #6a6eac; /* Tom mais escuro */
+}
+
+/* Animação de Pulso (Ícone Médico) */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3);
+    }
+    70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 15px rgba(0, 0, 0, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+    }
+}
+
+.modal-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.modal-icon-wrapper svg {
+    width: 48px;
+    height: 48px;
+}
+
+/* Estilo de Sucesso (Verde) */
+.modal-overlay.modal--success .modal-icon-wrapper {
+    background-color: #E6F6F6; /* Fundo de --status-green */
+    color: var(--status-green);
+    /* Ativa a animação de pulso pedida */
+    animation: pulse 1.5s infinite ease-out; 
+}
+.modal-overlay.modal--success .btn-modal-primary {
+    background-color: var(--status-green);
+}
+.modal-overlay.modal--success .btn-modal-primary:hover {
+    background-color: #4a8d8d; /* Tom mais escuro de --status-green */
+}
+
+/* Estilo de Erro (Vermelho) */
+.modal-overlay.modal--error .modal-icon-wrapper {
+    background-color: #FEEEEE; /* Fundo de --danger (de cancelar.css) */
+    color: #E57373; /* Cor --danger (de cancelar.css) */
+    animation: none; /* Erro não deve pulsar */
+}
+.modal-overlay.modal--error .btn-modal-primary {
+    background-color: #E57373;
+}
+.modal-overlay.modal--error .btn-modal-primary:hover {
+    background-color: #D32F2F; /* Cor --danger-dark (de cancelar.css) */
+}
