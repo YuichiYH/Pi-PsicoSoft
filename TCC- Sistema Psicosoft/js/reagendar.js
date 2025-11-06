@@ -312,7 +312,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         try {
             const response = await fetch(API_URL, {
-                method: 'PUT',
+                method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
