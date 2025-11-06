@@ -528,20 +528,19 @@ main {
     }
 }
 
-
 /* ======================================= */
-/* === 9. ESTILOS DO WIDGET DE CHATBOT === */
+/* === 10. ESTILOS DO WIDGET DE CHATBOT === */
 /* ======================================= */
 
-/* 1. Animação de Brilho (Sua Paleta) */
+/* 1. Animação de Brilho (Sua Paleta) - AJUSTADO (MAIS FORTE) */
 @keyframes palette-glow {
     0%, 100% {
-        /* Roxo/Azul Principal (#7A7EBF) */
-        box-shadow: 0 0 20px 5px rgba(122, 126, 191, 0.7);
+        /* Brilho Roxo (#7A7EBF) - MAIS FORTE */
+        box-shadow: 0 0 30px 8px rgba(122, 126, 191, 0.9);
     }
     50% {
-        /* Verde Água (#5BA6A6) */
-        box-shadow: 0 0 20px 5px rgba(91, 166, 166, 0.7);
+        /* Brilho Verde (#5BA6A6) - MAIS FORTE */
+        box-shadow: 0 0 30px 8px rgba(91, 166, 166, 0.9);
     }
 }
 
@@ -607,12 +606,11 @@ main {
 }
 
 
-/* 5. Ajustes no Botão FAB (O botão redondo) */
+/* 5. Ajustes no Botão FAB (O botão redondo) - AJUSTADO (POSIÇÃO CORRIGIDA) */
 .chat-fab {
-    /* ... (seus estilos existentes) ... */
     z-index: 999; /* Garante que o FAB fique acima do widget */
     /* Usado para a animação de troca de ícone */
-    position: relative;
+    /* REMOVIDO: position: relative; */
     overflow: hidden;
 }
 
