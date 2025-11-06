@@ -323,3 +323,35 @@ body {
         top: 60px;
     }
 }
+
+
+/* --- INÍCIO DA ALTERAÇÃO (Animação de Brilho Dinâmico) --- */
+
+/* 1. Definição da Animação (Keyframes) */
+@keyframes palette-glow {
+    0%, 100% {
+        /* Brilho Roxo/Azul Principal (#7A7EBF) */
+        /* Paleta: var(--primary) */
+        box-shadow: 0 0 20px 5px rgba(122, 126, 191, 0.7);
+    }
+    50% {
+        /* Brilho Verde Água (#5BA6A6) */
+        /* Paleta: var(--accent-2) */
+        box-shadow: 0 0 20px 5px rgba(91, 166, 166, 0.7);
+    }
+}
+
+/* 2. Aplicando a Animação ao Contêiner do Chat */
+.chat-container {
+    /* Adiciona a animação de 4s, com "ease-in-out" e "infinite" */
+    animation: palette-glow 4s ease-in-out infinite;
+}
+
+/* 3. Desabilita a animação em telas pequenas (onde o pop-up vira tela cheia) */
+@media (max-width: 500px) {
+    .chat-container {
+        /* Remove a animação quando o container não tiver espaço para o brilho */
+        animation: none;
+    }
+}
+/* --- FIM DA ALTERAÇÃO --- */
