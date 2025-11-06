@@ -460,11 +460,11 @@ a { text-decoration: none; color: var(--primary); }
 @keyframes palette-glow {
     0%, 100% {
         /* Brilho Roxo (#7A7EBF) - MAIS FORTE */
-        box-shadow: 0 0 30px 8px rgba(122, 126, 191, 0.9);
+        box-shadow: 0 0 60px 20px rgba(122, 126, 191, 0.9);
     }
     50% {
         /* Brilho Verde (#5BA6A6) - MAIS FORTE */
-        box-shadow: 0 0 30px 8px rgba(91, 166, 166, 0.9);
+        box-shadow: 0 0 60px 20px rgba(91, 166, 166, 0.9);
     }
 }
 
