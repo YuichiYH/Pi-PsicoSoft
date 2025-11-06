@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contato e Suporte - Psicosoft</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/contato.css">
+</head>
+<body>
+
+    <header class="dashboard-header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">Psicosoft</a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="dashboard.html">Meu Painel</a></li>
+                    <li><a href="historico.html">Histórico</a></li>
+                    <li><a href="bem-estar.html">Dicas de Bem-Estar</a></li>
+                    <li><a href="contato.html" class="active">Contato</a></li>
+                    <li><a href="index.html" class="btn-logout">
+                        <i data-lucide="log-out"></i> Sair
+                    </a></li> 
+                </ul>
+            </nav>
+            <button id="menu-toggle" class="menu-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <section class="welcome-header">
+                <h1>Contato e Suporte</h1>
+                <p class="subtitle">Precisa de ajuda? Entre em contato conosco.</p>
+            </section>
+
+            <div class="contact-layout">
+                <div class="contact-info">
+                    <h3>Informações de Contato</h3>
+                    <p>Você pode nos encontrar através dos canais abaixo:</p>
+                    
+                    <ul class="info-list">
+                        <li>
+                            <i data-lucide="phone"></i>
+                            <div>
+                                <strong>Telefone (Fictício)</strong>
+                                <span>(11) 4002-8922</span>
+                            </div>
+                        </li>
+                        <li>
+                            <i data-lucide="mail"></i>
+                            <div>
+                                <strong>E-mail (Fictício)</strong>
+                                <span>suporte@psicosoft.com.br</span>
+                            </div>
+                        </li>
+                        <li>
+                            <i data-lucide="clock"></i>
+                            <div>
+                                <strong>Horário de Atendimento</strong>
+                                <span>Seg. a Sex. das 08h às 18h</span>
+                            </div>
+                        </li>
+                        <li>
+                            <i data-lucide="map-pin"></i>
+                            <div>
+                                <strong>Endereço (Fictício)</strong>
+                                <span>Av. Paulista, 1000 - São Paulo/SP</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="contact-form">
+                    <h3>Envie-nos uma Mensagem</h3>
+                    <p>Para dúvidas, sugestões ou suporte técnico, preencha o formulário.</p>
+                    
+                    <form id="support-form">
+                        <div class="form-group">
+                            <label for="nome">Nome</label>
+                            <input type="text" id="nome" name="nome" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">E-mail</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="assunto">Assunto</label>
+                            <input type="text" id="assunto" name="assunto" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="mensagem">Mensagem</label>
+                            <textarea id="mensagem" name="mensagem" rows="6" required></textarea>
+                        </div>
+
+                        <div id="form-status" class="form-status" hidden></div>
+
+                        <button type="submit" class="btn-submit">Enviar Mensagem</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div class="chat-widget">
+        <div id="chat-widget-container" class="chat-container-flutuante">
+            <button id="chat-widget-close" class="chat-widget-fechar" aria-label="Fechar chat">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <iframe 
+                src="bot_web.html" 
+                title="PsicIA Chat" 
+                frameborder="0"
+                style="width: 100%; height: 100%;">
+            </iframe>
+        </div>
+
+        <button id="open-chat-bot" class="chat-fab" aria-label="Abrir chat de ajuda">
+            <i data-lucide="bot" class="icon-bot"></i>
+            <i data-lucide="x" class="icon-x"></i>
+        </button>
+    </div>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      lucide.createIcons(); // Ativa os ícones
+    </script>
+    <script src="js/contato.js"></script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <title>Dicas de Bem-Estar - Psicosoft</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/bem-estar.css">
+</head>
+<body>
+
+    <header class="dashboard-header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">Psicosoft</a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="dashboard.html">Meu Painel</a></li>
+                    <li><a href="historico.html">Histórico</a></li>
+                    <li><a href="bem-estar.html" class="active">Dicas de Bem-Estar</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                    <li><a href="index.html" class="btn-logout">
+                        <i data-lucide="log-out"></i> Sair
+                    </a></li> 
+                </ul>
+            </nav>
+            <button id="menu-toggle" class="menu-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <section class="welcome-header">
+                <h1>Dicas de Bem-Estar</h1>
+                <p class="subtitle">Pequenas práticas para uma vida mais saudável e equilibrada.</p>
+            </section>
+
+            <section class="featured-card tip-card animated-border">
+                <div class="card-icon">
+                    <i data-lucide="sparkles"></i>
+                </div>
+                <div class="featured-text">
+                    <h3>Dica da Semana: A Pausa Consciente</h3>
+                    <p>Reserve 5 minutos do seu dia, entre tarefas, para apenas respirar. Feche os olhos, foque no ar que entra e sai. Essa micro-pausa pode reduzir o estresse e aumentar seu foco para a próxima atividade.</p>
+                </div>
+            </section>
+
+            <div class="tip-grid">
+                
+                <div class="tip-card animated-border">
+                    <div class="card-icon">
+                        <i data-lucide="bed"></i>
+                    </div>
+                    <h3>Priorize seu Sono</h3>
+                    <p>Tente dormir e acordar no mesmo horário, mesmo nos fins de semana. Um sono de qualidade é fundamental para a saúde mental.</p>
+                </div>
+
+                <div class="tip-card animated-border">
+                    <div class="card-icon">
+                        <i data-lucide="glass-water"></i>
+                    </div>
+                    <h3>Hidrate-se</h3>
+                    <p>Muitas vezes, a fadiga e a dor de cabeça são sinais de desidratação. Tenha sempre uma garrafa de água por perto.</p>
+                </div>
+
+                <div class="tip-card animated-border">
+                    <div class="card-icon">
+                        <i data-lucide="sun"></i>
+                    </div>
+                    <h3>Tome um Pouco de Sol</h3>
+                    <p>A exposição solar (com segurança) ajuda na produção de vitamina D, essencial para o humor e bem-estar. 15 minutos pela manhã fazem a diferença.</p>
+                </div>
+
+                <div class="tip-card animated-border">
+                    <div class="card-icon">
+                        <i data-lucide="smartphone"></i>
+                    </div>
+                    <h3>Detox Digital</h3>
+                    <p>Estabeleça um horário para se desconectar do celular, pelo menos 30 minutos antes de dormir. A luz azul pode atrapalhar seu sono.</p>
+                </div>
+
+                <div class="tip-card animated-border">
+                    <div class="card-icon">
+                        <i data-lucide="move"></i>
+                    </div>
+                    <h3>Movimente o Corpo</h3>
+                    <p>Não precisa ser uma maratona. Uma caminhada leve de 20 minutos ou um alongamento pela manhã já ativa a circulação e libera endorfinas.</p>
+                </div>
+
+                <div class="tip-card animated-border">
+                    <div class="card-icon">
+                        <i data-lucide="book-open"></i>
+                    </div>
+                    <h3>Escreva seus Sentimentos</h3>
+                    <p>Manter um diário pode ser uma ferramenta poderosa. Anote 3 coisas pelas quais você é grato(a) antes de dormir.</p>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <div class="chat-widget">
+        <div id="chat-widget-container" class="chat-container-flutuante">
+            <button id="chat-widget-close" class="chat-widget-fechar" aria-label="Fechar chat">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <iframe 
+                src="bot_web.html" 
+                title="PsicIA Chat" 
+                frameborder="0"
+                style="width: 100%; height: 100%;">
+            </iframe>
+        </div>
+
+        <button id="open-chat-bot" class="chat-fab" aria-label="Abrir chat de ajuda">
+            <i data-lucide="bot" class="icon-bot"></i>
+            <i data-lucide="x" class="icon-x"></i>
+        </button>
+    </div>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      lucide.createIcons(); // Ativa os ícones
+    </script>
+    <script src="js/bem-estar.js"></script>
+</body>
+</html>
