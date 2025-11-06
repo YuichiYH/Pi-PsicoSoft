@@ -322,7 +322,8 @@ document.addEventListener("DOMContentLoaded", function() {
         confirmButton.disabled = true;
 
         try {
-            const response = await fetch(API_URL, {
+            const response = await fetch('https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta',
+            {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
