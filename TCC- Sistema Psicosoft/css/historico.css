@@ -329,3 +329,104 @@ main {
         font-size: 0.9rem;
     }
 }
+
+
+/* ======================================= */
+/* === 9. ESTILOS DO WIDGET DE CHATBOT === */
+/* ======================================= */
+
+/* 1. Animação de Brilho (Sua Paleta) */
+@keyframes palette-glow {
+    0%, 100% {
+        /* Roxo/Azul Principal (#7A7EBF) */
+        box-shadow: 0 0 20px 5px rgba(122, 126, 191, 0.7);
+    }
+    50% {
+        /* Verde Água (#5BA6A6) */
+        box-shadow: 0 0 20px 5px rgba(91, 166, 166, 0.7);
+    }
+}
+
+/* 2. O Contêiner flutuante (O chat em si) */
+.chat-container-flutuante {
+    position: fixed;
+    bottom: 90px; /* 1rem acima do botão FAB */
+    right: 2rem;
+    width: 440px;
+    height: 650px;
+    max-height: 80vh;
+    max-width: 90vw;
+
+    background-color: var(--card-bg, #FFF);
+    border-radius: 12px;
+    overflow: hidden; /* Para o iframe não vazar */
+    
+    /* A Animação de Brilho */
+    animation: palette-glow 4s ease-in-out infinite;
+
+    /* Escondido por padrão */
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    transition: all 0.3s ease-out;
+    pointer-events: none;
+    z-index: 998;
+}
+
+/* 3. Estado Ativo (Visível) */
+.chat-container-flutuante.active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+/* 4. Botão de Fechar (Dentro do widget) */
+.chat-widget-fechar {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 999;
+    
+    background-color: rgba(0, 0, 0, 0.1);
+    color: var(--card-bg, #FFF);
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.chat-container-flutuante .chat-widget-fechar {
+    /* O JavaScript do bot_web.html pode interferir, então 
+       forçamos a cor do X do widget flutuante. */
+    color: #FFF !important; 
+}
+
+.chat-widget-fechar:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+
+/* 5. Ajustes no Botão FAB (O botão redondo) */
+.chat-fab {
+    /* ... (seus estilos existentes) ... */
+    z-index: 999; /* Garante que o FAB fique acima do widget */
+    /* Usado para a animação de troca de ícone */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Esconde o ícone de 'X' por padrão */
+.chat-fab .icon-x {
+    display: none;
+}
+
+/* Mostra o 'X' e esconde o 'Bot' quando o chat está ativo */
+.chat-fab.chat-aberto .icon-bot {
+    display: none;
+}
+.chat-fab.chat-aberto .icon-x {
+    display: block;
+}

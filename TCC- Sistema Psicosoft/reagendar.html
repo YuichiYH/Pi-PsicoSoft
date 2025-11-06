@@ -114,10 +114,25 @@
         </div>
     </main>
 
-    <button id="open-chat-bot" class="chat-fab" aria-label="Abrir chat de ajuda">
-        <i data-lucide="bot"></i>
-    </button>
+    <div class="chat-widget">
+        
+        <div id="chat-widget-container" class="chat-container-flutuante">
+            <button id="chat-widget-close" class="chat-widget-fechar" aria-label="Fechar chat">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <iframe 
+                src="bot_web.html" 
+                title="PsicIA Chat" 
+                frameborder="0"
+                style="width: 100%; height: 100%;">
+            </iframe>
+        </div>
 
+        <button id="open-chat-bot" class="chat-fab" aria-label="Abrir chat de ajuda">
+            <i data-lucide="bot" class="icon-bot"></i>
+            <i data-lucide="x" class="icon-x"></i>
+        </button>
+    </div>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
       lucide.createIcons(); // Ativa os ícones
