@@ -3,6 +3,7 @@
  * Funcionalidades da página de Cancelamento.
  * ... (outros comentários)
  * - ATUALIZAÇÃO: Desabilita cancelamento para datas passadas.
+ * - ATUALIZAÇÃO 2: Chatbot agora é um widget flutuante.
  */
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -29,15 +30,23 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // --- 3. Controle do Chat Bot ---
+    // --- 3. Controle do Chat Bot (Widget Flutuante) ---
     const chatButton = document.getElementById('open-chat-bot');
-                
-    if (chatButton) {
+    const chatContainer = document.getElementById('chat-widget-container');
+    const chatCloseButton = document.getElementById('chat-widget-close');
+
+    if (chatButton && chatContainer && chatCloseButton) {
+        
+        // Abre/Fecha o widget ao clicar no botão FAB
         chatButton.addEventListener('click', function() {
-            const chatUrl = 'bot_web.html';
-            const windowName = 'PsicosoftChat';
-            const windowFeatures = 'width=450,height=700,top=100,left=100,resizable=yes,scrollbars=yes';
-            window.open(chatUrl, windowName, windowFeatures);
+            chatContainer.classList.toggle('active');
+            chatButton.classList.toggle('chat-aberto');
+        });
+
+        // Fecha o widget ao clicar no 'X' interno
+        chatCloseButton.addEventListener('click', function() {
+            chatContainer.classList.remove('active');
+            chatButton.classList.remove('chat-aberto');
         });
     }
     
