@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dicas de Bem-Estar - Psicosoft</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,15 +16,39 @@
     <header class="dashboard-header">
         <div class="container header-container">
             <a href="index.html" class="logo">Psicosoft</a>
+            
             <nav class="main-nav">
                 <ul>
-                    <li><a href="dashboard.html">Meu Painel</a></li>
-                    <li><a href="historico.html">Histórico</a></li>
-                    <li><a href="bem-estar.html" class="active">Dicas de Bem-Estar</a></li>
-                    <li><a href="contato.html">Contato</a></li>
-                    <li><a href="index.html" class="btn-logout">
-                        <i data-lucide="log-out"></i> Sair
-                    </a></li> 
+                    <li>
+                        <a href="dashboard.html">
+                            <i data-lucide="layout-dashboard"></i>
+                            <span>Meu Painel</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="historico.html">
+                            <i data-lucide="history"></i>
+                            <span>Histórico</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="bem-estar.html" class="active">
+                            <i data-lucide="sparkles"></i>
+                            <span>Bem-Estar</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="contato.html">
+                            <i data-lucide="life-buoy"></i>
+                            <span>Contato</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.html" class="btn-logout">
+                            <i data-lucide="log-out"></i>
+                            <span>Sair</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
             <button id="menu-toggle" class="menu-toggle">
@@ -37,11 +61,19 @@
 
     <main>
         <div class="container">
-            <section class="welcome-header">
-                <h1>Dicas de Bem-Estar</h1>
-                <p class="subtitle">Pequenas práticas para uma vida mais saudável e equilibrada.</p>
-            </section>
-
+            <div class="page-header-container">
+                <section class="welcome-header">
+                    <img src="img/pisc_logo.png" alt="Psicosoft Logo" class="page-icon">
+                    <div>
+                        <h1>Dicas de Bem-Estar</h1>
+                        <p class="subtitle">Pequenas práticas para uma vida mais saudável.</p>
+                    </div>
+                </section>
+                <a href="dashboard.html" class="btn-back">
+                    <i data-lucide="arrow-left"></i>
+                    <span>Voltar</span>
+                </a>
+            </div>
             <section class="featured-card tip-card animated-border">
                 <div class="card-icon">
                     <i data-lucide="sparkles"></i>

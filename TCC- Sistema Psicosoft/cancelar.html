@@ -16,14 +16,39 @@
     <header class="dashboard-header">
         <div class="container header-container">
             <a href="index.html" class="logo">Psicosoft</a>
+            
             <nav class="main-nav">
                 <ul>
-                    <li><a href="dashboard.html">Meu Painel</a></li>
-                    <li><a href="agendar.html">Agendar</a></li>
-                    <li><a href="historico.html">Histórico</a></li>
-                    <li><a href="index.html" class="btn-logout">
-                        <i data-lucide="log-out"></i> Sair
-                    </a></li>
+                    <li>
+                        <a href="dashboard.html">
+                            <i data-lucide="layout-dashboard"></i>
+                            <span>Meu Painel</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="historico.html">
+                            <i data-lucide="history"></i>
+                            <span>Histórico</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="bem-estar.html">
+                            <i data-lucide="sparkles"></i>
+                            <span>Bem-Estar</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="contato.html">
+                            <i data-lucide="life-buoy"></i>
+                            <span>Contato</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.html" class="btn-logout">
+                            <i data-lucide="log-out"></i>
+                            <span>Sair</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
             <button id="menu-toggle" class="menu-toggle">
@@ -37,10 +62,22 @@
     <main>
         <div class="container">
             <div class="cancel-container">
-                <section class="welcome-header">
-                    <h1>Cancelar Consultas</h1>
-                    <p class="subtitle">Abaixo estão suas consultas agendadas. Você pode cancelar uma consulta até 24h antes do horário marcado.</p>
-                </section>
+
+                <div class="page-header-container">
+                    <section class="welcome-header">
+                        <img src="img/pisc_logo.png" alt="Psicosoft Logo" class="page-icon">
+                        <div>
+                            <h1>Cancelar Consultas</h1>
+                            <p class="subtitle">Selecione uma consulta para cancelar.</p>
+                        </div>
+                    </section>
+                    <a href="dashboard.html" class="btn-back">
+                        <i data-lucide="arrow-left"></i>
+                        <span>Voltar</span>
+                    </a>
+                </div>
+                <p class="subtitle" style="margin-bottom: 2rem; text-align: center;">Você pode cancelar uma consulta até 24h antes do horário marcado.</p>
+
 
                 <div class="table-wrapper">
                     <table class="schedule-table">

@@ -626,3 +626,146 @@ main {
 .chat-fab.chat-aberto .icon-x {
     display: block;
 }
+
+/* --- INÍCIO DOS NOVOS ESTILOS (Refatoração UI/UX) --- */
+
+/* 1. Cabeçalho da Página (Botão Voltar e Título com Ícone) */
+.page-header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.welcome-header {
+    margin-bottom: 0; /* Remove margem do título */
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.page-icon {
+    width: 48px;
+    height: 48px;
+    padding: 6px;
+    border-radius: 10px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+}
+
+/* Botão de Voltar */
+.btn-back {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    color: var(--text-dark);
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+.btn-back:hover {
+    background-color: var(--background);
+    color: var(--primary);
+    border-color: var(--primary-light);
+}
+.btn-back svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* 2. Refatoração da Navbar (Ícones + Texto) */
+.main-nav ul {
+    gap: 0.5rem; /* Reduz o espaçamento entre os itens */
+}
+.main-nav li {
+    vertical-align: top;
+}
+
+.main-nav a {
+    display: flex;
+    flex-direction: column; /* Ícone em cima, texto embaixo */
+    align-items: center;
+    gap: 0.25rem; /* Espaço entre ícone e texto */
+    padding: 0.5rem 0.8rem;
+    border-radius: 8px;
+    min-width: 80px; /* Largura mínima para alinhamento */
+    font-size: 0.8rem; /* Texto menor */
+    color: var(--text-light);
+    border-bottom: 3px solid transparent;
+}
+.main-nav a svg {
+    width: 22px;
+    height: 22px;
+}
+
+.main-nav a:hover,
+.main-nav a.active {
+    color: var(--primary);
+    background-color: var(--background);
+    border-bottom-color: var(--primary);
+}
+
+/* 3. Ajuste do Logout (para parecer com os outros) */
+.btn-logout {
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.5rem 0.8rem;
+    min-width: 80px;
+    font-size: 0.8rem;
+    border-bottom: 3px solid transparent;
+}
+.btn-logout:hover {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+.btn-logout svg {
+    width: 22px;
+    height: 22px;
+}
+
+/* 4. Ajustes da Navbar Mobile */
+@media (max-width: 768px) {
+    .main-nav a,
+    .btn-logout {
+        flex-direction: row; /* Volta ao layout de ícone + texto */
+        min-width: 0;
+        font-size: 1rem; /* Tamanho de fonte normal */
+        justify-content: flex-start;
+        border-bottom: 1px solid var(--border-color);
+        border-radius: 0;
+    }
+    
+    .main-nav a.active,
+    .main-nav a:hover {
+        border-bottom-color: var(--border-color); /* Remove a borda colorida no mobile */
+    }
+
+    .main-nav li:last-child a,
+    .main-nav li:last-child .btn-logout {
+        border-bottom: none; /* Remove borda do último item */
+    }
+
+    /* Ajuste do Título da Página no Mobile */
+    .page-header-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    .welcome-header h1 {
+        font-size: 1.8rem;
+    }
+    .page-icon {
+        width: 40px;
+        height: 40px;
+    }
+    .btn-back {
+        align-self: flex-start; /* Alinha o botão à esquerda */
+    }
+}
+/* --- FIM DOS NOVOS ESTILOS --- */
