@@ -26,7 +26,9 @@ body{
     overflow: hidden;
     width: 768px;
     max-width: 100%;
-    min-height: 480px;
+    
+    /* --- AJUSTE DE PROPORÇÃO --- */
+    min-height: 550px; /* Aumentado de 480px para 550px */
 }
 
 .container p {
@@ -552,9 +554,6 @@ body{
     position: relative; /* Para o ícone de SVG se sobrepor */
 }
 
-/* --- AJUSTE: REMOVIDO O CSS DA ANIMAÇÃO DE CALENDÁRIO/RELÓGIO --- */
-/* (O CSS da animação de calendário foi removido daqui pois não é mais usado) */
-
 
 /* --- ESTADOS (SUCESSO E ERRO) --- */
 
@@ -566,7 +565,6 @@ body{
     background-color: #5BA6A6; /* Verde-água */
     color: white;
 }
-/* AJUSTE: Adicionada regra para o SVG de sucesso */
 .modal-overlay.modal--success .modal-icon-wrapper svg {
     width: 48px;
     height: 48px;
