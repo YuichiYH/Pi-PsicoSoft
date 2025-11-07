@@ -1,14 +1,14 @@
 /*
  * admin_dashboard.js
  * Funcionalidades do painel gerencial da clínica.
+ * - CORREÇÃO: Lógica de data para "Consultas de Hoje" ajustada.
  * - Carrega dados reais da API GET /Consulta
  * - Utiliza a API POST /Consulta/CancelarConsulta para cancelamentos.
- * - Calcula KPIs e filtra a tabela para as consultas do dia.
  */
 
 document.addEventListener("DOMContentLoaded", function() {
 
-    // --- 1. Seletores dos Modais (Reutilizados de cancelar.js) ---
+    // --- 1. Seletores dos Modais ---
     const cancelModal = document.getElementById('cancel-modal');
     const confirmCancelBtn = document.getElementById('modal-btn-confirm');
     const closeModalBtn = document.getElementById('modal-btn-close');
@@ -21,8 +21,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const notificationOkButton = document.getElementById('modal-btn-ok');
 
     // --- 2. Lógica de UI Padrão (Menu, Logout) ---
-
-    // Menu Mobile
+    // (Menu Mobile e Logout)
     const menuToggle = document.getElementById('menu-toggle');
     const mainNav = document.querySelector('.main-nav');
     if (menuToggle && mainNav) {
@@ -31,24 +30,19 @@ document.addEventListener("DOMContentLoaded", function() {
             menuToggle.classList.toggle('active');
         });
     }
-
-    // Logout
     const logoutButton = document.querySelector('.btn-logout');
     if (logoutButton) {
         logoutButton.addEventListener('click', function(event) {
             event.preventDefault(); 
-            // Limparia o localStorage do admin
             window.location.href = "index.html"; 
         });
     }
     
     // --- 3. Carregamento de Dados da API ---
-
-    // URLs das APIs (baseadas nos seus outros arquivos JS)
     const API_GET_CONSULTAS = "https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta";
     const API_POST_CANCELAR = "https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta/CancelarConsulta";
 
-    // Seletores da UI do Dashboard
+    // Seletores da UI
     const tbody = document.getElementById('consultas-tbody');
     const kpiTotal = document.getElementById('kpi-consultas-total');
     const kpiAgendadas = document.getElementById('kpi-consultas-agendadas');
@@ -58,51 +52,31 @@ document.addEventListener("DOMContentLoaded", function() {
     const statsHoje = document.getElementById('stats-hoje');
     const adminWelcome = document.getElementById('admin-welcome');
     
-    /**
-     * Helper para converter "dd/mm/aaaa HH:MM" em um objeto Date
-     */
     function parseDataHorario(horarioStr) {
-        // Ex: "07/11/2025 09:30"
         if (!horarioStr || horarioStr.indexOf(' ') === -1) {
-             // Retorna uma data inválida se o formato for incorreto
              return new Date('invalid');
         }
         const [dataStr, horaStr] = horarioStr.split(' '); 
         const [dia, mesNum, ano] = dataStr.split('/'); 
         const [hora, minuto] = (horaStr || '00:00').split(':'); 
-        
-        // Mês em JS é 0-indexado (0 = Jan, 11 = Dez)
         return new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia), parseInt(hora) || 0, parseInt(minuto) || 0);
     }
     
-    /**
-     * Define o status dinâmico de uma consulta
-     */
     function getStatusConsulta(consulta, agora) {
-        // 1. Verifica o status "cancelada" (que vem da API)
         if ((consulta.status || '').toLowerCase() === "cancelada") {
             return { status: "cancelada", tag: '<span class="status-tag status-cancelada">Cancelada</span>', disabled: true };
         }
-
         const dataConsulta = parseDataHorario(consulta.horario);
-        
-        // 2. Verifica se a data é válida (se não for, marca como agendada)
         if (isNaN(dataConsulta.getTime())) {
              return { status: "agendada", tag: '<span class="status-tag status-agendada">Agendada</span>', disabled: false };
         }
-
-        // 3. Verifica se a consulta já passou
         if (dataConsulta < agora) {
             return { status: "concluida", tag: '<span class="status-tag status-concluida">Concluída</span>', disabled: true };
         }
-        
-        // 4. (Opcional) Verifica se está "Em Andamento"
         const diffMinutos = (agora - dataConsulta) / (1000 * 60);
-        if (diffMinutos > 0 && diffMinutos < 45) { // Assumindo 45 min de consulta
+        if (diffMinutos > 0 && diffMinutos < 45) {
              return { status: "andamento", tag: '<span class="status-tag status-andamento">Em Andamento</span>', disabled: false };
         }
-
-        // 5. Se não for nenhuma das anteriores, está agendada
         return { status: "agendada", tag: '<span class="status-tag status-agendada">Agendada</span>', disabled: false };
     }
 
@@ -111,13 +85,12 @@ document.addEventListener("DOMContentLoaded", function() {
      * Carrega todos os dados do painel (KPIs e tabela)
      */
     async function loadDashboardData() {
-        // ATENÇÃO: ID do funcionário fixo. 
-        // Troque pelo ID do admin logado (ex: pego do localStorage).
+        // ID do funcionário (Dr. André)
         const funcionarioId = "psicosoft_dr@gmail.com"; 
-        const nomeAdmin = "Dr. Pscosoft"; // Nome para a saudação
+        const nomeAdmin = "Dr. André"; 
         
         if (adminWelcome) {
-            adminWelcome.textContent = `Bem-vinda, ${nomeAdmin} 👋`;
+            adminWelcome.textContent = `Bem-vindo, ${nomeAdmin} 👋`;
         }
 
         const url = `${API_GET_CONSULTAS}?FuncionarioId=${encodeURIComponent(funcionarioId)}`;
@@ -132,7 +105,6 @@ document.addEventListener("DOMContentLoaded", function() {
             
             let allConsultas = await response.json();
             
-            // Validação: Garante que é um array
             if (!Array.isArray(allConsultas)) {
                  if (allConsultas.message) throw new Error(allConsultas.message);
                  allConsultas = [];
@@ -140,10 +112,21 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // --- Processamento dos Dados ---
             const agora = new Date();
-            const hojeStr = agora.toLocaleDateString('pt-BR'); // Ex: "07/11/2025"
+            
+            // =================================================================
+            // === CORREÇÃO DA DATA "HOJE" ===
+            // =================================================================
+            // Gera a string "hoje" manualmente para garantir "dd/mm/aaaa"
+            const dia = String(agora.getDate()).padStart(2, '0');
+            const mes = String(agora.getMonth() + 1).padStart(2, '0'); // Mês é 0-indexado
+            const ano = agora.getFullYear();
+            const hojeStr = `${dia}/${mes}/${ano}`; // Formato "07/11/2025"
+            // =================================================================
+            
             const hojeFormatado = agora.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
 
             // 1. Filtra apenas as consultas de HOJE
+            // A API retorna 'horario' como "07/11/2025 10:00"
             const consultasDeHoje = allConsultas.filter(c => 
                 c.horario && c.horario.startsWith(hojeStr)
             );
@@ -199,7 +182,6 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
-        // Ordena pela hora
         consultas.sort((a, b) => {
             return parseDataHorario(a.horario) - parseDataHorario(b.horario);
         });
@@ -243,15 +225,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 const horario = e.currentTarget.dataset.horario;
                 const paciente = e.currentTarget.dataset.paciente;
 
-                // Preenche o modal de confirmação
                 cancelDetailsText.textContent = `Paciente: ${paciente} (${horario})`;
                 
-                // Define a ação do botão "Sim, cancelar"
                 confirmCancelBtn.onclick = () => {
                     performCancellation(orderId);
                 };
 
-                // Mostra o modal
                 cancelModal.classList.add('active');
             });
         });
@@ -274,10 +253,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 throw new Error(responseData.message || 'Não foi possível cancelar a consulta.');
             }
 
-            // Sucesso!
             showNotification(true, 'Consulta Cancelada', 'A consulta foi cancelada com sucesso.');
-
-            // Recarrega o painel para atualizar a tabela e KPIs
             loadDashboardData();
 
         } catch (error) {

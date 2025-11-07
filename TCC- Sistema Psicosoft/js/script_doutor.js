@@ -1,10 +1,10 @@
 /*
  * script_doutor.js
  * Lógica da nova "Central de Atendimento"
+ * - ATUALIZADO: funcionarioId = psicosoft_dr@gmail.com
+ * - ATUALIZADO: Lógica para mostrar/esconder card de Meet vs. Presencial
  * - Busca dados da API
- * - Popula a lista de consultas
  * - Habilita filtro de busca e data
- * - Mostra detalhes dinamicamente
  */
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -20,6 +20,10 @@ document.addEventListener("DOMContentLoaded", function() {
     const placeholderEl = document.getElementById('detalhes-placeholder');
     const detalhesContentEl = document.getElementById('detalhes-consulta-content');
     
+    // --- NOVOS Seletores de Card ---
+    const cardMeet = document.getElementById('card-meet');
+    const cardPresencial = document.getElementById('card-presencial');
+    
     // Campos de Detalhes
     const detailMeetLink = document.getElementById('detail-meet-link');
     const detailNome = document.getElementById('detail-nome');
@@ -31,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // --- 2. Variáveis Globais ---
     const API_URL = "https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta";
     
-    // ATENÇÃO: ID Fixo para Dra. Beatriz. Mude conforme necessário.
+    // ATUALIZADO: ID do Dr. André
     const funcionarioId = "psicosoft_dr@gmail.com"; 
     
     let todasConsultas = []; // Armazena todas as consultas da API
@@ -52,21 +56,16 @@ document.addEventListener("DOMContentLoaded", function() {
             
             todasConsultas = await response.json();
             
-            // Validação: Garante que é um array
             if (!Array.isArray(todasConsultas)) {
                  todasConsultas = [];
                  throw new Error("A resposta da API não foi uma lista de consultas.");
             }
             
-            // Ordena por data (mais recentes primeiro)
             todasConsultas.sort((a, b) => {
                 return (parseDataHorario(b.horario) || 0) - (parseDataHorario(a.horario) || 0);
             });
 
-            // Renderiza a lista inicial
             renderListaConsultas(todasConsultas);
-            
-            // Configura os filtros
             setupFiltros();
             
         } catch (error) {
@@ -83,7 +82,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     /**
      * Renderiza a lista de consultas na sidebar
-     * @param {Array} consultas - A lista de consultas a ser renderizada
      */
     function renderListaConsultas(consultas) {
         consultasListaEl.innerHTML = ''; // Limpa a lista
@@ -103,7 +101,6 @@ document.addEventListener("DOMContentLoaded", function() {
             const item = document.createElement('div');
             item.className = 'consult-item';
             
-            // Adiciona o objeto 'consulta' inteiro ao dataset
             item.dataset.consulta = JSON.stringify(consulta);
             
             item.innerHTML = `
@@ -111,14 +108,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 <p>${consulta.horario || 'Data não informada'}</p>
             `;
             
-            // Adiciona o evento de clique
             item.addEventListener('click', () => {
-                // Remove a classe 'active' de todos
                 document.querySelectorAll('.consult-item.active').forEach(el => el.classList.remove('active'));
-                // Adiciona 'active' ao item clicado
                 item.classList.add('active');
-                
-                // Mostra os detalhes
                 mostrarDetalhes(consulta);
             });
             
@@ -144,21 +136,34 @@ document.addEventListener("DOMContentLoaded", function() {
         detailForma.textContent = consulta.forma || 'N/A';
         detailMotivo.textContent = consulta.motivo || 'Nenhum motivo informado.';
         
-        // Define o link do Meet
-        if (consulta.meet_url) {
+        // =======================================================
+        // === LÓGICA DO CARD PRESENCIAL vs ONLINE ===
+        // =======================================================
+        const forma = (consulta.forma || '').toLowerCase();
+
+        if (forma === 'online' && consulta.meet_url) {
+            // Mostra card ONLINE
             detailMeetLink.href = consulta.meet_url;
-            detailMeetLink.parentElement.classList.remove('hidden');
+            cardMeet.classList.remove('hidden');
+            cardPresencial.classList.add('hidden');
+            
+        } else if (forma === 'presencial') {
+            // Mostra card PRESENCIAL
+            cardMeet.classList.add('hidden');
+            cardPresencial.classList.remove('hidden');
+            
         } else {
-            // Esconde o card do Meet se não houver link
-            detailMeetLink.parentElement.classList.add('hidden');
+            // Esconde AMBOS se a forma não for clara ou não tiver link
+            cardMeet.classList.add('hidden');
+            cardPresencial.classList.add('hidden');
         }
+        // =======================================================
     }
 
     /**
      * Configura os event listeners para os filtros
      */
     function setupFiltros() {
-        // Função unificada para aplicar ambos os filtros
         const aplicarFiltros = () => {
             const termoBusca = searchInput.value.toLowerCase();
             const dataFiltro = dateFilter.value; // Formato "aaaa-mm-dd"
@@ -169,13 +174,12 @@ document.addEventListener("DOMContentLoaded", function() {
             if (termoBusca) {
                 consultasFiltradas = consultasFiltradas.filter(c => 
                     (c.nome && c.nome.toLowerCase().includes(termoBusca)) ||
-                    (c.ClienteId && c.ClienteId.includes(termoBusca)) // Assumindo ClienteId = CPF
+                    (c.ClienteId && c.ClienteId.includes(termoBusca))
                 );
             }
 
             // 2. Filtra por data
             if (dataFiltro) {
-                // Converte "aaaa-mm-dd" para "dd/mm/aaaa"
                 const [ano, mes, dia] = dataFiltro.split('-');
                 const dataFiltroFormatada = `${dia}/${mes}/${ano}`;
                 
@@ -184,10 +188,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 );
             }
 
-            // Re-renderiza a lista com os resultados
             renderListaConsultas(consultasFiltradas);
             
-            // Esconde os detalhes, pois a lista mudou
             placeholderEl.classList.remove('hidden');
             detalhesContentEl.classList.add('hidden');
         };
@@ -208,6 +210,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // --- 4. Inicialização ---
-    carregarConsultas(); // Começa o processo ao carregar a página
+    carregarConsultas(); 
     lucide.createIcons(); // Ativa os ícones estáticos
 });

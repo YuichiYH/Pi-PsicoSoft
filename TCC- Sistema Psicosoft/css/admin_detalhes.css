@@ -9,7 +9,7 @@
     --primary: #7A7EBF;
     --primary-light: #A9ABD9;
     --accent-1: #8BC3D9;
-    --accent-2: #5BA6A6;
+    --accent-2: #5BA6A6; /* Verde-Água (usado no card presencial) */
     --background: #F2F1F0;
     --card-bg: #FFFFFF;
     --text-dark: #1A202C;
@@ -83,7 +83,9 @@ body {
 .btn-logout { color: var(--text-light); }
 .btn-logout:hover { color: var(--status-danger); }
 .main-nav a svg { width: 18px; height: 18px; }
-.menu-toggle { display: none; } /* Oculto por padrão no desktop */
+.menu-toggle { display: none; background: none; border: none; cursor: pointer; }
+.menu-toggle .bar { width: 25px; height: 3px; background-color: var(--text-dark); margin: 5px 0; transition: all 0.3s ease; }
+
 
 /* --- 3. Layout Principal --- */
 main {
@@ -99,6 +101,7 @@ main .container {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    height: 100%; /* Garante que o container use o espaço */
 }
 
 /* 3.1. Cabeçalho da Página (Título e Voltar) */
@@ -171,6 +174,8 @@ main .container {
     border: 1px solid var(--border-color);
     border-radius: 16px;
     box-shadow: var(--shadow-sm);
+    /* Garante que o grid não encolha além do conteúdo */
+    min-height: 0;
 }
 
 /* 3.3. Coluna da Esquerda (Lista) */
@@ -187,6 +192,7 @@ main .container {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    flex-shrink: 0; /* Impede que o filtro encolha */
 }
 .filter-bar .search-wrapper {
     position: relative;
@@ -282,7 +288,7 @@ main .container {
     overflow-y: auto;
 }
 .hidden {
-    display: none;
+    display: none !important; /* Garante que o card fique oculto */
 }
 #detalhes-consulta-content {
     display: flex;
@@ -336,7 +342,7 @@ main .container {
     display: flex;
     align-items: center;
     gap: 1.5rem;
-    background-color: var(--accent-2); /* Verde-Água */
+    background-color: var(--primary); /* Roxo */
     color: #FFF;
     border: none;
 }
@@ -370,7 +376,7 @@ main .container {
 }
 .btn-meet {
     background-color: #FFF;
-    color: var(--accent-2);
+    color: var(--primary);
     font-weight: 700;
     padding: 0.75rem 1.25rem;
     border-radius: 8px;
@@ -388,17 +394,57 @@ main .container {
     width: 18px;
 }
 
+/* ================================== */
+/* === NOVO ESTILO: CARD PRESENCIAL === */
+/* ================================== */
+.presencial-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background-color: var(--accent-2); /* Verde-Água */
+    color: #FFF;
+    border: none;
+}
+.presencial-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: rgba(255,255,255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.presencial-icon svg {
+    width: 24px;
+    height: 24px;
+}
+.presencial-info {
+    flex-grow: 1;
+}
+.presencial-info h4 {
+    color: #FFF;
+    font-size: 1.2rem;
+    margin: 0;
+}
+.presencial-info p {
+    color: #FFF;
+    opacity: 0.9;
+    margin: 0;
+    font-size: 1rem;
+}
+
 /* 4. Responsividade */
 @media (max-width: 992px) {
+    /* Tablet: Passa para coluna única, lista rolável em cima, detalhes embaixo */
     .atendimento-container {
-        /* Vira coluna única */
         grid-template-columns: 1fr; 
         height: auto;
-        max-height: none;
+        /* Remove o scroll da área principal no tablet */
+        overflow-y: visible; 
     }
     .appointment-list-column {
-        /* Altura fixa para a lista no mobile */
-        height: 400px;
+        height: 50vh; /* 50% da altura da tela */
         border-right: none;
         border-bottom: 1px solid var(--border-color);
     }
@@ -407,9 +453,27 @@ main .container {
     }
 }
 @media (max-width: 768px) {
+    /* --- AJUSTE DE RESPONSIVIDADE MOBILE --- */
+    main {
+        /* Permite que o 'main' role no celular */
+        overflow-y: auto; 
+        padding-top: 1.5rem;
+    }
+    main .container {
+        overflow: visible;
+        height: auto; /* Altura automática no mobile */
+    }
+    .atendimento-container {
+        /* Remove o overflow para o scroll da página funcionar */
+        overflow: visible; 
+    }
+    .appointment-list-column {
+        height: 45vh; /* Lista ocupa 45% da tela */
+    }
+    /* --- FIM DO AJUSTE --- */
+
     /* Menu Mobile */
     .menu-toggle { display: block; background: none; border: none; cursor: pointer; }
-    .menu-toggle .bar { width: 25px; height: 3px; background-color: var(--text-dark); margin: 5px 0; transition: all 0.3s ease; }
     .main-nav {
         position: absolute; top: 68px; left: 0;
         width: 100%; background-color: var(--card-bg);
@@ -437,8 +501,9 @@ main .container {
         border-radius: 0;
         border-left: none;
         border-right: none;
+        gap: 0;
     }
-    .meet-card {
+    .meet-card, .presencial-card {
         flex-direction: column;
         align-items: flex-start;
         text-align: left;
