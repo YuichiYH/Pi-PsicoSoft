@@ -1,0 +1,495 @@
+/*
+ * admin_dashboard.css
+ * Estilo para o painel gerencial da clínica.
+ * Utiliza a paleta oficial Psicosoft.
+ */
+
+/* --- 1. Variáveis Globais e Reset (Paleta Oficial) --- */
+:root {
+    --primary: #7A7EBF;
+    --primary-light: #A9ABD9;
+    --accent-1: #8BC3D9;
+    --accent-2: #5BA6A6;
+    --background: #F2F1F0;
+    --card-bg: #FFFFFF;
+    --text-dark: #1A202C;
+    --text-light: #718096;
+    --border-color: #E2E8F0;
+    --status-green: var(--accent-2);
+    --status-danger: #E57373; /* Vermelho suave (de cancelar.css) */
+    --status-danger-dark: #D32F2F;
+    
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.07), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Lato', sans-serif;
+    background-color: var(--background);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1400px; /* Mais largo para um dashboard */
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+h1, h2, h3, h4, h5 {
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+h1 { font-size: 2.2rem; }
+h3 { font-size: 1.25rem; }
+h4 { font-size: 1.1rem; color: var(--text-dark); }
+p { font-size: 1rem; color: var(--text-light); margin-bottom: 1rem; }
+a { text-decoration: none; color: var(--primary); }
+
+/* --- 2. Header (Copiado de dashboard.css) --- */
+.dashboard-header {
+    background-color: var(--card-bg);
+    box-shadow: var(--shadow-sm);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--primary);
+    text-decoration: none;
+}
+.main-nav ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+.main-nav a {
+    color: var(--text-light);
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.main-nav a:hover,
+.main-nav a.active {
+    color: var(--primary);
+}
+.btn-logout {
+    color: var(--text-light);
+}
+.btn-logout:hover {
+    color: var(--status-danger);
+}
+.main-nav a svg { width: 18px; height: 18px; }
+.menu-toggle { display: none; background: none; border: none; cursor: pointer; }
+.menu-toggle .bar {
+    width: 25px; height: 3px; background-color: var(--text-dark);
+    margin: 5px 0; transition: all 0.3s ease;
+}
+
+/* --- 3. Layout Principal do Dashboard --- */
+main {
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+}
+.admin-container {
+    display: grid;
+    grid-template-columns: 2.5fr 1fr; /* Coluna principal mais larga */
+    gap: 2rem;
+}
+.dashboard-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+.dashboard-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* --- 4. Cabeçalho de Boas-Vindas --- */
+.welcome-header h1 {
+    margin-bottom: 0.25rem;
+}
+.welcome-header .subtitle {
+    font-size: 1.25rem;
+    color: var(--text-light);
+    margin: 0;
+    font-weight: 400;
+}
+
+/* --- 5. Cards Resumo (KPIs) --- */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+}
+.kpi-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+}
+.kpi-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-light);
+}
+.kpi-card.kpi-action {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: var(--background);
+}
+.kpi-card.kpi-action:hover {
+    background-color: #e0e0e0;
+}
+.kpi-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+.kpi-icon svg {
+    width: 24px;
+    height: 24px;
+}
+.kpi-card h4 {
+    margin-bottom: 0.25rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-light);
+}
+.kpi-card .kpi-metric {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1;
+}
+.kpi-card .kpi-desc {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+.kpi-sub-stats {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    color: var(--text-light);
+}
+
+/* --- 6. Widget de Consultas do Dia --- */
+.consultas-widget {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    box-shadow: var(--shadow-sm);
+}
+.consultas-widget h3 {
+    margin-bottom: 1rem;
+}
+.table-wrapper {
+    overflow-x: auto;
+}
+.consultas-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+.consultas-table th, 
+.consultas-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+    vertical-align: middle;
+}
+.consultas-table th {
+    background-color: var(--background);
+    font-size: 0.85rem;
+    color: var(--text-light);
+    text-transform: uppercase;
+}
+.consultas-table td:first-child {
+    font-weight: 700;
+    color: var(--text-dark);
+}
+.consultas-table tr:last-child td {
+    border-bottom: none;
+}
+.status-tag {
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+.status-tag.status-agendada { background-color: var(--primary-light); color: var(--primary); }
+.status-tag.status-concluida { background-color: #E6F6F6; color: var(--accent-2); }
+.status-tag.status-cancelada { background-color: #FEEEEE; color: var(--status-danger); }
+.status-tag.status-andamento { background-color: #EBF7FC; color: var(--accent-1); }
+
+.btn-cancel {
+    background-color: var(--status-danger);
+    color: var(--card-bg);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.btn-cancel:hover:not(:disabled) {
+    background-color: var(--status-danger-dark);
+}
+.btn-cancel:disabled {
+    background-color: var(--border-color);
+    color: var(--text-light);
+    cursor: not-allowed;
+}
+
+
+/* --- 7. Sidebar Widgets --- */
+.sidebar-widget {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+.sidebar-widget h4 {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.75rem;
+    margin-bottom: 1rem;
+}
+.quick-actions {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.btn-quick {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.btn-quick.btn-primary {
+    background-color: var(--primary);
+    color: var(--card-bg);
+}
+.btn-quick.btn-primary:hover {
+    background-color: #6a6eac;
+}
+.btn-quick.btn-secondary {
+    background-color: var(--background);
+    color: var(--text-dark);
+}
+.btn-quick.btn-secondary:hover {
+    background-color: var(--border-color);
+}
+.btn-quick svg { width: 18px; height: 18px; }
+
+.chart-container {
+    height: 200px;
+    background: var(--background);
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+.indicator-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+.indicator-item {
+    padding: 1rem;
+    background: var(--background);
+    border-radius: 8px;
+    text-align: center;
+}
+.indicator-metric {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--accent-2);
+    display: block;
+    line-height: 1.1;
+}
+.indicator-title {
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+/* --- 8. MODAIS (Copiados de cancelar.css) --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: none; 
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+.modal-content {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+}
+.modal-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+.modal-icon-wrapper svg {
+    width: 48px;
+    height: 48px;
+}
+.modal-content h4 {
+    font-size: 1.4rem;
+    color: var(--text-dark);
+}
+.modal-content p {
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+}
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+.btn-modal-secondary,
+.btn-modal-danger,
+.btn-modal-primary {
+    flex: 1;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-family: 'Lato', sans-serif;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.btn-modal-secondary {
+    background-color: var(--background);
+    color: var(--text-dark);
+    border: 1px solid var(--border-color);
+}
+.btn-modal-secondary:hover { background-color: #e0e0e0; }
+.btn-modal-danger {
+    background-color: var(--status-danger);
+    color: var(--card-bg);
+}
+.btn-modal-danger:hover { background-color: var(--status-danger-dark); }
+.btn-modal-primary {
+    background-color: var(--primary); 
+    color: var(--card-bg);
+}
+/* Sucesso (Verde) */
+.modal-overlay.modal--success .modal-icon-wrapper {
+    background-color: #E6F6F6; 
+    color: var(--status-green);
+}
+.modal-overlay.modal--success .btn-modal-primary {
+    background-color: var(--status-green);
+}
+/* Erro (Vermelho) */
+.modal-overlay.modal--error .modal-icon-wrapper {
+    background-color: #FEEEEE; 
+    color: var(--status-danger);
+}
+.modal-overlay.modal--error .btn-modal-primary {
+    background-color: var(--status-danger);
+}
+
+
+/* --- 9. Responsividade --- */
+@media (max-width: 992px) {
+    .admin-container {
+        grid-template-columns: 1fr; /* Coluna única */
+    }
+}
+
+@media (max-width: 768px) {
+    /* Menu Mobile */
+    .menu-toggle { display: block; }
+    .main-nav {
+        position: absolute; top: 68px; left: 0;
+        width: 100%; background-color: var(--card-bg);
+        box-shadow: var(--shadow-md); max-height: 0;
+        overflow: hidden; transition: max-height 0.4s ease-out;
+    }
+    .main-nav.active { max-height: 300px; }
+    .main-nav ul { flex-direction: column; padding: 1rem; align-items: stretch; }
+    .main-nav li { border-bottom: 1px solid var(--border-color); }
+    .main-nav a { display: block; padding: 0.8rem; }
+    .menu-toggle.active .bar:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+    .menu-toggle.active .bar:nth-child(2) { opacity: 0; }
+    .menu-toggle.active .bar:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
+
+    /* Página */
+    .admin-container { gap: 1.5rem; }
+    h1 { font-size: 1.8rem; }
+    .welcome-header .subtitle { font-size: 1.1rem; }
+}
