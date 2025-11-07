@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tela de Pagamento</title>
+    <link rel="stylesheet" href="pag.css">
+</head>
+
+<body>
+
+
+    <div class="checkout-panel">
+        <div class="panel-body">
+            <h2 class="title">Pagamento</h2>
+
+            <div class="progress-bar">
+                <div class="step active"></div>
+                <div class="step active"></div>
+                <div class="step"></div>
+                <div class="step"></div>
+            </div>
+
+            <div class="payment-method">
+                <label for="card" class="method card">
+                    <div class="card-logos">
+                        <img src="https://designmodo.com/demo/checkout-panel/img/visa_logo.png" />
+                        <img src="https://designmodo.com/demo/checkout-panel/img/mastercard_logo.png" />
+                    </div>
+
+                    <div class="radio-input">
+                        <input id="card" type="radio" name="payment">
+                       Pagamento no cartão
+                    </div>
+                </label>
+
+                <label for="paypal" class="method paypal">
+                    <img  height="50%" src="https://upload.wikimedia.org/wikipedia/commons/a/a2/Logo%E2%80%94pix_powered_by_Banco_Central_%28Brazil%2C_2020%29.svg" />
+                    <div class="radio-input">
+                        <input id="paypal" type="radio" name="payment">
+                       Pagamento no Pix
+                    </div>
+                </label>
+            </div>
+
+            <div class="input-fields">
+                <div class="column-1">
+                    <label for="cardholder">Nome do Titular</label>
+                    <input type="text" id="cardholder" />
+
+                    <div class="small-inputs">
+                        <div>
+                            <label for="date">Data de Validade</label>
+                            <input type="text" id="date" placeholder="00/0000"/>
+                        </div>
+
+                        <div>
+                            <label for="verification">CVV / CVC *</label>
+                            <input type="password" id="verification" placeholder="000"/>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="column-2" >
+                    <label for="cardnumber">Numero do cartão</label>
+                    <input type="password" id="cardnumber"  placeholder="0000-0000-0000-0000"/>
+
+                    <span class="info">* CVV ou CVC Números de segurança encontrados atrás do cartão</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-footer">
+            <a href="consulta.html"><button class="btn back-btn" > Voltar</button></a>
+            <a href=""><button class="btn next-btn">Continuar</button></a>
+        </div>
+    </div>
+
+
+
+
+
+</body>
+
+</html>

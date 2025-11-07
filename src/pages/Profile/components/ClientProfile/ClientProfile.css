@@ -1,0 +1,23 @@
+.card-container {
+  max-width: 600px;
+  margin: auto;
+  padding: 16px;
+}
+
+.success-alert {
+  margin-bottom: 16px;
+}
+
+.appointment-card {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.appointment-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.confirmation-button {
+  margin-top: 16px;
+}
