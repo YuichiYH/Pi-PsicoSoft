@@ -137,7 +137,6 @@ main {
 /* --- 5. Cards Resumo (KPIs) --- */
 .kpi-grid {
     display: grid;
-    /* Alterado para 3 colunas */
     grid-template-columns: repeat(3, 1fr); 
     gap: 1.5rem;
 }
@@ -461,9 +460,72 @@ main {
     h1 { font-size: 1.8rem; }
     .welcome-header .subtitle { font-size: 1.1rem; }
     
-    /* Grid de KPIs vira coluna única no mobile */
     .kpi-grid {
         grid-template-columns: 1fr;
     }
 }
 
+/* ======================================================= */
+/* === 10. ESTILOS DO NOVO CARD DE RELATÓRIOS (ADICIONADO) === */
+/* ======================================================= */
+
+/* Animação de Brilho (Copiada de bem-estar.css) */
+@keyframes palette-glow {
+    0%, 100% {
+        /* Brilho Roxo (#7A7EBF) */
+        box-shadow: 0 0 30px 8px rgba(122, 126, 191, 0.7);
+    }
+    50% {
+        /* Brilho Verde (#5BA6A6) */
+        box-shadow: 0 0 30px 8px rgba(91, 166, 166, 0.7);
+    }
+}
+
+/* Estilo base do card (Copiado de bem-estar.css) */
+.tip-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.tip-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Aplica a animação de brilho */
+.tip-card.animated-border {
+    animation: palette-glow 4s ease-in-out infinite;
+}
+
+/* Estilo do card horizontal (Copiado de bem-estar.css) */
+.featured-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem;
+}
+.featured-card .card-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0; /* Remove margem inferior no modo horizontal */
+    flex-shrink: 0;
+}
+.featured-card .card-icon svg {
+    width: 24px;
+    height: 24px;
+}
+.featured-card h3 {
+    color: var(--text-dark); /* Título escuro para legibilidade */
+    margin-bottom: 0.25rem;
+}
+.featured-card p {
+    margin-bottom: 0; /* Remove margem inferior do parágrafo */
+}

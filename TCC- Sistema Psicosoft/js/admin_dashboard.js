@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     // --- 3. Carregamento de Dados da API ---
 
-    // URLs das APIs
+    // URLs das APIs (baseadas nos seus outros arquivos JS)
     const API_GET_CONSULTAS = "https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta";
     const API_POST_CANCELAR = "https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta/CancelarConsulta";
 
@@ -62,9 +62,16 @@ document.addEventListener("DOMContentLoaded", function() {
      * Helper para converter "dd/mm/aaaa HH:MM" em um objeto Date
      */
     function parseDataHorario(horarioStr) {
+        // Ex: "07/11/2025 09:30"
+        if (!horarioStr || horarioStr.indexOf(' ') === -1) {
+             // Retorna uma data inválida se o formato for incorreto
+             return new Date('invalid');
+        }
         const [dataStr, horaStr] = horarioStr.split(' '); 
         const [dia, mesNum, ano] = dataStr.split('/'); 
         const [hora, minuto] = (horaStr || '00:00').split(':'); 
+        
+        // Mês em JS é 0-indexado (0 = Jan, 11 = Dez)
         return new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia), parseInt(hora) || 0, parseInt(minuto) || 0);
     }
     
@@ -72,20 +79,30 @@ document.addEventListener("DOMContentLoaded", function() {
      * Define o status dinâmico de uma consulta
      */
     function getStatusConsulta(consulta, agora) {
+        // 1. Verifica o status "cancelada" (que vem da API)
         if ((consulta.status || '').toLowerCase() === "cancelada") {
             return { status: "cancelada", tag: '<span class="status-tag status-cancelada">Cancelada</span>', disabled: true };
         }
 
         const dataConsulta = parseDataHorario(consulta.horario);
+        
+        // 2. Verifica se a data é válida (se não for, marca como agendada)
+        if (isNaN(dataConsulta.getTime())) {
+             return { status: "agendada", tag: '<span class="status-tag status-agendada">Agendada</span>', disabled: false };
+        }
+
+        // 3. Verifica se a consulta já passou
         if (dataConsulta < agora) {
             return { status: "concluida", tag: '<span class="status-tag status-concluida">Concluída</span>', disabled: true };
         }
         
+        // 4. (Opcional) Verifica se está "Em Andamento"
         const diffMinutos = (agora - dataConsulta) / (1000 * 60);
         if (diffMinutos > 0 && diffMinutos < 45) { // Assumindo 45 min de consulta
              return { status: "andamento", tag: '<span class="status-tag status-andamento">Em Andamento</span>', disabled: false };
         }
 
+        // 5. Se não for nenhuma das anteriores, está agendada
         return { status: "agendada", tag: '<span class="status-tag status-agendada">Agendada</span>', disabled: false };
     }
 
@@ -94,12 +111,11 @@ document.addEventListener("DOMContentLoaded", function() {
      * Carrega todos os dados do painel (KPIs e tabela)
      */
     async function loadDashboardData() {
-        // ATENÇÃO: ID do funcionário fixo. Troque pelo ID do admin logado.
-        // Usei o ID da Dra. Beatriz que você mencionou no HTML de agendamento.
+        // ATENÇÃO: ID do funcionário fixo. 
+        // Troque pelo ID do admin logado (ex: pego do localStorage).
         const funcionarioId = "psicosoft_dra@gmail.com"; 
-        const nomeAdmin = "Dra.Pscosoft"; // Nome para a saudação
+        const nomeAdmin = "Dra. Beatriz"; // Nome para a saudação
         
-        // Atualiza a saudação
         if (adminWelcome) {
             adminWelcome.textContent = `Bem-vinda, ${nomeAdmin} 👋`;
         }
@@ -114,7 +130,15 @@ document.addEventListener("DOMContentLoaded", function() {
                 throw new Error(`Erro ${response.status}: Não foi possível buscar os dados.`);
             }
             
-            const allConsultas = await response.json();
+            let allConsultas = await response.json();
+            
+            // Validação: Garante que é um array
+            if (!Array.isArray(allConsultas)) {
+                 // Se a API retornar um objeto de erro com 'message'
+                 if (allConsultas.message) throw new Error(allConsultas.message);
+                 // Se retornar um objeto vazio ou inesperado
+                 allConsultas = [];
+            }
 
             // --- Processamento dos Dados ---
             const agora = new Date();
@@ -160,8 +184,9 @@ document.addEventListener("DOMContentLoaded", function() {
             
         } catch (error) {
             console.error("Erro ao carregar dashboard:", error);
-            if (tbody) tbody.innerHTML = `<tr><td colspan="4" style="color: red;">${error.message}</td></tr>`;
+            if (tbody) tbody.innerHTML = `<tr><td colspan="4" style="color: red; text-align: center; padding: 1rem;">${error.message}</td></tr>`;
             if (statsHoje) statsHoje.textContent = "Não foi possível carregar os dados.";
+            if (adminWelcome) adminWelcome.textContent = "Erro ao carregar";
         }
     }
 
@@ -220,12 +245,15 @@ document.addEventListener("DOMContentLoaded", function() {
                 const horario = e.currentTarget.dataset.horario;
                 const paciente = e.currentTarget.dataset.paciente;
 
+                // Preenche o modal de confirmação
                 cancelDetailsText.textContent = `Paciente: ${paciente} (${horario})`;
                 
+                // Define a ação do botão "Sim, cancelar"
                 confirmCancelBtn.onclick = () => {
                     performCancellation(orderId);
                 };
 
+                // Mostra o modal
                 cancelModal.classList.add('active');
             });
         });
