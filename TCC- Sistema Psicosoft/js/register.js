@@ -31,6 +31,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- 2. FORMULÁRIO DE CADASTRO (formulario) ---
     const formulario = document.getElementById('formulario');
+    // AJUSTE: Seletores dos campos de cadastro
+    const registerName = document.getElementById('register-name');
+    const registerCpf = document.getElementById('register-cpf');
+    const registerTelefone = document.getElementById('register-telefone');
+    const registerEmail = document.getElementById('register-email');
+    const registerPassword = document.getElementById('register-password');
+    const registerError = document.getElementById('register-error');
 
     // Função de confete
     function runConfettiAnimation() {
@@ -104,9 +111,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (isSuccess) {
             modal.classList.add('modal--success');
-            
-            // --- AJUSTE: Ícone de "Usuário Verificado" ---
-            // Substituímos o calendário/relógio por este SVG.
+            // Ícone de "Usuário Verificado"
             modalIconWrapper.innerHTML = `
                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -115,10 +120,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 </svg>
             `;
             isSuccessRedirect = true;
-
         } else {
             modal.classList.add('modal--error');
-            // Ícone de erro (permanece o mesmo)
+            // Ícone de erro
             modalIconWrapper.innerHTML = `
                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
@@ -145,15 +149,70 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Listener do formulário de cadastro
+    // --- AJUSTE: Nova Função de Validação do Formulário ---
+    function validateForm() {
+        // Limpa erros e estilos inválidos antigos
+        registerError.textContent = "";
+        const inputs = [registerName, registerCpf, registerTelefone, registerEmail, registerPassword];
+        inputs.forEach(input => input.classList.remove('invalid'));
+
+        // Validação do Nome (mínimo 3 caracteres, apenas letras e espaços)
+        if (!/^[A-Za-zÀ-ú\s]{3,}$/.test(registerName.value)) {
+            registerError.textContent = "Nome inválido. (mínimo 3 letras)";
+            registerName.classList.add('invalid');
+            registerName.focus();
+            return false;
+        }
+
+        // Validação do CPF (exatamente 11 dígitos numéricos)
+        if (!/^\d{11}$/.test(registerCpf.value)) {
+            registerError.textContent = "CPF inválido. Digite 11 números, sem pontos ou traços.";
+            registerCpf.classList.add('invalid');
+            registerCpf.focus();
+            return false;
+        }
+
+        // Validação do Telefone (10 ou 11 dígitos numéricos)
+        if (!/^\d{10,11}$/.test(registerTelefone.value)) {
+            registerError.textContent = "Telefone inválido. Digite 10 ou 11 números (com DDD).";
+            registerTelefone.classList.add('invalid');
+            registerTelefone.focus();
+            return false;
+        }
+        
+        // Validação do Email (formato básico)
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerEmail.value)) {
+            registerError.textContent = "Formato de e-mail inválido.";
+            registerEmail.classList.add('invalid');
+            registerEmail.focus();
+            return false;
+        }
+
+        // Validação da Senha (mínimo 6 caracteres)
+        if (registerPassword.value.length < 6) {
+            registerError.textContent = "Senha muito curta (mínimo 6 caracteres).";
+            registerPassword.classList.add('invalid');
+            registerPassword.focus();
+            return false;
+        }
+
+        return true; // Todos os campos são válidos
+    }
+
+    // Listener do formulário de cadastro atualizado
     if (formulario) {
         formulario.addEventListener('submit', function(event) {
-            event.preventDefault(); 
+            event.preventDefault(); // Sempre impede o envio padrão
 
             const submitButton = formulario.querySelector('button[type="submit"]');
-            const registerError = document.getElementById('register-error');
-            if (registerError) registerError.textContent = "";
 
+            // --- AJUSTE: Executa a validação JS primeiro ---
+            if (!validateForm()) {
+                // Se a validação falhar, não faz nada (a mensagem de erro já foi definida)
+                return;
+            }
+            
+            // Se a validação JS passar, continua com o envio para a API
             submitButton.disabled = true;
             submitButton.textContent = "CADASTRANDO...";
 
@@ -171,6 +230,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => {
                 if (!response.ok) {
+                    // Se a API retornar um erro (ex: CPF já existe), lança o erro
                     return response.json().then(err => { throw new Error(err.message || 'Erro de rede') });
                 }
                 return response.json(); 
@@ -187,8 +247,9 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 console.error('Erro:', error);
-                // 3. MOSTRA O MODAL DE ERRO
-                showNotification(false, 'Erro no Cadastro', `Não foi possível cadastrar: ${error.message}`);
+                // 3. MOSTRA O MODAL DE ERRO (com a mensagem da API)
+                // Se a API retornar "Este CPF já está cadastrado.", é isso que aparecerá.
+                showNotification(false, 'Erro no Cadastro', error.message);
             })
             .finally(() => {
                 submitButton.disabled = false;

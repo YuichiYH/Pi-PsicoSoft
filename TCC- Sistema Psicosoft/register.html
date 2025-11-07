@@ -13,8 +13,7 @@
     <div class="container" id="container">
         
         <div class="form-container sign-up">
-            <form id="formulario">
-                <h1>Criar Conta</h1>
+            <form id="formulario" novalidate> <h1>Criar Conta</h1>
                 <div class="social-icons">
                     <a href="#" class="icon"><i class="fa-brands fa-google-plus-g"></i></a>
                     <a href="#" class="icon"><i class="fa-brands fa-facebook-f"></i></a>
@@ -23,13 +22,21 @@
                 </div>
                 <span>ou use seu e-mail para se cadastrar</span>
                 
-                <input type="text" placeholder="Nome" name="name" required>
-                <input type="text" placeholder="CPF" name="cpf" required>
-                <input type="tel" placeholder="Telefone" name="telefone" required>
-                <input type="email" placeholder="Email" name="email" required>
+                <input type="text" placeholder="Nome Completo" name="name" id="register-name"
+                       required minlength="3">
+                
+                <input type="tel" placeholder="CPF (apenas números)" name="cpf" id="register-cpf"
+                       required pattern="\d{11}" maxlength="11" title="Digite 11 números, sem pontos ou traços.">
+                
+                <input type="tel" placeholder="Telefone (apenas números)" name="telefone" id="register-telefone"
+                       required pattern="\d{10,11}" maxlength="11" title="Digite 10 ou 11 números (com DDD).">
+                
+                <input type="email" placeholder="Email" name="email" id="register-email"
+                       required>
                 
                 <div class="password-wrapper">
-                    <input type="password" placeholder="Senha" name="password" id="register-password" required>
+                    <input type="password" placeholder="Senha (mín. 6 caracteres)" name="password" id="register-password"
+                           required minlength="6">
                     <i class="fa-solid fa-eye" id="toggleRegisterPassword"></i>
                 </div>
                 

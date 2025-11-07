@@ -90,8 +90,17 @@ body{
     border-radius: 8px;
     width: 100%; /* Largura total */
     outline: none;
-    
+    /* AJUSTE: Adicionada transição e borda padrão */
+    border: 2px solid transparent;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 } 
+
+/* --- AJUSTE: Feedback visual para campos inválidos --- */
+.container input.invalid {
+    border-color: #E57373; /* Vermelho suave */
+    box-shadow: 0 0 5px rgba(229, 115, 115, 0.3);
+}
+/* Fim do ajuste */
 
 .form-container {
     position: absolute;
@@ -554,6 +563,8 @@ body{
     position: relative; /* Para o ícone de SVG se sobrepor */
 }
 
+
+/* --- ESTADOS (SUCESSO E ERRO) --- */
 
 .modal-overlay.modal--success .modal-icon-wrapper {
     background-color: #E6F6F6; /* Fundo verde claro */
