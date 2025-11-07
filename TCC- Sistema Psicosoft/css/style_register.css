@@ -552,85 +552,24 @@ body{
     position: relative; /* Para o ícone de SVG se sobrepor */
 }
 
-/* --- ANIMAÇÃO DE SUCESSO (Calendário/Relógio de reagendar.css) --- */
-@keyframes spin-clock-hand {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-@keyframes calendar-pop-in {
-    from { transform: scale(0.8); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-}
+/* --- AJUSTE: REMOVIDO O CSS DA ANIMAÇÃO DE CALENDÁRIO/RELÓGIO --- */
+/* (O CSS da animação de calendário foi removido daqui pois não é mais usado) */
 
-.animated-icon-container {
-    width: 60px;
-    height: 60px;
-    position: relative;
-    animation: calendar-pop-in 0.5s ease-out;
-}
-.calendar-icon, .clock-icon {
-    position: absolute;
-    background: #5BA6A6; /* Cor de sucesso (verde-água) */
-    border-radius: 4px;
-}
-.calendar-icon {
-    width: 40px;
-    height: 40px;
-    top: 0;
-    left: 0;
-}
-.calendar-icon::before { /* Argolas do topo */
-    content: '';
-    position: absolute;
-    top: -6px;
-    left: 8px;
-    width: 5px;
-    height: 10px;
-    background: #5BA6A6;
-    border-radius: 2px;
-    box-shadow: 12px 0 0 #5BA6A6;
-}
-.calendar-icon::after { /* Linhas de data */
-    content: '';
-    position: absolute;
-    top: 10px;
-    left: 6px;
-    width: 28px;
-    height: 18px;
-    border-top: 3px solid white;
-    border-bottom: 3px solid white;
-    box-shadow: 0 8px 0 0 white;
-}
-.clock-icon {
-    width: 32px;
-    height: 32px;
-    bottom: 0;
-    right: 0;
-    border-radius: 50%;
-    border: 3px solid #5BA6A6;
-    background: white;
-}
-.clock-icon::after { /* Ponteiro dos minutos */
-    content: '';
-    position: absolute;
-    top: 2px;
-    left: 13px;
-    width: 3px;
-    height: 12px;
-    background: #5BA6A6;
-    transform-origin: 50% 90%;
-    border-radius: 2px;
-    animation: spin-clock-hand 1.5s linear infinite;
-}
 
 /* --- ESTADOS (SUCESSO E ERRO) --- */
 
 .modal-overlay.modal--success .modal-icon-wrapper {
     background-color: #E6F6F6; /* Fundo verde claro */
+    color: #5BA6A6; /* Cor do ícone (verde-água) */
 }
 .modal-overlay.modal--success .btn-modal-primary {
     background-color: #5BA6A6; /* Verde-água */
     color: white;
+}
+/* AJUSTE: Adicionada regra para o SVG de sucesso */
+.modal-overlay.modal--success .modal-icon-wrapper svg {
+    width: 48px;
+    height: 48px;
 }
 
 .modal-overlay.modal--error .modal-icon-wrapper {

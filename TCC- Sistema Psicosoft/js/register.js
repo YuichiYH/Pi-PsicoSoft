@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
         loginMobileBtn.addEventListener('click', (e) => { e.preventDefault(); container.classList.remove("active"); });
     }
 
-    // --- AJUSTE: Seletores do Modal de Notificação ---
+    // --- Seletores do Modal de Notificação ---
     const modal = document.getElementById('notification-modal');
     const modalIconWrapper = modal.querySelector('.modal-icon-wrapper');
     const modalTitle = document.getElementById('modal-title');
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- 2. FORMULÁRIO DE CADASTRO (formulario) ---
     const formulario = document.getElementById('formulario');
 
-    // AJUSTE: Função de confete
+    // Função de confete
     function runConfettiAnimation() {
         const canvas = document.getElementById('confetti-canvas');
         if (!canvas) return;
@@ -97,26 +97,30 @@ document.addEventListener('DOMContentLoaded', function() {
         updateConfetti();
     }
 
-    // AJUSTE: Função para mostrar o modal (adaptada de reagendar.js)
+    // Função para mostrar o modal
     function showNotification(isSuccess, title, message) {
         if (!modal) return;
         modal.classList.remove('modal--success', 'modal--error');
 
         if (isSuccess) {
             modal.classList.add('modal--success');
-            // Animação de celebração (calendário/relógio)
+            
+            // --- AJUSTE: Ícone de "Usuário Verificado" ---
+            // Substituímos o calendário/relógio por este SVG.
             modalIconWrapper.innerHTML = `
-                <div class="animated-icon-container">
-                    <div class="calendar-icon"></div>
-                    <div class="clock-icon"></div>
-                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="8.5" cy="7" r="4"></circle>
+                    <polyline points="17 11 19 13 23 9"></polyline>
+                </svg>
             `;
             isSuccessRedirect = true;
+
         } else {
             modal.classList.add('modal--error');
-            // Ícone de erro
+            // Ícone de erro (permanece o mesmo)
             modalIconWrapper.innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
                     <line x1="12" x2="12" y1="9" y2="13"></line><line x1="12" x2="12.01" y1="17" y2="17"></line>
                 </svg>
@@ -128,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function() {
         modal.classList.add('active');
     }
 
-    // AJUSTE: Evento para fechar o modal
+    // Evento para fechar o modal
     if (modalOkButton) {
         modalOkButton.addEventListener('click', () => {
             modal.classList.remove('active');
@@ -141,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // AJUSTE: Listener do formulário de cadastro atualizado
+    // Listener do formulário de cadastro
     if (formulario) {
         formulario.addEventListener('submit', function(event) {
             event.preventDefault(); 
@@ -180,7 +184,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 // 2. DISPARA O CONFETE (simultaneamente)
                 runConfettiAnimation();
                 
-                // A mudança de tela e limpeza do form agora acontece no listener do modalOkButton
             })
             .catch(error => {
                 console.error('Erro:', error);
@@ -195,7 +198,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- 3. FORMULÁRIO DE LOGIN (login-form) ---
-    // (Lógica de animação de login da resposta anterior - sem mudanças)
     console.log("--- 3. Procurando formulário de LOGIN ---");
     const loginForm = document.getElementById('login-form');
     console.log("Formulário de LOGIN encontrado:", loginForm); // DEBUG
