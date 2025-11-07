@@ -1,3 +1,23 @@
+// --- AJUSTE: SCRIPT DE PROTEÇÃO DE ROTA (GUARD) ---
+// Este script verifica se o usuário está logado ANTES de carregar o bot.
+(function() {
+    const pacienteCPF = localStorage.getItem('paciente_cpf');
+
+    if (!pacienteCPF) {
+        console.warn("Acesso ao Chatbot negado. Usuário não autenticado.");
+        
+        // Redireciona a janela principal (o "top") para a página de login.
+        // Isso impede que o bot seja aberto diretamente pela URL ou
+        // carregado em um iframe por um usuário não logado.
+        window.top.location.href = "register.html";
+        
+        // Lança um erro para parar a execução do restante deste script.
+        throw new Error("Usuário não autenticado. Interrompendo a execução do bot.");
+    }
+})();
+// --- FIM DO SCRIPT DE PROTEÇÃO ---
+
+
 // Aguarda o documento HTML ser completamente carregado
 document.addEventListener('DOMContentLoaded', () => {
     
