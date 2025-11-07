@@ -1,29 +1,41 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel do Doutor - PisicoSoft</title>
-    <link rel="stylesheet" href="css/style_chat.css">
-    <link rel="stylesheet" href="css/style_doutor.css">
+    <title>Central de Atendimento - Psicosoft</title>
+    
+    <link rel="stylesheet" href="css/admin_detalhes.css">
 </head>
 <body>
     <div class="doctor-container">
         <div class="sidebar">
             <div class="sidebar-header">
-                <h2>Consultas</h2>
+                <h2>Todas as Consultas</h2>
             </div>
-            <div id="consultas-lista" class="consultas-scroll"></div>
+            <div id="consultas-lista" class="consultas-scroll">
+                <p style="padding: 1rem; color: var(--text-light);">Carregando...</p>
+            </div>
         </div>
+        
         <div class="main-view">
             <div class="header">
                 <h2 id="titulo-consulta">Detalhes da Consulta</h2>
+                <a href="admin_dashboard.html" class="btn-back">
+                    <i data-lucide="arrow-left"></i>
+                    <span>Voltar ao Painel</span>
+                </a>
             </div>
             <div class="info-box" id="detalhes-consulta">
                 <p>Selecione uma consulta ao lado para ver os detalhes.</p>
             </div>
         </div>
     </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      lucide.createIcons();
+    </script>
     <script src="js/script_doutor.js"></script>
 </body>
 </html>
