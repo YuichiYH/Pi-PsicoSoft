@@ -5,33 +5,136 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Central de Atendimento - Psicosoft</title>
     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="css/admin_detalhes.css">
 </head>
 <body>
-    <div class="doctor-container">
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <h2>Todas as Consultas</h2>
-            </div>
-            <div id="consultas-lista" class="consultas-scroll">
-                <p style="padding: 1rem; color: var(--text-light);">Carregando...</p>
-            </div>
+
+    <header class="dashboard-header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">Psicosoft</a>
+            
+            <nav class="main-nav">
+                <ul>
+                    <li>
+                        <a href="admin_dashboard.html">
+                            <i data-lucide="bar-chart-3"></i>
+                            <span>Painel Gerencial</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.html" class="btn-logout">
+                            <i data-lucide="log-out"></i>
+                            <span>Sair</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <button id="menu-toggle" class="menu-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
         </div>
-        
-        <div class="main-view">
-            <div class="header">
-                <h2 id="titulo-consulta">Detalhes da Consulta</h2>
+    </header>
+
+    <main>
+        <div class="container">
+            
+            <div class="page-header-container">
+                <section class="welcome-header">
+                    <i data-lucide="clipboard-list" class="page-icon"></i>
+                    <div>
+                        <h1>Central de Atendimento</h1>
+                        <p class="subtitle">Visualize e gerencie todas as suas consultas.</p>
+                    </div>
+                </section>
                 <a href="admin_dashboard.html" class="btn-back">
                     <i data-lucide="arrow-left"></i>
                     <span>Voltar ao Painel</span>
                 </a>
             </div>
-            <div class="info-box" id="detalhes-consulta">
-                <p>Selecione uma consulta ao lado para ver os detalhes.</p>
+
+            <div class="atendimento-container">
+                
+                <div class="appointment-list-column">
+                    <div class="filter-bar">
+                        <div class="search-wrapper">
+                            <i data-lucide="search"></i>
+                            <input type="text" id="search-input" placeholder="Buscar por nome ou CPF...">
+                        </div>
+                        <input type="date" id="date-filter">
+                    </div>
+                    
+                    <div id="consultas-lista" class="consultas-scroll">
+                        <div class="list-placeholder">
+                            <i data-lucide="loader-2" class="loading-icon"></i>
+                            <p>Carregando consultas...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="appointment-detail-column">
+                    
+                    <div id="detalhes-placeholder" class="details-placeholder-card">
+                        <i data-lucide="mouse-pointer-square"></i>
+                        <h3>Nenhuma consulta selecionada</h3>
+                        <p>Selecione uma consulta na lista ao lado para ver todos os detalhes aqui.</p>
+                    </div>
+                    
+                    <div id="detalhes-consulta-content" class="hidden">
+                        
+                        <div class="detail-card meet-card">
+                            <div class="meet-icon">
+                                <i data-lucide="video"></i>
+                            </div>
+                            <div class="meet-info">
+                                <h4>Link da Consulta Online</h4>
+                                <p>A consulta será realizada via Google Meet.</p>
+                            </div>
+                            <a href="#" id="detail-meet-link" target="_blank" class="btn-meet">
+                                <span>Acessar Sala</span>
+                                <i data-lucide="external-link"></i>
+                            </a>
+                        </div>
+                        
+                        <div class="detail-card">
+                            <h3>Paciente</h3>
+                            <div class="info-grid">
+                                <div class="info-group">
+                                    <strong>Nome:</strong>
+                                    <span id="detail-nome">...</span>
+                                </div>
+                                <div class="info-group">
+                                    <strong>Idade:</strong>
+                                    <span id="detail-idade">...</span>
+                                </div>
+                                <div class="info-group">
+                                    <strong>Horário:</strong>
+                                    <span id="detail-horario">...</span>
+                                </div>
+                                <div class="info-group">
+                                    <strong>Forma:</strong>
+                                    <span id="detail-forma">...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-card">
+                            <h3>Motivo da Consulta</h3>
+                            <p id="detail-motivo">...</p>
+                        </div>
+                        
+                    </div>
+                </div>
+
             </div>
         </div>
-    </div>
-
+    </main>
+    
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
       lucide.createIcons();

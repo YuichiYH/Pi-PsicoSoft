@@ -1,6 +1,6 @@
 /*
  * admin_detalhes.css
- * Nova folha de estilo para a "Central de Atendimento" (bot_web_funcionario.html)
+ * Layout moderno para a Central de Atendimento (bot_web_funcionario.html)
  * Utiliza a paleta oficial Psicosoft.
  */
 
@@ -15,6 +15,7 @@
     --text-dark: #1A202C;
     --text-light: #718096;
     --border-color: #E2E8F0;
+    --status-danger: #E57373;
     
     --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.07), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
@@ -23,104 +24,123 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    margin: 0;
-    padding: 0;
     font-family: 'Lato', sans-serif;
     background-color: var(--background);
     color: var(--text-dark);
+    line-height: 1.6;
     height: 100vh;
-    overflow: hidden;
-}
-
-/* --- 2. Layout Principal --- */
-.doctor-container {
-    display: flex;
-    width: 100vw;
-    height: 100vh;
-}
-
-/* --- 3. Sidebar (Lista de Consultas) --- */
-.sidebar {
-    width: 320px; 
-    background-color: var(--card-bg);
-    border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    height: 100%;
-    overflow: hidden;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* --- 2. Header (Copiado de admin_dashboard.css) --- */
+.dashboard-header {
+    background-color: var(--card-bg);
     box-shadow: var(--shadow-sm);
-    z-index: 2;
-}
-.sidebar-header {
-    padding: 1.5rem;
-    background-color: var(--primary);
-    color: var(--card-bg);
-    text-align: center;
-}
-.sidebar-header h2 {
-    font-size: 1.5rem;
-    margin: 0;
-}
-.consultas-scroll {
-    flex-grow: 1;
-    overflow-y: auto;
-}
-.consult-item {
-    padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid var(--background);
-    cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
-.consult-item:hover {
-    background-color: var(--background);
-}
-.consult-item.active {
-    background-color: var(--primary-light);
-    color: var(--primary);
-    border-right: 4px solid var(--primary);
-}
-.consult-item strong {
-    font-size: 1.1rem;
-    color: var(--text-dark);
-}
-.consult-item:hover strong,
-.consult-item.active strong {
-    color: var(--primary);
-}
-.consult-item small {
-    font-size: 0.9rem;
-    color: var(--text-light);
-}
-
-/* --- 4. Área Principal (Detalhes) --- */
-.main-view {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    background-color: var(--background);
-    height: 100%;
-    overflow: hidden;
-}
-.header {
-    padding: 1.25rem 2rem;
-    background-color: var(--card-bg);
     border-bottom: 1px solid var(--border-color);
-    box-shadow: var(--shadow-sm);
-    z-index: 1;
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-shrink: 0;
+}
+.header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
-.header h2 {
-    font-size: 1.5rem;
-    color: var(--text-dark);
+.logo {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--primary);
+    text-decoration: none;
+}
+.main-nav ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+.main-nav a {
+    color: var(--text-light);
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.main-nav a:hover,
+.main-nav a.active {
+    color: var(--primary);
+}
+.btn-logout { color: var(--text-light); }
+.btn-logout:hover { color: var(--status-danger); }
+.main-nav a svg { width: 18px; height: 18px; }
+.menu-toggle { display: none; } /* Oculto por padrão no desktop */
+
+/* --- 3. Layout Principal --- */
+main {
+    flex-grow: 1;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    overflow: hidden; /* Impede o scroll da página principal */
+    display: flex;
+    flex-direction: column;
+}
+main .container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* 3.1. Cabeçalho da Página (Título e Voltar) */
+.page-header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    flex-shrink: 0;
+}
+.welcome-header {
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.welcome-header h1 {
+    font-size: 1.8rem;
     margin: 0;
+}
+.welcome-header .subtitle {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin: 0;
+}
+.page-icon {
+    width: 48px;
+    height: 48px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--primary);
+    flex-shrink: 0;
 }
 .btn-back {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background-color: var(--background);
+    background-color: var(--card-bg);
     border: 1px solid var(--border-color);
     padding: 0.6rem 1rem;
     border-radius: 8px;
@@ -128,41 +148,306 @@ body {
     font-weight: 700;
     font-size: 0.95rem;
     transition: all 0.3s ease;
+    flex-shrink: 0;
 }
 .btn-back:hover {
-    background-color: var(--border-color);
+    background-color: var(--background);
     color: var(--primary);
+    border-color: var(--primary-light);
 }
 .btn-back svg {
     width: 20px;
     height: 20px;
 }
-.info-box {
-    max-width: 900px;
-    width: 90%;
-    margin: 2rem auto 0 auto;
-    padding: 2rem;
+
+/* 3.2. Container de Duas Colunas */
+.atendimento-container {
+    display: grid;
+    grid-template-columns: 350px 1fr; /* Sidebar fixa, conteúdo flexível */
+    gap: 1.5rem;
+    flex-grow: 1;
+    overflow: hidden; /* Chave para o scroll interno */
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 16px;
     box-shadow: var(--shadow-sm);
+}
+
+/* 3.3. Coluna da Esquerda (Lista) */
+.appointment-list-column {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-right: 1px solid var(--border-color);
+    background-color: #FAFAFB; /* Fundo levemente diferente */
+}
+.filter-bar {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.filter-bar .search-wrapper {
+    position: relative;
+}
+.filter-bar .search-wrapper i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+    width: 18px;
+}
+.filter-bar input[type="text"] {
+    padding: 10px 12px 10px 40px;
+    width: 100%;
+}
+.filter-bar input {
+    font-family: 'Lato', sans-serif;
+    font-size: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--card-bg);
+}
+.filter-bar input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+.consultas-scroll {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+.list-placeholder,
+.details-placeholder-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    height: 100%;
+    color: var(--text-light);
+}
+.list-placeholder i,
+.details-placeholder-card i {
+    width: 48px;
+    height: 48px;
+    color: var(--primary-light);
+    margin-bottom: 1rem;
+}
+.list-placeholder p {
+    margin: 0;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+.loading-icon {
+    animation: spin 1s linear infinite;
+}
+
+.consult-item {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.consult-item:hover {
+    background-color: var(--background);
+}
+.consult-item.active {
+    background-color: var(--primary-light);
+    border-right: 4px solid var(--primary);
+}
+.consult-item h5 {
+    font-size: 1.1rem;
+    color: var(--text-dark);
+    margin: 0 0 0.25rem 0;
+}
+.consult-item.active h5 {
+    color: var(--primary);
+}
+.consult-item p {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin: 0;
+}
+
+/* 3.4. Coluna da Direita (Detalhes) */
+.appointment-detail-column {
+    padding: 1.5rem 2rem;
+    overflow-y: auto;
+}
+.hidden {
+    display: none;
+}
+#detalhes-consulta-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.detail-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+.detail-card h3 {
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    color: var(--text-light);
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+.info-group {
+    font-size: 1.1rem;
+}
+.info-group strong {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    font-weight: 700;
+}
+.info-group span {
+    color: var(--text-dark);
+    font-weight: 700;
+}
+#detail-motivo {
     font-size: 1.1rem;
     color: var(--text-dark);
     line-height: 1.7;
+    margin: 0;
+    white-space: pre-wrap; /* Preserva quebras de linha */
 }
-.info-box p {
-    margin-bottom: 1rem;
-    color: var(--text-light);
+
+/* Card de Destaque (Meet) */
+.meet-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background-color: var(--accent-2); /* Verde-Água */
+    color: #FFF;
+    border: none;
 }
-.info-box p strong {
-    color: var(--text-dark);
-    min-width: 120px;
-    display: inline-block;
+.meet-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: rgba(255,255,255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
-.info-box p a {
-    font-weight: 700;
+.meet-icon svg {
+    width: 24px;
+    height: 24px;
+}
+.meet-info {
+    flex-grow: 1;
+}
+.meet-info h4 {
+    color: #FFF;
+    font-size: 1.2rem;
+    margin: 0;
+}
+.meet-info p {
+    color: #FFF;
+    opacity: 0.9;
+    margin: 0;
+    font-size: 1rem;
+}
+.btn-meet {
+    background-color: #FFF;
     color: var(--accent-2);
+    font-weight: 700;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
 }
-.info-box p a:hover {
-    text-decoration: underline;
+.btn-meet:hover {
+    background-color: var(--background);
+    transform: scale(1.05);
+}
+.btn-meet svg {
+    width: 18px;
+}
+
+/* 4. Responsividade */
+@media (max-width: 992px) {
+    .atendimento-container {
+        /* Vira coluna única */
+        grid-template-columns: 1fr; 
+        height: auto;
+        max-height: none;
+    }
+    .appointment-list-column {
+        /* Altura fixa para a lista no mobile */
+        height: 400px;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .appointment-detail-column {
+        overflow-y: visible;
+    }
+}
+@media (max-width: 768px) {
+    /* Menu Mobile */
+    .menu-toggle { display: block; background: none; border: none; cursor: pointer; }
+    .menu-toggle .bar { width: 25px; height: 3px; background-color: var(--text-dark); margin: 5px 0; transition: all 0.3s ease; }
+    .main-nav {
+        position: absolute; top: 68px; left: 0;
+        width: 100%; background-color: var(--card-bg);
+        box-shadow: var(--shadow-md); max-height: 0;
+        overflow: hidden; transition: max-height 0.4s ease-out;
+    }
+    .main-nav.active { max-height: 300px; }
+    .main-nav ul { flex-direction: column; padding: 1rem; align-items: stretch; }
+    .main-nav li { border-bottom: 1px solid var(--border-color); }
+    .main-nav a { display: block; padding: 0.8rem; }
+    .menu-toggle.active .bar:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+    .menu-toggle.active .bar:nth-child(2) { opacity: 0; }
+    .menu-toggle.active .bar:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
+
+    /* Layout da Página */
+    .page-header-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    .btn-back {
+        align-self: flex-start;
+    }
+    .atendimento-container {
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+    }
+    .meet-card {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+    }
+    .btn-meet {
+        width: 100%;
+        justify-content: center;
+    }
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
 }

@@ -113,8 +113,8 @@ document.addEventListener("DOMContentLoaded", function() {
     async function loadDashboardData() {
         // ATENÇÃO: ID do funcionário fixo. 
         // Troque pelo ID do admin logado (ex: pego do localStorage).
-        const funcionarioId = "psicosoft_dra@gmail.com"; 
-        const nomeAdmin = "Dra. Beatriz"; // Nome para a saudação
+        const funcionarioId = "psicosoft_dr@gmail.com"; 
+        const nomeAdmin = "Dr. Pscosoft"; // Nome para a saudação
         
         if (adminWelcome) {
             adminWelcome.textContent = `Bem-vinda, ${nomeAdmin} 👋`;
