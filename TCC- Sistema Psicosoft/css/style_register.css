@@ -475,3 +475,173 @@ body{
     /* Impede que o canvas bloqueie cliques no formulário */
     pointer-events: none;
 }
+
+
+/* --- AJUSTE: CSS DO MODAL DE NOTIFICAÇÃO --- */
+/* (Baseado no css/reagendar.css e adaptado para esta página) */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: none; /* Escondido por padrão */
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background: #FFFFFF; /* --card-bg */
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.03); /* --shadow-lg */
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+}
+.modal-content h4 {
+    font-size: 1.25rem;
+    color: #1A202C; /* --text-dark */
+    margin-bottom: 0.5rem;
+}
+.modal-content p {
+    font-size: 1rem;
+    color: #718096; /* --text-light */
+    margin-bottom: 1.5rem;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+}
+.btn-modal-primary {
+    flex: 1;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-family: 'Montserrat', 'sans-serif'; /* Fonte da página */
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Wrapper do Ícone */
+.modal-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative; /* Para o ícone de SVG se sobrepor */
+}
+
+/* --- ANIMAÇÃO DE SUCESSO (Calendário/Relógio de reagendar.css) --- */
+@keyframes spin-clock-hand {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+@keyframes calendar-pop-in {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.animated-icon-container {
+    width: 60px;
+    height: 60px;
+    position: relative;
+    animation: calendar-pop-in 0.5s ease-out;
+}
+.calendar-icon, .clock-icon {
+    position: absolute;
+    background: #5BA6A6; /* Cor de sucesso (verde-água) */
+    border-radius: 4px;
+}
+.calendar-icon {
+    width: 40px;
+    height: 40px;
+    top: 0;
+    left: 0;
+}
+.calendar-icon::before { /* Argolas do topo */
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 8px;
+    width: 5px;
+    height: 10px;
+    background: #5BA6A6;
+    border-radius: 2px;
+    box-shadow: 12px 0 0 #5BA6A6;
+}
+.calendar-icon::after { /* Linhas de data */
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 6px;
+    width: 28px;
+    height: 18px;
+    border-top: 3px solid white;
+    border-bottom: 3px solid white;
+    box-shadow: 0 8px 0 0 white;
+}
+.clock-icon {
+    width: 32px;
+    height: 32px;
+    bottom: 0;
+    right: 0;
+    border-radius: 50%;
+    border: 3px solid #5BA6A6;
+    background: white;
+}
+.clock-icon::after { /* Ponteiro dos minutos */
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 13px;
+    width: 3px;
+    height: 12px;
+    background: #5BA6A6;
+    transform-origin: 50% 90%;
+    border-radius: 2px;
+    animation: spin-clock-hand 1.5s linear infinite;
+}
+
+/* --- ESTADOS (SUCESSO E ERRO) --- */
+
+.modal-overlay.modal--success .modal-icon-wrapper {
+    background-color: #E6F6F6; /* Fundo verde claro */
+}
+.modal-overlay.modal--success .btn-modal-primary {
+    background-color: #5BA6A6; /* Verde-água */
+    color: white;
+}
+
+.modal-overlay.modal--error .modal-icon-wrapper {
+    background-color: #FEEEEE; /* Fundo vermelho suave */
+    color: #E57373; /* Vermelho */
+}
+.modal-overlay.modal--error .btn-modal-primary {
+    background-color: #E57373;
+    color: white;
+}
+.modal-overlay.modal--error .modal-icon-wrapper svg {
+    width: 48px;
+    height: 48px;
+}

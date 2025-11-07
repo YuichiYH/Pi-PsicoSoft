@@ -8,40 +8,31 @@ document.addEventListener('DOMContentLoaded', function() {
     const registerMobileBtn = document.getElementById('register-mobile');
     const loginMobileBtn = document.getElementById('login-mobile');
 
-    // Listener para o botão de Registrar (Desktop)
     if (registerBtn) {
-        registerBtn.addEventListener('click', () => {
-            container.classList.add("active");
-        });
+        registerBtn.addEventListener('click', () => { container.classList.add("active"); });
     }
-
-    // Listener para o botão de Login (Desktop)
     if (loginBtn) {
-        loginBtn.addEventListener('click', () => {
-            container.classList.remove("active");
-        });
+        loginBtn.addEventListener('click', () => { container.classList.remove("active"); });
     }
-
-    // Listeners para os links do celular
     if (registerMobileBtn) {
-        registerMobileBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            container.classList.add("active");
-        });
+        registerMobileBtn.addEventListener('click', (e) => { e.preventDefault(); container.classList.add("active"); });
     }
-
     if (loginMobileBtn) {
-        loginMobileBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            container.classList.remove("active");
-        });
+        loginMobileBtn.addEventListener('click', (e) => { e.preventDefault(); container.classList.remove("active"); });
     }
 
+    // --- AJUSTE: Seletores do Modal de Notificação ---
+    const modal = document.getElementById('notification-modal');
+    const modalIconWrapper = modal.querySelector('.modal-icon-wrapper');
+    const modalTitle = document.getElementById('modal-title');
+    const modalMessage = document.getElementById('modal-message');
+    const modalOkButton = document.getElementById('modal-btn-ok');
+    let isSuccessRedirect = false; // Controla se o 'OK' deve mudar de tela
 
     // --- 2. FORMULÁRIO DE CADASTRO (formulario) ---
     const formulario = document.getElementById('formulario');
 
-    // AJUSTE: Função de confete que será chamada no sucesso
+    // AJUSTE: Função de confete
     function runConfettiAnimation() {
         const canvas = document.getElementById('confetti-canvas');
         if (!canvas) return;
@@ -55,12 +46,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const terminalVelocity = 5;
         const drag = 0.075;
         const colors = [
-            { r: 122, g: 126, b: 191 }, // Roxo --primary
-            { r: 169, g: 171, b: 217 }, // Roxo --primary-light
-            { r: 91, g: 166, b: 166 },  // Verde --accent-2
-            { r: 139, g: 195, b: 217 }  // Azul --accent-1
+            { r: 122, g: 126, b: 191 }, { r: 169, g: 171, b: 217 },
+            { r: 91, g: 166, b: 166 }, { r: 139, g: 195, b: 217 }
         ];
-
         const randomRange = (min, max) => Math.random() * (max - min) + min;
 
         function initConfetti() {
@@ -79,21 +67,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function updateConfetti() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
             confetti.forEach((c, idx) => {
                 c.velocity.y += gravity;
                 c.velocity.x -= c.velocity.x * drag;
                 c.velocity.y = Math.min(c.velocity.y, terminalVelocity);
-                
                 c.position.x += c.velocity.x;
                 c.position.y += c.velocity.y;
                 c.rotation += c.velocity.x * 0.1;
                 c.scale.y = Math.cos(c.position.y * 0.1);
                 c.scale.x = Math.sin(c.position.y * 0.1);
-
                 if (c.position.y > canvas.height) confetti.splice(idx, 1);
             });
-
             confetti.forEach((c) => {
                 ctx.save();
                 ctx.fillStyle = `rgb(${c.color.r}, ${c.color.g}, ${c.color.b})`;
@@ -103,48 +87,82 @@ document.addEventListener('DOMContentLoaded', function() {
                 ctx.fillRect(-c.dimensions.x / 2, -c.dimensions.y / 2, c.dimensions.x, c.dimensions.y);
                 ctx.restore();
             });
-
             if (confetti.length > 0) {
                 requestAnimationFrame(updateConfetti);
             } else {
-                ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpa no final
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
             }
         }
-        
         initConfetti();
         updateConfetti();
     }
 
-    // Verifica se o formulário existe antes de adicionar o listener
+    // AJUSTE: Função para mostrar o modal (adaptada de reagendar.js)
+    function showNotification(isSuccess, title, message) {
+        if (!modal) return;
+        modal.classList.remove('modal--success', 'modal--error');
+
+        if (isSuccess) {
+            modal.classList.add('modal--success');
+            // Animação de celebração (calendário/relógio)
+            modalIconWrapper.innerHTML = `
+                <div class="animated-icon-container">
+                    <div class="calendar-icon"></div>
+                    <div class="clock-icon"></div>
+                </div>
+            `;
+            isSuccessRedirect = true;
+        } else {
+            modal.classList.add('modal--error');
+            // Ícone de erro
+            modalIconWrapper.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                    <line x1="12" x2="12" y1="9" y2="13"></line><line x1="12" x2="12.01" y1="17" y2="17"></line>
+                </svg>
+            `;
+            isSuccessRedirect = false;
+        }
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
+        modal.classList.add('active');
+    }
+
+    // AJUSTE: Evento para fechar o modal
+    if (modalOkButton) {
+        modalOkButton.addEventListener('click', () => {
+            modal.classList.remove('active');
+            if (isSuccessRedirect) {
+                // Se foi sucesso, muda para a tela de login e limpa o formulário
+                if (container) container.classList.remove("active");
+                if (formulario) formulario.reset();
+                isSuccessRedirect = false; // Reseta a flag
+            }
+        });
+    }
+
+    // AJUSTE: Listener do formulário de cadastro atualizado
     if (formulario) {
         formulario.addEventListener('submit', function(event) {
-            event.preventDefault(); // Impede o recarregamento da página
+            event.preventDefault(); 
 
-            // AJUSTE: Pega o botão e o campo de erro
             const submitButton = formulario.querySelector('button[type="submit"]');
             const registerError = document.getElementById('register-error');
             if (registerError) registerError.textContent = "";
 
-            // AJUSTE: Mostra carregando
             submitButton.disabled = true;
             submitButton.textContent = "CADASTRANDO...";
 
             const formData = new FormData(this);
             const jsonData = {};
-            
-            formData.forEach(function(value, key) {
-                jsonData[key] = value;
-            });
-
+            formData.forEach((value, key) => { jsonData[key] = value; });
             jsonData["Empresas"] = "PSICOSOFT";
 
             const url = 'https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/paciente';
 
             fetch(url, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(jsonData)
             })
             .then(response => {
@@ -156,29 +174,20 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 console.log('Sucesso:', data);
                 
-                // 1. INICIA A ANIMAÇÃO DE CONFETE
+                // 1. MOSTRA O MODAL DE SUCESSO
+                showNotification(true, 'Cadastro Realizado!', 'Sua conta foi criada com sucesso. Faça o login para continuar.');
+                
+                // 2. DISPARA O CONFETE (simultaneamente)
                 runConfettiAnimation();
                 
-                // 2. MOSTRA UM ALERTA AMIGÁVEL
-                alert('Cadastro realizado com sucesso! Faça o login para continuar.');
-                
-                // 3. LIMPA O FORMULÁRIO
-                formulario.reset();
-
-                // 4. MUDA PARA A TELA DE LOGIN
-                if (container) container.classList.remove("active");
+                // A mudança de tela e limpeza do form agora acontece no listener do modalOkButton
             })
             .catch(error => {
                 console.error('Erro:', error);
-                // AJUSTE: Mostra erro no parágrafo, em vez de alert
-                if (registerError) {
-                    registerError.textContent = `ERRO: ${error.message}`;
-                } else {
-                    alert(`ERRO NO CADASTRO: ${error.message}`);
-                }
+                // 3. MOSTRA O MODAL DE ERRO
+                showNotification(false, 'Erro no Cadastro', `Não foi possível cadastrar: ${error.message}`);
             })
             .finally(() => {
-                // AJUSTE: Restaura o botão
                 submitButton.disabled = false;
                 submitButton.textContent = "Cadastre-se";
             });
@@ -186,7 +195,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- 3. FORMULÁRIO DE LOGIN (login-form) ---
-    
+    // (Lógica de animação de login da resposta anterior - sem mudanças)
     console.log("--- 3. Procurando formulário de LOGIN ---");
     const loginForm = document.getElementById('login-form');
     console.log("Formulário de LOGIN encontrado:", loginForm); // DEBUG
@@ -194,7 +203,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (loginForm) {
         console.log("Anexando 'submit' ao LOGIN"); // DEBUG
         const loginError = document.getElementById('login-error');
-        // AJUSTE: Pega o botão de login
         const loginButton = loginForm.querySelector('button[type="submit"]');
 
         loginForm.addEventListener('submit', async event => {
@@ -202,7 +210,6 @@ document.addEventListener('DOMContentLoaded', function() {
             event.preventDefault();
             loginError.textContent = "";
 
-            // 1. AJUSTE: ATIVA O ESTADO DE CARREGAMENTO
             loginButton.disabled = true;
             loginButton.classList.add('loading');
             loginButton.innerHTML = 'Entrando... <span class="loader"></span>';
@@ -216,7 +223,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log("Login bloqueado: campos vazios."); // DEBUG
                 loginError.textContent = "Por favor, preencha e-mail e senha.";
                 
-                // 2. AJUSTE: DESATIVA O CARREGAMENTO (EM CASO DE ERRO IMEDIATO)
                 loginButton.disabled = false;
                 loginButton.classList.remove('loading');
                 loginButton.innerHTML = 'Entre';
@@ -238,16 +244,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 if (responseData.success && responseData.client) {
                     
-                    // --- INÍCIO DA ATUALIZAÇÃO ---
-                    // Salvamos os dados do paciente que vieram da API
                     localStorage.setItem('paciente_nome', responseData.client.name);
                     localStorage.setItem('paciente_cpf', responseData.client.cpf); 
-                    
-                    // CORREÇÃO: Salvamos o 'email' que o usuário USOU PARA LOGAR
                     localStorage.setItem('paciente_email', email);
-                    // --- FIM DA ATUALIZAÇÃO ---
 
-                    window.location.href = "dashboard.html"; // Redireciona para o painel
+                    window.location.href = "dashboard.html"; 
                 } else {
                     throw new Error(responseData.message || "Login falhou.");
                 }
@@ -257,7 +258,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 loginError.textContent = err.message;
             
             } finally {
-                // 3. AJUSTE: DESATIVA O CARREGAMENTO (SEJA SUCESSO OU FALHA)
                 loginButton.disabled = false;
                 loginButton.classList.remove('loading');
                 loginButton.innerHTML = 'Entre';
@@ -268,23 +268,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- 4. CÓDIGO: MOSTRAR/ESCONDER SENHA ---
-    
-    /**
-     * Função genérica para alternar a visibilidade de um campo de senha.
-     * @param {string} inputId - O ID do <input type="password">
-     * @param {string} toggleId - O ID do ícone <i> (o "olho")
-     */
     const togglePasswordVisibility = (inputId, toggleId) => {
         const passwordInput = document.getElementById(inputId);
         const toggleIcon = document.getElementById(toggleId);
 
         if (passwordInput && toggleIcon) {
             toggleIcon.addEventListener('click', function() {
-                // Verifica o tipo atual do input
                 const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
                 passwordInput.setAttribute('type', type);
-                
-                // Muda o ícone (olho aberto / olho fechado)
                 this.classList.toggle('fa-eye');
                 this.classList.toggle('fa-eye-slash');
             });
@@ -293,10 +284,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // Aplica a função para o formulário de LOGIN
     togglePasswordVisibility('login-password', 'toggleLoginPassword');
-
-    // Aplica a função para o formulário de CADASTRO
     togglePasswordVisibility('register-password', 'toggleRegisterPassword');
 
 });
