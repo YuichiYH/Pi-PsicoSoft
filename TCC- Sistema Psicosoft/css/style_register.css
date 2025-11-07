@@ -555,8 +555,6 @@ body{
 }
 
 
-/* --- ESTADOS (SUCESSO E ERRO) --- */
-
 .modal-overlay.modal--success .modal-icon-wrapper {
     background-color: #E6F6F6; /* Fundo verde claro */
     color: #5BA6A6; /* Cor do ícone (verde-água) */
