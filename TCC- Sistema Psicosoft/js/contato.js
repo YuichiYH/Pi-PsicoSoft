@@ -5,6 +5,16 @@
 
 document.addEventListener("DOMContentLoaded", function() {
 
+    // --- AJUSTE: Adicionada Proteção de Rota ---
+    const pacienteCPF = localStorage.getItem('paciente_cpf');
+
+    if (!pacienteCPF) {
+        // Redireciona silenciosamente
+        window.location.href = "register.html";
+        return; 
+    }
+    // --- Fim da Proteção ---
+
     // --- 1. Controle do Menu Mobile ---
     const menuToggle = document.getElementById('menu-toggle');
     const mainNav = document.querySelector('.main-nav');

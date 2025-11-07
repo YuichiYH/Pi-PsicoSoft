@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const pacienteCPF = localStorage.getItem('paciente_cpf');
 
     if (!pacienteCPF) {
-        alert("Acesso negado. Por favor, faça login para continuar.");
+        // AJUSTE: Removido 'alert' para um redirecionamento silencioso.
         window.location.href = "register.html";
         return; 
     }

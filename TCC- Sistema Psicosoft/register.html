@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login/Registro</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -23,15 +23,18 @@
                 </div>
                 <span>ou use seu e-mail para se cadastrar</span>
                 
-                <input type="text" placeholder="Nome" name="name">
-                <input type="text" placeholder="CPF" name="cpf">
-                <input type="tel" placeholder="Telefone" name="telefone">
-                <input type="email" placeholder="Email" name="email">
+                <input type="text" placeholder="Nome" name="name" required>
+                <input type="text" placeholder="CPF" name="cpf" required>
+                <input type="tel" placeholder="Telefone" name="telefone" required>
+                <input type="email" placeholder="Email" name="email" required>
                 
                 <div class="password-wrapper">
-                    <input type="password" placeholder="Senha" name="password" id="register-password">
+                    <input type="password" placeholder="Senha" name="password" id="register-password" required>
                     <i class="fa-solid fa-eye" id="toggleRegisterPassword"></i>
                 </div>
+                
+                <p id="register-error" style="color: red; font-size: 0.9em; margin-top: 10px; min-height: 1.2em;"></p>
+                
                 <button type="submit">Cadastre-se</button>
 
                 <div class="form-toggle-mobile">
@@ -59,7 +62,7 @@
                 </div>
                 <a href="#">Esqueceu sua senha?</a>
 
-                <p id="login-error" style="color: red; font-size: 0.9em;"></p>
+                <p id="login-error" style="color: red; font-size: 0.9em; min-height: 1.2em;"></p>
                 
                 <button type="submit">Entre</button>
 
@@ -86,6 +89,7 @@
     </div>
     <div class="mobile-toggle-bg"></div>
 
+    <canvas id="confetti-canvas"></canvas>
     
     <script src="js/register.js"></script>
 </body>

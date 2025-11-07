@@ -11,8 +11,11 @@ document.addEventListener("DOMContentLoaded", function() {
     const pacienteCPF = localStorage.getItem('paciente_cpf');
 
     if (!pacienteCPF) {
-        // (Usaremos o modal de erro para esta falha também)
-        console.warn("Acesso negado. CPF não encontrado no localStorage.");
+        // AJUSTE: Removida lógica de 'showNotification' e 'alert'.
+        // Apenas redireciona silenciosamente.
+        console.warn("Acesso negado. CPF não encontrado. Redirecionando...");
+        window.location.href = "register.html";
+        return; // Impede a execução do restante do script
     }
     // --- Fim do Script de Proteção ---
 
@@ -307,15 +310,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // --- 10. Checagem de Proteção de Rota (AGORA USA O MODAL) ---
-    if (!pacienteCPF) {
-        showNotification(false, 'Acesso Negado', 'Você precisa fazer login para agendar uma consulta.');
-        // Desabilita o botão de confirmar se o usuário não estiver logado
-        const confirmButton = document.querySelector('.btn-confirm');
-        if (confirmButton) {
-            confirmButton.disabled = true;
-            confirmButton.textContent = "Faça login para agendar";
-        }
-    }
+    // (Esta verificação foi movida para o topo do arquivo)
 
 
     // =======================================================================

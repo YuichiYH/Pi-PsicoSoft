@@ -56,13 +56,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // --- 3. Script de Proteção de Rota (Guard) ---
     if (!pacienteCPF) {
-        // Mostra o modal de erro se não estiver logado
-        showNotification(false, 'Acesso Negado', 'Você precisa fazer login para reagendar uma consulta.');
-        // Desabilita os botões para segurança
-        document.querySelectorAll('.btn-reschedule, .btn-confirm').forEach(btn => {
-            if(btn) btn.disabled = true;
-        });
-        // Não continua a execução
+        // AJUSTE: Padronizado para redirecionamento silencioso.
+        window.location.href = "register.html";
+        return; 
     } else {
         // Se estiver logado, inicia o carregamento
         carregarConsultasAgendadas();
