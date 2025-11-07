@@ -47,9 +47,9 @@
             <div class="dashboard-main">
                 
                 <section class="welcome-header">
-                    <h1>Bem-vindo(a), Dr(a). Beatriz 👋</h1>
+                    <h1 id="admin-welcome">Carregando...</h1>
                     <p class="subtitle" id="stats-hoje">
-                        Hoje é 07 de Novembro de 2025. Você tem 12 consultas agendadas.
+                        Carregando estatísticas do dia...
                     </p>
                 </section>
 
@@ -59,11 +59,11 @@
                             <i data-lucide="calendar-check"></i>
                         </div>
                         <h4>Consultas do Dia</h4>
-                        <span class="kpi-metric" id="kpi-consultas-total">12</span>
+                        <span class="kpi-metric" id="kpi-consultas-total">0</span>
                         <div class="kpi-sub-stats">
-                            <span id="kpi-consultas-agendadas"><strong>8</strong> Agendadas</span>
-                            <span id="kpi-consultas-concluidas"><strong>2</strong> Concluídas</span>
-                            <span id="kpi-consultas-canceladas"><strong>2</strong> Canceladas</span>
+                            <span id="kpi-consultas-agendadas"><strong>0</strong> Agendadas</span>
+                            <span id="kpi-consultas-concluidas"><strong>0</strong> Concluídas</span>
+                            <span id="kpi-consultas-canceladas"><strong>0</strong> Canceladas</span>
                         </div>
                     </div>
                     
@@ -71,18 +71,9 @@
                         <div class="kpi-icon" style="background-color: #E6F6F6; color: var(--accent-2);">
                             <i data-lucide="users"></i>
                         </div>
-                        <h4>Pacientes Ativos</h4>
-                        <span class="kpi-metric" id="kpi-pacientes">324</span>
-                        <p class="kpi-desc">Total de pacientes em acompanhamento.</p>
-                    </div>
-
-                    <div class="kpi-card">
-                        <div class="kpi-icon" style="background-color: #EBF7FC; color: var(--accent-1);">
-                            <i data-lucide="message-square"></i>
-                        </div>
-                        <h4>Novas Mensagens</h4>
-                        <span class="kpi-metric" id="kpi-mensagens">3</span>
-                         <p class="kpi-desc">Aguardando sua resposta.</p>
+                        <h4>Pacientes (Total)</h4>
+                        <span class="kpi-metric" id="kpi-pacientes-unicos">0</span>
+                        <p class="kpi-desc">Pacientes únicos no seu histórico.</p>
                     </div>
 
                     <a href="#" class="kpi-card kpi-action">
@@ -108,7 +99,7 @@
                             </thead>
                             <tbody id="consultas-tbody">
                                 <tr>
-                                    <td colspan="4">Carregando consultas...</td>
+                                    <td colspan="4" style="text-align: center; padding: 2rem;">Carregando consultas...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -121,33 +112,13 @@
                 <div class="sidebar-widget">
                     <h4>Ações Rápidas</h4>
                     <ul class="quick-actions">
-                        <li><a href="#" class="btn-quick btn-primary"><i data-lucide="plus-circle"></i> Nova Consulta</a></li>
+                        <li><a href="#" class="btn-quick btn-primary"><i data-lucide="plus-circle"></i> Novo Agendamento</a></li>
                         <li><a href="#" class="btn-quick btn-secondary"><i data-lucide="history"></i> Ver Histórico Completo</a></li>
-                        <li><a href="#" class="btn-quick btn-secondary"><i data-lucide="phone"></i> Contatar Paciente</a></li>
+                        <li><a href="#" class="btn-quick btn-secondary"><i data-lucide="users"></i> Gerenciar Pacientes</a></li>
                     </ul>
                 </div>
 
-                <div class="sidebar-widget">
-                    <h4>Evolução (Últimos 30 Dias)</h4>
-                    <div class="chart-container">
-                        <p>Componente de gráfico será integrado aqui.</p>
-                                            </div>
-                </div>
-
-                <div class="sidebar-widget">
-                    <h4>Indicadores Chave</h4>
-                    <div class="indicator-grid">
-                        <div class="indicator-item">
-                            <span class="indicator-metric">92%</span>
-                            <span class="indicator-title">Taxa de Comparecimento</span>
-                        </div>
-                        <div class="indicator-item">
-                            <span class="indicator-metric">10:00</span>
-                            <span class="indicator-title">Horário de Pico</span>
-                        </div>
-                    </div>
-                </div>
-            </aside>
+                </aside>
         </div>
 
         <div id="cancel-modal" class="modal-overlay">
@@ -169,7 +140,7 @@
         <div id="notification-modal" class="modal-overlay">
             <div class="modal-content">
                 <div class="modal-icon-wrapper">
-                    </div>
+                </div>
                 <h4 id="modal-title" style="margin-top: 1rem;"></h4>
                 <p id="modal-message" style="margin-bottom: 1.5rem;"></p>
                 <div class="modal-actions">
@@ -178,28 +149,10 @@
             </div>
         </div>
     </main>
-
-    <div class="chat-widget">
-        <div id="chat-widget-container" class="chat-container-flutuante">
-            <button id="chat-widget-close" class="chat-widget-fechar" aria-label="Fechar chat">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-            <iframe 
-                src="bot_web.html" 
-                title="PsicIA Chat" 
-                frameborder="0"
-                style="width: 100%; height: 100%;">
-            </iframe>
-        </div>
-        <button id="open-chat-bot" class="chat-fab" aria-label="Abrir chat de ajuda">
-            <i data-lucide="bot" class="icon-bot"></i>
-            <i data-lucide="x" class="icon-x"></i>
-        </button>
-    </div>
     
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
-      lucide.createIcons(); // Ativa os ícones
+      lucide.createIcons();
     </script>
     
     <script src="js/admin_dashboard.js"></script>

@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const notificationMessage = document.getElementById('modal-message');
     const notificationOkButton = document.getElementById('modal-btn-ok');
 
-    // --- 2. Lógica de UI Padrão (Menu, Logout, Chat) ---
+    // --- 2. Lógica de UI Padrão (Menu, Logout) ---
 
     // Menu Mobile
     const menuToggle = document.getElementById('menu-toggle');
@@ -37,29 +37,14 @@ document.addEventListener("DOMContentLoaded", function() {
     if (logoutButton) {
         logoutButton.addEventListener('click', function(event) {
             event.preventDefault(); 
-            // Limparia o localStorage do admin (ex: localStorage.removeItem('admin_id'))
+            // Limparia o localStorage do admin
             window.location.href = "index.html"; 
-        });
-    }
-
-    // Chat
-    const chatButton = document.getElementById('open-chat-bot');
-    const chatContainer = document.getElementById('chat-widget-container');
-    const chatCloseButton = document.getElementById('chat-widget-close');
-    if (chatButton && chatContainer && chatCloseButton) {
-        chatButton.addEventListener('click', function() {
-            chatContainer.classList.toggle('active');
-            chatButton.classList.toggle('chat-aberto');
-        });
-        chatCloseButton.addEventListener('click', function() {
-            chatContainer.classList.remove('active');
-            chatButton.classList.remove('chat-aberto');
         });
     }
     
     // --- 3. Carregamento de Dados da API ---
 
-    // URLs das APIs (baseadas nos seus outros arquivos JS)
+    // URLs das APIs
     const API_GET_CONSULTAS = "https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta";
     const API_POST_CANCELAR = "https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta/CancelarConsulta";
 
@@ -69,44 +54,38 @@ document.addEventListener("DOMContentLoaded", function() {
     const kpiAgendadas = document.getElementById('kpi-consultas-agendadas');
     const kpiConcluidas = document.getElementById('kpi-consultas-concluidas');
     const kpiCanceladas = document.getElementById('kpi-consultas-canceladas');
+    const kpiPacientesUnicos = document.getElementById('kpi-pacientes-unicos');
     const statsHoje = document.getElementById('stats-hoje');
+    const adminWelcome = document.getElementById('admin-welcome');
     
     /**
      * Helper para converter "dd/mm/aaaa HH:MM" em um objeto Date
      */
     function parseDataHorario(horarioStr) {
-        // Ex: "07/11/2025 09:30"
         const [dataStr, horaStr] = horarioStr.split(' '); 
         const [dia, mesNum, ano] = dataStr.split('/'); 
-        const [hora, minuto] = horaStr.split(':'); 
-        // Mês em JS é 0-indexado (0 = Jan, 11 = Dez)
-        return new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia), parseInt(hora), parseInt(minuto));
+        const [hora, minuto] = (horaStr || '00:00').split(':'); 
+        return new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia), parseInt(hora) || 0, parseInt(minuto) || 0);
     }
     
     /**
      * Define o status dinâmico de uma consulta
      */
     function getStatusConsulta(consulta, agora) {
-        // Se a API já marcou como cancelada, esse é o status final.
         if ((consulta.status || '').toLowerCase() === "cancelada") {
             return { status: "cancelada", tag: '<span class="status-tag status-cancelada">Cancelada</span>', disabled: true };
         }
 
         const dataConsulta = parseDataHorario(consulta.horario);
-
-        // Se a data/hora da consulta já passou
         if (dataConsulta < agora) {
             return { status: "concluida", tag: '<span class="status-tag status-concluida">Concluída</span>', disabled: true };
         }
         
-        // (Lógica opcional para "Em Andamento")
-        // Se a consulta começou nos últimos 45 min
         const diffMinutos = (agora - dataConsulta) / (1000 * 60);
-        if (diffMinutos > 0 && diffMinutos < 45) {
+        if (diffMinutos > 0 && diffMinutos < 45) { // Assumindo 45 min de consulta
              return { status: "andamento", tag: '<span class="status-tag status-andamento">Em Andamento</span>', disabled: false };
         }
 
-        // Se não, ainda está agendada
         return { status: "agendada", tag: '<span class="status-tag status-agendada">Agendada</span>', disabled: false };
     }
 
@@ -115,14 +94,19 @@ document.addEventListener("DOMContentLoaded", function() {
      * Carrega todos os dados do painel (KPIs e tabela)
      */
     async function loadDashboardData() {
-        // ATENÇÃO: O ID do funcionário está fixo para "Dra. Beatriz".
-        // Em um app real, você pegaria isso do localStorage após o login do admin.
+        // ATENÇÃO: ID do funcionário fixo. Troque pelo ID do admin logado.
+        // Usei o ID da Dra. Beatriz que você mencionou no HTML de agendamento.
         const funcionarioId = "psicosoft_dra@gmail.com"; 
+        const nomeAdmin = "Dra.Pscosoft"; // Nome para a saudação
         
+        // Atualiza a saudação
+        if (adminWelcome) {
+            adminWelcome.textContent = `Bem-vinda, ${nomeAdmin} 👋`;
+        }
+
         const url = `${API_GET_CONSULTAS}?FuncionarioId=${encodeURIComponent(funcionarioId)}`;
 
         if (!tbody) return;
-        tbody.innerHTML = '<tr><td colspan="4">Carregando consultas...</td></tr>';
         
         try {
             const response = await fetch(url);
@@ -159,19 +143,25 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             });
 
-            // 3. Atualiza a UI (Cabeçalho e KPIs)
+            // 3. Calcula Pacientes Únicos (do histórico total)
+            const pacientesSet = new Set(allConsultas.map(c => c.ClienteId));
+            const pacientesUnicosCount = pacientesSet.size;
+
+            // 4. Atualiza a UI (Cabeçalho e KPIs)
             statsHoje.textContent = `Hoje é ${hojeFormatado}. Você tem ${consultasDeHoje.length} consultas.`;
             kpiTotal.textContent = consultasDeHoje.length;
             kpiAgendadas.innerHTML = `<strong>${agendadasCount}</strong> Agendadas`;
             kpiConcluidas.innerHTML = `<strong>${concluidasCount}</strong> Concluídas`;
             kpiCanceladas.innerHTML = `<strong>${canceladasCount}</strong> Canceladas`;
+            kpiPacientesUnicos.textContent = pacientesUnicosCount;
 
-            // 4. Renderiza a Tabela
+            // 5. Renderiza a Tabela
             renderTable(consultasDeHoje, agora);
             
         } catch (error) {
             console.error("Erro ao carregar dashboard:", error);
-            tbody.innerHTML = `<tr><td colspan="4" style="color: red;">${error.message}</td></tr>`;
+            if (tbody) tbody.innerHTML = `<tr><td colspan="4" style="color: red;">${error.message}</td></tr>`;
+            if (statsHoje) statsHoje.textContent = "Não foi possível carregar os dados.";
         }
     }
 
@@ -182,7 +172,7 @@ document.addEventListener("DOMContentLoaded", function() {
         tbody.innerHTML = ''; // Limpa a tabela
         
         if (consultas.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4">Nenhuma consulta para hoje.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 1rem;">Nenhuma consulta para hoje.</td></tr>';
             return;
         }
 
@@ -195,8 +185,6 @@ document.addEventListener("DOMContentLoaded", function() {
             const tr = document.createElement('tr');
             const statusInfo = getStatusConsulta(consulta, agora);
             const horario = consulta.horario.split(' ')[1] || 'N/A';
-            
-            // O nome do paciente vem da API (campo 'nome')
             const nomePaciente = consulta.nome || 'Paciente não informado'; 
 
             tr.innerHTML = `
@@ -216,7 +204,6 @@ document.addEventListener("DOMContentLoaded", function() {
             tbody.appendChild(tr);
         });
         
-        // (Re)anexa os eventos aos novos botões
         attachCancelButtons();
         lucide.createIcons();
     }
