@@ -1,6 +1,7 @@
 /*
  * admin_dashboard.css
- * Estilo para o painel gerencial da clínica (Sem Chatbot).
+ * Estilo para o painel gerencial da clínica.
+ * Efeito de brilho aplicado ao card de "Consultas do Dia".
  */
 
 /* --- 1. Variáveis Globais e Reset (Paleta Oficial) --- */
@@ -466,10 +467,10 @@ main {
 }
 
 /* ======================================================= */
-/* === 10. ESTILOS DO NOVO CARD DE RELATÓRIOS (ADICIONADO) === */
+/* === 10. ESTILOS DO CARD COM BRILHO (ADICIONADO) === */
 /* ======================================================= */
 
-/* Animação de Brilho (Copiada de bem-estar.css) */
+/* Animação de Brilho */
 @keyframes palette-glow {
     0%, 100% {
         /* Brilho Roxo (#7A7EBF) */
@@ -481,51 +482,19 @@ main {
     }
 }
 
-/* Estilo base do card (Copiado de bem-estar.css) */
-.tip-card {
-    background-color: var(--card-bg);
-    border-radius: 12px;
-    padding: 2rem;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border-color);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.tip-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-lg);
-}
-
-/* Aplica a animação de brilho */
-.tip-card.animated-border {
+/* Aplica a animação de brilho ao card especificado */
+.kpi-card.animated-border {
     animation: palette-glow 4s ease-in-out infinite;
+    /* Sobrescreve a borda padrão para que o brilho (box-shadow) seja o foco */
+    border-color: transparent; 
+    /* Garante que o brilho não seja cortado */
+    overflow: visible;
 }
 
-/* Estilo do card horizontal (Copiado de bem-estar.css) */
-.featured-card {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 2rem;
+.kpi-card.animated-border:hover {
+    /* Adiciona um leve scale para destacar mais no hover, mantendo a animação */
+    transform: translateY(-5px) scale(1.02);
+    animation-play-state: paused; /* Pausa a animação no hover para destacar */
 }
-.featured-card .card-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 0; /* Remove margem inferior no modo horizontal */
-    flex-shrink: 0;
-}
-.featured-card .card-icon svg {
-    width: 24px;
-    height: 24px;
-}
-.featured-card h3 {
-    color: var(--text-dark); /* Título escuro para legibilidade */
-    margin-bottom: 0.25rem;
-}
-.featured-card p {
-    margin-bottom: 0; /* Remove margem inferior do parágrafo */
-}
+
+/* --- FIM DAS NOVAS REGRAS --- */

@@ -134,9 +134,7 @@ document.addEventListener("DOMContentLoaded", function() {
             
             // Validação: Garante que é um array
             if (!Array.isArray(allConsultas)) {
-                 // Se a API retornar um objeto de erro com 'message'
                  if (allConsultas.message) throw new Error(allConsultas.message);
-                 // Se retornar um objeto vazio ou inesperado
                  allConsultas = [];
             }
 
