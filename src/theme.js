@@ -1,0 +1,74 @@
+// src/theme.js
+
+import { createTheme } from '@mui/material/styles';
+
+// Sua paleta de cores:
+// #ffb884 (Pêssego/Laranja claro)
+// #f5df98 (Amarelo claro)
+// #fff8d4 (Creme/Off-white)
+// #c0d1c2 (Verde/Cinza Mute)
+// #2e4347 (Azul/Cinza Escuro)
+
+const theme = createTheme({
+  palette: {
+    // Modo 'light' é o padrão
+    primary: {
+      main: '#ffb884', // Cor principal de ações (botões, links)
+      contrastText: '#2e4347', // Texto para usar sobre a cor primária
+    },
+    secondary: {
+      main: '#c0d1c2', // Cor secundária (ações menos importantes)
+      contrastText: '#2e4347',
+    },
+    background: {
+      default: '#fff8d4', // Cor de fundo da página
+      paper: '#ffffff',   // Cor de fundo dos 'Cards', 'Dialogs', 'Menus'
+    },
+    text: {
+      primary: '#2e4347',   // Cor principal de texto
+      secondary: '#5a7175', // Cor de texto secundário (um pouco mais clara)
+    },
+    info: {
+      main: '#f5df98', // Usada para componentes de 'Alert' (info)
+    },
+    // Você pode usar as cores restantes para 'success', 'warning', 'error'
+    // Ex:
+    // success: {
+    //   main: '#c0d1c2', 
+    // },
+  },
+  typography: {
+    fontFamily: 'system-ui, Avenir, Helvetica, Arial, sans-serif',
+    h4: {
+      fontWeight: 600,
+    },
+    h5: {
+      fontWeight: 600,
+    },
+    h6: {
+      fontWeight: 600,
+    }
+  },
+  components: {
+    // Sobrescrevendo estilos globais de componentes
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12, // Bordas mais arredondadas para um look moderno
+          boxShadow: '0 6px 16px rgba(46, 67, 71, 0.08)', // Sombra suave
+        }
+      }
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 8, // Bordas arredondadas (como no seu index.css)
+          textTransform: 'none', // Botões sem CAIXA ALTA
+          fontWeight: 600,
+        }
+      }
+    }
+  }
+});
+
+export default theme;

@@ -3,9 +3,9 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* REMOVIDO: color-scheme, color, e background-color 
+    para permitir que o ThemeProvider do MUI controle as cores.
+  */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -15,6 +15,8 @@
 
 a {
   font-weight: 500;
+  /* Esta cor será controlada pelo tema se você usar 
+     o componente <Link> do Material-UI ou do React Router */
   color: #646cff;
   text-decoration: inherit;
 }
@@ -28,13 +30,19 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  /* A cor de fundo do body será definida pelo 'background.default' 
+     do seu tema através do <CssBaseline /> */
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+  /* A cor do texto será definida pelo 'text.primary' do seu tema */
 }
 
+/* Estes estilos de botão só se aplicarão a tags <button> HTML puras.
+  Os componentes <Button> do Material-UI usarão os estilos do seu 'theme.js'.
+*/
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -54,15 +62,6 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
+/* REMOVIDO: O bloco @media (prefers-color-scheme: light) 
+  foi removido, pois o ThemeProvider agora gerencia isso.
+*/
