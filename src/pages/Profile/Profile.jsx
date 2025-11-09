@@ -9,7 +9,10 @@ import {
 import ClientProfile from './components/ClientProfile'
 import PersonalInfo from './components/PersonalInfo'
 import AppointmentHistory from './components/AppointmentHistory'
+import styles from './Profile.module.css';
 
+
+ 
 function Profile() {
     const [activeTab, setActiveTab] = useState(0);
 
@@ -25,6 +28,7 @@ function Profile() {
     };
 
     return (
+        <div className={styles.principal}>
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Box sx={{ width: '100%' }}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -46,6 +50,7 @@ function Profile() {
                 </Box>
             </Box>
         </Container>
+        </div>
     );
 }
 

@@ -9,6 +9,7 @@ import {
 import QueueManagement from './components/QueueManagement';
 import MetricsPanel from './components/MetricsPanel';
 import Dashboard from './components/Dashboard';
+import styles from './Employee.module.css';
 
 function Employee() {
     const [activeTab, setActiveTab] = useState(0);
@@ -18,6 +19,7 @@ function Employee() {
     };
 
     return (
+        <div className={styles.principal}>
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Box sx={{ width: '100%' }}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -39,6 +41,7 @@ function Employee() {
                 </Box>
             </Box>
         </Container>
+        </div>
     );
 }
 
