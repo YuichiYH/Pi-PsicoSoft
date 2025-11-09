@@ -136,13 +136,48 @@
                             <h3>Motivo da Consulta</h3>
                             <p id="detail-motivo">...</p>
                         </div>
-                        
-                    </div>
+
+                        <div class="detail-card hidden" id="card-acao">
+                            <h3>Ações</h3>
+                            <button class="btn-cancel-action" id="btn-cancelar-consulta">
+                                <i data-lucide="trash-2"></i>
+                                <span>Cancelar Consulta</span>
+                            </button>
+                        </div>
+                        </div>
                 </div>
 
             </div>
         </div>
-    </main>
+
+        <div id="cancel-modal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-icon-wrapper" style="background-color: #FFF3E0; color: #FFA726;">
+                     <i data-lucide="alert-triangle"></i>
+                </div>
+                <h4>Confirmar Cancelamento</h4>
+                <p>Você tem certeza que deseja cancelar esta consulta?</p>
+                <p id="modal-cancel-details" style="font-weight: 700; color: var(--text-dark);"></p>
+                
+                <div class="modal-actions">
+                    <button id="modal-btn-close" class="btn-modal-secondary">Voltar</button>
+                    <button id="modal-btn-confirm" class="btn-modal-danger">Sim, cancelar</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="notification-modal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-icon-wrapper">
+                </div>
+                <h4 id="modal-title" style="margin-top: 1rem;"></h4>
+                <p id="modal-message" style="margin-bottom: 1.5rem;"></p>
+                <div class="modal-actions">
+                    <button id="modal-btn-ok" class="btn-modal-primary">Entendido</button>
+                </div>
+            </div>
+        </div>
+        </main>
     
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>

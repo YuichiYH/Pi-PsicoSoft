@@ -1,8 +1,12 @@
 /*
  * admin_dashboard.js
  * Funcionalidades do painel gerencial da clínica.
- * - CORREÇÃO: Lógica de data para "Consultas de Hoje" ajustada.
- * - Carrega dados reais da API GET /Consulta
+ *
+ * REVISÃO:
+ * - Lógica alterada para exibir TODAS as consultas do profissional,
+ * em vez de apenas as de hoje.
+ * - KPIs (métricas) agora refletem o histórico total.
+ * - Carrega dados da API GET /Consulta
  * - Utiliza a API POST /Consulta/CancelarConsulta para cancelamentos.
  */
 
@@ -52,6 +56,9 @@ document.addEventListener("DOMContentLoaded", function() {
     const statsHoje = document.getElementById('stats-hoje');
     const adminWelcome = document.getElementById('admin-welcome');
     
+    /**
+     * Converte "dd/mm/aaaa HH:MM" para um objeto Date
+     */
     function parseDataHorario(horarioStr) {
         if (!horarioStr || horarioStr.indexOf(' ') === -1) {
              return new Date('invalid');
@@ -62,6 +69,9 @@ document.addEventListener("DOMContentLoaded", function() {
         return new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia), parseInt(hora) || 0, parseInt(minuto) || 0);
     }
     
+    /**
+     * Retorna o status (agendada, concluida, cancelada) de uma consulta
+     */
     function getStatusConsulta(consulta, agora) {
         if ((consulta.status || '').toLowerCase() === "cancelada") {
             return { status: "cancelada", tag: '<span class="status-tag status-cancelada">Cancelada</span>', disabled: true };
@@ -73,6 +83,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if (dataConsulta < agora) {
             return { status: "concluida", tag: '<span class="status-tag status-concluida">Concluída</span>', disabled: true };
         }
+        // Lógica de "Em Andamento" (opcional, mantida)
         const diffMinutos = (agora - dataConsulta) / (1000 * 60);
         if (diffMinutos > 0 && diffMinutos < 45) {
              return { status: "andamento", tag: '<span class="status-tag status-andamento">Em Andamento</span>', disabled: false };
@@ -114,29 +125,14 @@ document.addEventListener("DOMContentLoaded", function() {
             const agora = new Date();
             
             // =================================================================
-            // === CORREÇÃO DA DATA "HOJE" ===
-            // =================================================================
-            // Gera a string "hoje" manualmente para garantir "dd/mm/aaaa"
-            const dia = String(agora.getDate()).padStart(2, '0');
-            const mes = String(agora.getMonth() + 1).padStart(2, '0'); // Mês é 0-indexado
-            const ano = agora.getFullYear();
-            const hojeStr = `${dia}/${mes}/${ano}`; // Formato "07/11/2025"
+            // === LÓGICA ATUALIZADA: KPIs baseados em TODAS as consultas ===
             // =================================================================
             
-            const hojeFormatado = agora.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
-
-            // 1. Filtra apenas as consultas de HOJE
-            // A API retorna 'horario' como "07/11/2025 10:00"
-            const consultasDeHoje = allConsultas.filter(c => 
-                c.horario && c.horario.startsWith(hojeStr)
-            );
-            
-            // 2. Calcula os KPIs com base nas consultas de HOJE
             let agendadasCount = 0;
             let concluidasCount = 0;
             let canceladasCount = 0;
 
-            consultasDeHoje.forEach(consulta => {
+            allConsultas.forEach(consulta => {
                 const statusInfo = getStatusConsulta(consulta, agora);
                 switch(statusInfo.status) {
                     case 'cancelada': canceladasCount++; break;
@@ -147,21 +143,21 @@ document.addEventListener("DOMContentLoaded", function() {
                         break;
                 }
             });
-
-            // 3. Calcula Pacientes Únicos (do histórico total)
+            
+            // 2. Calcula Pacientes Únicos (do histórico total)
             const pacientesSet = new Set(allConsultas.map(c => c.ClienteId));
             const pacientesUnicosCount = pacientesSet.size;
 
-            // 4. Atualiza a UI (Cabeçalho e KPIs)
-            statsHoje.textContent = `Hoje é ${hojeFormatado}. Você tem ${consultasDeHoje.length} consultas.`;
-            kpiTotal.textContent = consultasDeHoje.length;
+            // 3. Atualiza a UI (Cabeçalho e KPIs)
+            statsHoje.textContent = `Você possui ${allConsultas.length} consultas em seu histórico total.`;
+            kpiTotal.textContent = allConsultas.length;
             kpiAgendadas.innerHTML = `<strong>${agendadasCount}</strong> Agendadas`;
             kpiConcluidas.innerHTML = `<strong>${concluidasCount}</strong> Concluídas`;
             kpiCanceladas.innerHTML = `<strong>${canceladasCount}</strong> Canceladas`;
             kpiPacientesUnicos.textContent = pacientesUnicosCount;
 
-            // 5. Renderiza a Tabela
-            renderTable(consultasDeHoje, agora);
+            // 4. Renderiza a Tabela com TODAS as consultas
+            renderTable(allConsultas, agora);
             
         } catch (error) {
             console.error("Erro ao carregar dashboard:", error);
@@ -178,28 +174,31 @@ document.addEventListener("DOMContentLoaded", function() {
         tbody.innerHTML = ''; // Limpa a tabela
         
         if (consultas.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 1rem;">Nenhuma consulta para hoje.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 1rem;">Nenhuma consulta encontrada.</td></tr>';
             return;
         }
 
+        // Ordena por data, da mais recente para a mais antiga
         consultas.sort((a, b) => {
-            return parseDataHorario(a.horario) - parseDataHorario(b.horario);
+            return (parseDataHorario(b.horario) || 0) - (parseDataHorario(a.horario) || 0);
         });
 
         consultas.forEach(consulta => {
             const tr = document.createElement('tr');
             const statusInfo = getStatusConsulta(consulta, agora);
-            const horario = consulta.horario.split(' ')[1] || 'N/A';
+            
+            // Mostra data e hora, não apenas a hora
+            const dataHora = consulta.horario || 'N/A';
             const nomePaciente = consulta.nome || 'Paciente não informado'; 
 
             tr.innerHTML = `
                 <td>${nomePaciente}</td>
-                <td>${horario}</td>
+                <td>${dataHora}</td>
                 <td>${statusInfo.tag}</td>
                 <td>
                     <button class="btn-cancel" 
                         data-order-id="${consulta.OrderId}" 
-                        data-horario="${horario}"
+                        data-horario="${dataHora}"
                         data-paciente="${nomePaciente}"
                         ${statusInfo.disabled ? 'disabled' : ''}>
                         ${statusInfo.disabled ? '—' : 'Cancelar'}
@@ -214,7 +213,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
 
-    // --- 4. Lógica de Cancelamento (Reutilizada de cancelar.js) ---
+    // --- 4. Lógica de Cancelamento (Reutilizada) ---
 
     function attachCancelButtons() {
         const buttons = document.querySelectorAll('.btn-cancel:not(:disabled)');
@@ -254,7 +253,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
 
             showNotification(true, 'Consulta Cancelada', 'A consulta foi cancelada com sucesso.');
-            loadDashboardData();
+            loadDashboardData(); // Recarrega os dados para atualizar a lista
 
         } catch (error) {
             console.error('Erro ao cancelar:', error);

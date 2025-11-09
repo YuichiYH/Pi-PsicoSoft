@@ -2,6 +2,10 @@
  * admin_detalhes.css
  * Layout moderno para a Central de Atendimento (bot_web_funcionario.html)
  * Utiliza a paleta oficial Psicosoft.
+ *
+ * REVISÃO:
+ * - Adicionados estilos para o card de Ação (Cancelar).
+ * - Adicionados estilos para os Modais de confirmação e notificação.
  */
 
 /* --- 1. Variáveis Globais e Reset (Paleta Oficial) --- */
@@ -16,9 +20,11 @@
     --text-light: #718096;
     --border-color: #E2E8F0;
     --status-danger: #E57373;
+    --status-danger-dark: #D32F2F; /* ADICIONADO */
     
     --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.07), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.03); /* ADICIONADO */
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -394,9 +400,7 @@ main .container {
     width: 18px;
 }
 
-/* ================================== */
-/* === NOVO ESTILO: CARD PRESENCIAL === */
-/* ================================== */
+/* Card Presencial */
 .presencial-card {
     display: flex;
     align-items: center;
@@ -433,6 +437,146 @@ main .container {
     margin: 0;
     font-size: 1rem;
 }
+
+
+/* ================================== */
+/* === NOVOS ESTILOS (AÇÃO/MODAL) === */
+/* ================================== */
+
+/* 1. Botão de Cancelar no card de Ação */
+.btn-cancel-action {
+    background-color: var(--status-danger);
+    color: var(--card-bg);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    width: 100%;
+    border-radius: 8px;
+    font-weight: 700;
+    font-family: 'Lato', sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+.btn-cancel-action:hover {
+    background-color: var(--status-danger-dark);
+}
+.btn-cancel-action svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* 2. Estilos dos Modais (Copiados de admin_dashboard.css) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: none; 
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+.modal-content {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+}
+.modal-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+.modal-icon-wrapper svg {
+    width: 48px;
+    height: 48px;
+}
+.modal-content h4 {
+    font-size: 1.4rem;
+    color: var(--text-dark);
+    margin-top: 0;
+}
+.modal-content p {
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+}
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+.btn-modal-secondary,
+.btn-modal-danger,
+.btn-modal-primary {
+    flex: 1;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-family: 'Lato', sans-serif;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.btn-modal-secondary {
+    background-color: var(--background);
+    color: var(--text-dark);
+    border: 1px solid var(--border-color);
+}
+.btn-modal-secondary:hover { background-color: #e0e0e0; }
+.btn-modal-danger {
+    background-color: var(--status-danger);
+    color: var(--card-bg);
+}
+.btn-modal-danger:hover { background-color: var(--status-danger-dark); }
+.btn-modal-primary {
+    background-color: var(--primary); 
+    color: var(--card-bg);
+}
+/* Sucesso (Verde) */
+.modal-overlay.modal--success .modal-icon-wrapper {
+    background-color: #E6F6F6; 
+    color: var(--accent-2); /* status-green */
+}
+.modal-overlay.modal--success .btn-modal-primary {
+    background-color: var(--accent-2);
+}
+/* Erro (Vermelho) */
+.modal-overlay.modal--error .modal-icon-wrapper {
+    background-color: #FEEEEE; 
+    color: var(--status-danger);
+}
+.modal-overlay.modal--error .btn-modal-primary {
+    background-color: var(--status-danger);
+}
+
+/* --- FIM DOS ESTILOS ADICIONADOS --- */
+
 
 /* 4. Responsividade */
 @media (max-width: 992px) {
