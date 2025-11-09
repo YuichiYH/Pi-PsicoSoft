@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Box,
   Card,
@@ -35,65 +34,56 @@ import {
   Cell
 } from 'recharts';
 
+// Os dados de exemplo permanecem os mesmos
+const stats = {
+  pacientesHoje: 45,
+  tempoMedioEspera: '25min',
+  ocupacao: 75,
+  alertas: 3
+};
+const tempoEsperaData = [
+  { hora: '08:00', tempo: 15 },
+  { hora: '09:00', tempo: 25 },
+  { hora: '10:00', tempo: 30 },
+  { hora: '11:00', tempo: 20 },
+  { hora: '12:00', tempo: 10 },
+  { hora: '13:00', tempo: 15 },
+  { hora: '14:00', tempo: 35 },
+  { hora: '15:00', tempo: 25 },
+];
+const tiposConsultaData = [
+  { tipo: 'Regular', quantidade: 30 },
+  { tipo: 'Urgente', quantidade: 15 },
+  { tipo: 'Renovação', quantidade: 25 },
+  { tipo: 'Primeira', quantidade: 20 },
+];
+const statusData = [
+  { name: 'Em Espera', value: 30, color: '#2196f3' },
+  { name: 'Em Atendimento', value: 15, color: '#4caf50' },
+  { name: 'Atendidos', value: 45, color: '#ff9800' },
+  { name: 'Cancelados', value: 10, color: '#f44336' },
+];
+const filaAtual = [
+  { nome: 'João Silva', tipo: 'Urgente', tempo: '5min' },
+  { nome: 'Maria Santos', tipo: 'Regular', tempo: '15min' },
+  { nome: 'Pedro Costa', tipo: 'Renovação', tempo: '20min' },
+];
+
+
 function Dashboard() {
-  // Dados de exemplo
-  const stats = {
-    pacientesHoje: 45,
-    tempoMedioEspera: '25min',
-    ocupacao: 75,
-    alertas: 3
-  };
-
-  // Dados para o gráfico de linha (Tempo médio de espera por hora)
-  const tempoEsperaData = [
-    { hora: '08:00', tempo: 15 },
-    { hora: '09:00', tempo: 25 },
-    { hora: '10:00', tempo: 30 },
-    { hora: '11:00', tempo: 20 },
-    { hora: '12:00', tempo: 10 },
-    { hora: '13:00', tempo: 15 },
-    { hora: '14:00', tempo: 35 },
-    { hora: '15:00', tempo: 25 },
-  ];
-
-  // Dados para o gráfico de barras (Pacientes por tipo de consulta)
-  const tiposConsultaData = [
-    { tipo: 'Regular', quantidade: 30 },
-    { tipo: 'Urgente', quantidade: 15 },
-    { tipo: 'Renovação', quantidade: 25 },
-    { tipo: 'Primeira', quantidade: 20 },
-  ];
-
-  // Dados para o gráfico de pizza (Distribuição de status)
-  const statusData = [
-    { name: 'Em Espera', value: 30, color: '#2196f3' },
-    { name: 'Em Atendimento', value: 15, color: '#4caf50' },
-    { name: 'Atendidos', value: 45, color: '#ff9800' },
-    { name: 'Cancelados', value: 10, color: '#f44336' },
-  ];
-
-  const filaAtual = [
-    { nome: 'João Silva', tipo: 'Urgente', tempo: '5min' },
-    { nome: 'Maria Santos', tipo: 'Regular', tempo: '15min' },
-    { nome: 'Pedro Costa', tipo: 'Renovação', tempo: '20min' },
-  ];
-
   return (
     <Box sx={{ flexGrow: 1 }}>
-      {/* Cards de Estatísticas */}
+      {/* Cards de Estatísticas (KPIs) - Esta linha já está ótima */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ bgcolor: 'primary.light' }}>
+          {/* Card Pacientes Hoje */}
+          <Card sx={{ bgcolor: 'primary.light', color: 'primary.contrastText' }}>
             <CardContent>
               <Stack direction="row" spacing={2} alignItems="center">
-                <PeopleIcon sx={{ color: 'white', fontSize: 40 }} />
+                <PeopleIcon sx={{ fontSize: 40 }} />
                 <Box>
-                  <Typography color="white" variant="h4">
-                    {stats.pacientesHoje}
-                  </Typography>
-                  <Typography color="white" variant="subtitle2">
-                    Pacientes Hoje
-                  </Typography>
+                  <Typography variant="h4">{stats.pacientesHoje}</Typography>
+                  <Typography variant="subtitle2">Pacientes Hoje</Typography>
                 </Box>
               </Stack>
             </CardContent>
@@ -101,17 +91,14 @@ function Dashboard() {
         </Grid>
 
         <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ bgcolor: 'success.light' }}>
+          {/* Card Tempo Médio de Espera */}
+          <Card sx={{ bgcolor: 'success.light', color: 'success.contrastText' }}>
             <CardContent>
               <Stack direction="row" spacing={2} alignItems="center">
-                <TimeIcon sx={{ color: 'white', fontSize: 40 }} />
+                <TimeIcon sx={{ fontSize: 40 }} />
                 <Box>
-                  <Typography color="white" variant="h4">
-                    {stats.tempoMedioEspera}
-                  </Typography>
-                  <Typography color="white" variant="subtitle2">
-                    Tempo Médio de Espera
-                  </Typography>
+                  <Typography variant="h4">{stats.tempoMedioEspera}</Typography>
+                  <Typography variant="subtitle2">Tempo Médio de Espera</Typography>
                 </Box>
               </Stack>
             </CardContent>
@@ -119,40 +106,34 @@ function Dashboard() {
         </Grid>
 
         <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ bgcolor: 'info.light' }}>
+          {/* Card Ocupação */}
+          <Card sx={{ bgcolor: 'info.light', color: 'info.contrastText' }}>
             <CardContent>
               <Stack direction="row" spacing={2} alignItems="center">
-                <TrendingIcon sx={{ color: 'white', fontSize: 40 }} />
+                <TrendingIcon sx={{ fontSize: 40 }} />
                 <Box>
-                  <Typography color="white" variant="h4">
-                    {stats.ocupacao}%
-                  </Typography>
-                  <Typography color="white" variant="subtitle2">
-                    Ocupação
-                  </Typography>
+                  <Typography variant="h4">{stats.ocupacao}%</Typography>
+                  <Typography variant="subtitle2">Ocupação</Typography>
                 </Box>
               </Stack>
               <LinearProgress 
                 variant="determinate" 
                 value={stats.ocupacao} 
-                sx={{ mt: 2, bgcolor: 'white' }}
+                sx={{ mt: 2, bgcolor: 'rgba(255,255,255,0.3)', '& .MuiLinearProgress-bar': { bgcolor: 'info.contrastText' } }}
               />
             </CardContent>
           </Card>
         </Grid>
 
         <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ bgcolor: 'warning.light' }}>
+          {/* Card Alertas */}
+          <Card sx={{ bgcolor: 'warning.light', color: 'warning.contrastText' }}>
             <CardContent>
               <Stack direction="row" spacing={2} alignItems="center">
-                <AlertIcon sx={{ color: 'white', fontSize: 40 }} />
+                <AlertIcon sx={{ fontSize: 40 }} />
                 <Box>
-                  <Typography color="white" variant="h4">
-                    {stats.alertas}
-                  </Typography>
-                  <Typography color="white" variant="subtitle2">
-                    Alertas
-                  </Typography>
+                  <Typography variant="h4">{stats.alertas}</Typography>
+                  <Typography variant="subtitle2">Alertas</Typography>
                 </Box>
               </Stack>
             </CardContent>
@@ -160,11 +141,11 @@ function Dashboard() {
         </Grid>
       </Grid>
 
-      {/* Gráficos */}
-      <Grid container spacing={3}>
+      {/* Gráficos Principais - Esta linha também está ótima */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
         {/* Gráfico de Linha - Tempo de Espera */}
         <Grid item xs={12} md={8}>
-          <Paper elevation={3}>
+          <Paper elevation={3} sx={{ height: '100%' }}>
             <Box p={2}>
               <Typography variant="h6" gutterBottom>
                 Tempo Médio de Espera por Hora
@@ -176,13 +157,7 @@ function Dashboard() {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="tempo"
-                    stroke="#2196f3"
-                    strokeWidth={2}
-                    name="Minutos"
-                  />
+                  <Line type="monotone" dataKey="tempo" strokeWidth={2} name="Minutos" stroke="#8884d8" />
                 </LineChart>
               </ResponsiveContainer>
             </Box>
@@ -191,22 +166,14 @@ function Dashboard() {
 
         {/* Gráfico de Pizza - Distribuição de Status */}
         <Grid item xs={12} md={4}>
-          <Paper elevation={3}>
+          <Paper elevation={3} sx={{ height: '100%' }}>
             <Box p={2}>
               <Typography variant="h6" gutterBottom>
                 Distribuição de Status
               </Typography>
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
-                  <Pie
-                    data={statusData}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={80}
-                    label
-                  >
+                  <Pie data={statusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
                     {statusData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
@@ -218,10 +185,14 @@ function Dashboard() {
             </Box>
           </Paper>
         </Grid>
+      </Grid>
 
-        {/* Gráfico de Barras - Tipos de Consulta */}
-        <Grid item xs={12}>
-          <Paper elevation={3}>
+      {/* --- MUDANÇA NA DISPOSIÇÃO AQUI --- */}
+      {/* Gráficos Secundários e Dados ao Vivo */}
+      <Grid container spacing={3}>
+        {/* Gráfico de Barras - Tipos de Consulta (Agora com 7 colunas) */}
+        <Grid item xs={12} md={7}>
+          <Paper elevation={3} sx={{ height: '100%' }}>
             <Box p={2}>
               <Typography variant="h6" gutterBottom>
                 Pacientes por Tipo de Consulta
@@ -233,20 +204,16 @@ function Dashboard() {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar
-                    dataKey="quantidade"
-                    fill="#4caf50"
-                    name="Quantidade de Pacientes"
-                  />
+                  <Bar dataKey="quantidade" fill="#4caf50" name="Quantidade de Pacientes" />
                 </BarChart>
               </ResponsiveContainer>
             </Box>
           </Paper>
         </Grid>
 
-        {/* Lista de Fila Atual */}
-        <Grid item xs={12} md={6}>
-          <Paper elevation={3}>
+        {/* Lista de Fila Atual (Agora com 5 colunas, ao lado do gráfico) */}
+        <Grid item xs={12} md={5}>
+          <Paper elevation={3} sx={{ height: '100%' }}>
             <Box p={2}>
               <Typography variant="h6" gutterBottom>
                 Fila Atual

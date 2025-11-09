@@ -1,8 +1,14 @@
+/* src/App.css */
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  /* REMOVIDO: 'max-width: 1280px'
+    REMOVIDO: 'margin: 0 auto'
+    REMOVIDO: 'padding: 2rem'
+    REMOVIDO: 'text-align: center'
+    
+    Isso permite que o layout do App.jsx (com Sidebar) 
+    controle 100% da tela.
+  */
 }
 
 .logo {
