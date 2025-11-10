@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
        
         // --- INÍCIO DA ATUALIZAÇÃO ---
-        // 1. URL atualizada para usar o 'idCliente' (que é o email)
+        // 1. URL atualizada para usar o 'idCliente' (que é o cpf)
         const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta?ClienteId=${idCliente}`;
         // --- FIM DA ATUALIZAÇÃO ---
         
@@ -132,16 +132,50 @@ document.addEventListener("DOMContentLoaded", function() {
         const meses = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
         const mesesCompleto = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
-        // A Lambda retorna "horario" (ex: "05/11/2025 11:00")
-        const [dataStr, horaStr] = consulta.horario.split(' '); // ["05/11/2025", "11:00"]
-        const [dia, mesNum, ano] = dataStr.split('/');       // ["05", "11", "2025"]
-        const [hora, minuto] = horaStr.split(':');           // ["11", "00"]
-        
-        // --- INÍCIO DA LÓGICA DE DATA ---
-        
+        // --- INÍCIO DA CORREÇÃO DE ROBUSTEZ E LÓGICA ---
 
-        // Criamos um objeto Date com a data e hora da consulta
-        const dataObj = new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia), parseInt(hora), parseInt(minuto));
+        // 1. (ROBUSTEZ) Função de helper para retornar um objeto de erro visível
+        function retornarErro(motivo) {
+            console.warn(`Historico: ${motivo}`, consulta);
+            return {
+                dataStatus: "canceladas", // Coloca na aba "canceladas"
+                mes: "ERR", dia: "!",
+                titulo: `Consulta Inválida (ID: ${consulta.OrderId || 'N/A'})`,
+                descricao: "O formato da data desta consulta está incorreto.",
+                classeStatus: "status-cancelada", 
+                iconeStatus: "alert-triangle",
+                textoStatus: "Inválida", 
+                isCancelada: true
+            };
+        }
+
+        // 2. (ROBUSTEZ) Validação da entrada
+        if (!consulta.horario || typeof consulta.horario !== 'string' || !consulta.horario.includes(' ')) {
+            return retornarErro("Ignorando consulta com 'horario' malformado.");
+        }
+
+        const [dataStr, horaStr] = consulta.horario.split(' ');
+        
+        if (!dataStr || !horaStr || !dataStr.includes('/') || !horaStr.includes(':')) {
+             return retornarErro("Ignorando consulta com data/hora malformada.");
+        }
+
+        const [dia, mesNum, ano] = dataStr.split('/');
+        const [hora, minuto] = horaStr.split(':');
+
+        if (!dia || !mesNum || !ano || !hora || !minuto) {
+             return retornarErro("Ignorando consulta com data/hora inválida.");
+        }
+        
+        let dataObj;
+        try {
+            dataObj = new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia), parseInt(hora), parseInt(minuto));
+            if (isNaN(dataObj.getTime())) throw new Error("Data inválida resultante do parse"); 
+        } catch(e) {
+            return retornarErro(`Erro ao parsear data: ${e.message}`);
+        }
+        
+        // 3. (LÓGICA CORRIGIDA) Início da Lógica de Status
         const agora = new Date(); // Data e hora atuais
 
         let status = "proximas";
@@ -150,7 +184,7 @@ document.addEventListener("DOMContentLoaded", function() {
         let textoStatus = "Confirmada";
         let isCancelada = false;
 
-        // 1. (CORREÇÃO) Verifica o status de "Cancelada" PRIMEIRO.
+        // 4. (LÓGICA CORRIGIDA) Verifica "Cancelada" PRIMEIRO
         if ((consulta.status || '').toLowerCase() === "cancelada") {
             status = "canceladas";
             classeStatus = "status-cancelada";
@@ -158,17 +192,16 @@ document.addEventListener("DOMContentLoaded", function() {
             textoStatus = "Cancelada";
             isCancelada = true;
         }
-        // 2. Se não estiver cancelada, verifica se já foi realizada.
+        // 5. Se não estiver cancelada, verifica se já foi "Realizada"
         else if (dataObj < agora) {
             status = "realizadas";
             classeStatus = "status-realizada";
             iconeStatus = "history";
             textoStatus = "Realizada";
         }
-        // 3. Se não for nenhuma das anteriores, é uma próxima consulta.
-        // (O status "proximas" já é o padrão)
-
-        // --- FIM DA LÓGICA DE DATA ---
+        // 6. Se não for nenhuma das anteriores, é "Próxima"
+        
+        // --- FIM DA CORREÇÃO DE ROBUSTEZ E LÓGICA ---
         
         const diaSemana = diasSemana[dataObj.getDay()];
         const mesIdx = dataObj.getMonth();
@@ -177,7 +210,7 @@ document.addEventListener("DOMContentLoaded", function() {
             dataStatus: status, // Para o filtro da aba
             mes: meses[mesIdx],
             dia: dia,
-            titulo: `Consulta de ${consulta.especialidade || 'Clínica'}`, // API retorna 'especialidade'
+            titulo: `Consulta de ${consulta.especialidade || 'Clínica'}`, 
             descricao: `${diaSemana}, ${dia} de ${mesesCompleto[mesIdx]} de ${ano} - ${horaStr}`,
             classeStatus: classeStatus,
             iconeStatus: iconeStatus,
@@ -237,10 +270,19 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         });
 
-        const abaTodas = document.querySelector('.tab-item[data-filter="todas"]');
-        if (abaTodas) {
-            abaTodas.click();
+        // --- CORREÇÃO DE INICIALIZAÇÃO ---
+        // Clica na aba "Próximas" por padrão ao carregar, em vez de "Todas"
+        const abaProximas = document.querySelector('.tab-item[data-filter="proximas"]');
+        if (abaProximas) {
+            abaProximas.click();
+        } else {
+            // Fallback se não encontrar
+            const abaTodas = document.querySelector('.tab-item[data-filter="todas"]');
+            if (abaTodas) {
+                abaTodas.click();
+            }
         }
+        // --- FIM DA CORREÇÃO ---
     }
 
     // --- Ponto de Partida ---

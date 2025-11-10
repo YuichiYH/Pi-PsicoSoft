@@ -102,29 +102,66 @@ document.addEventListener("DOMContentLoaded", function() {
             
             // 3. A resposta (API envia todas as consultas)
             const todasConsultas = await response.json();
-
+            
+            // --- INÍCIO DA CORREÇÃO (FILTRO DE DATA E ROBUSTEZ) ---
+            
             const agora = new Date(); // Pega a data/hora atual
 
-            // 1. Cria uma data que representa o INÍCIO do dia de hoje (00:00)
-            const hoje = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
+            // 1. (LÓGICA CORRETA) Cria uma data que representa o INÍCIO do dia de hoje (00:00)
+            const hoje_inicio_dia = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
 
             // 2. Filtra a lista no frontend
             const consultasFuturas = todasConsultas.filter(consulta => {
-                // A API retorna "horario" (ex: "10/11/2025 14:30")
-                if (!consulta.horario || !consulta.horario.includes(' ')) return false; // Ignora consultas malformadas
+                
+                // 3. (ROBUSTEZ) Validação da entrada.
+                // Se 'horario' não existir ou não tiver o formato "data hora", ignora este item
+                if (!consulta.horario || typeof consulta.horario !== 'string' || !consulta.horario.includes(' ')) {
+                    console.warn('Dashboard: Ignorando consulta com horario malformado.', consulta);
+                    return false; 
+                }
+                
+                // 3.1 (ROBUSTEZ) Verifica se o status é 'cancelada'
+                if ((consulta.status || '').toLowerCase() === 'cancelada') {
+                    return false; // Não mostra consultas canceladas como "próximas"
+                }
 
-                const [dataStr, horaStr] = consulta.horario.split(' '); // ["10/11/2025", "14:30"]
-                const [dia, mesNum, ano] = dataStr.split('/');       // ["10", "11", "2025"]
-                const [hora, minuto] = horaStr.split(':');           // ["14", "30"]
+                const [dataStr, horaStr] = consulta.horario.split(' ');
                 
-                // 3. Cria a data da consulta
-                const dataConsulta = new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia), parseInt(hora), parseInt(minuto));
-                
-                // 4. CORREÇÃO: A consulta é considerada "futura" se for de hoje (a qualquer hora) ou de uma data futura.
-                // Isso impede que consultas agendadas para hoje desapareçam do dashboard.
-                return dataConsulta >= hoje;
+                // 4. (ROBUSTEZ) Validação das partes
+                if (!dataStr || !horaStr || !dataStr.includes('/') || !horaStr.includes(':')) {
+                    console.warn('Dashboard: Ignorando consulta com data/hora malformada.', consulta.horario);
+                    return false;
+                }
+
+                const [dia, mesNum, ano] = dataStr.split('/');
+                const [hora, minuto] = horaStr.split(':');
+
+                // 5. (ROBUSTEZ) Validação final dos números
+                if (!dia || !mesNum || !ano || !hora || !minuto) {
+                    console.warn('Dashboard: Ignorando consulta com data/hora inválida.', consulta.horario);
+                    return false;
+                }
+
+                try {
+                    // 6. Cria a data da consulta
+                    const dataConsulta = new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia), parseInt(hora), parseInt(minuto));
+                    
+                    // 6.1 (ROBUSTEZ) Verifica se a data é válida
+                    if (isNaN(dataConsulta.getTime())) {
+                        throw new Error("Data inválida resultante do parse");
+                    }
+                    
+                    // 7. (LÓGICA CORRETA) Retorna true se a consulta for de hoje (qualquer hora) ou de um dia futuro.
+                    return dataConsulta >= hoje_inicio_dia;
+
+                } catch (e) {
+                    // Se a data for inválida (ex: "aa/bb/cccc"), ignora
+                    console.warn('Dashboard: Erro ao parsear data, ignorando consulta:', consulta.horario, e);
+                    return false;
+                }
             });
-    
+            // --- FIM DA CORREÇÃO ---
+
             // Limpa a lista
             appointmentList.innerHTML = ""; 
 
@@ -160,22 +197,24 @@ document.addEventListener("DOMContentLoaded", function() {
     function formatarConsultaDashboard(consulta) {
         const meses = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
         
-        // A Lambda retorna um campo "horario" (ex: "10/11/2025 14:30")
-        const [dataStr, horaStr] = consulta.horario.split(' '); // ["10/11/2025", "14:30"]
-        const [dia, mesNum, ano] = dataStr.split('/');       // ["10", "11", "2025"]
+        // --- INÍCIO DA CORREÇÃO DE ROBUSTEZ ---
+        // (Já validado no filtro anterior, mas como boa prática, verificamos de novo)
+        if (!consulta.horario || typeof consulta.horario !== 'string' || !consulta.horario.includes(' ')) {
+             return { mes: 'ERR', dia: '!', titulo: 'Consulta Inválida', classeStatus: 'status-cancelada', iconeStatus: 'alert-triangle', textoStatus: 'Inválida' };
+        }
+        // --- FIM DA CORREÇÃO DE ROBUSTEZ ---
+
+        const [dataStr, horaStr] = consulta.horario.split(' '); 
+        const [dia, mesNum, ano] = dataStr.split('/');      
 
         let dadosFormatados = {
             mes: meses[parseInt(mesNum, 10) - 1], // Pega o mês (ex: 11 -> 10)
             dia: dia,
-            // Usa 'especialidade' pois 'profissional' não existe nesta Lambda
             titulo: `Consulta de ${consulta.especialidade || 'Clínica'}`, 
             classeStatus: "status-confirmado", // Assumindo confirmada
             iconeStatus: "check-circle",
             textoStatus: `Confirmada - ${horaStr}` // Exibe a hora
         };
-        
-        // (Lógica de 'confirmada' vs 'pendente' omitida,
-        // pois a API /Consulta não parece fornecer esse booleano)
         
         return dadosFormatados;
     }
