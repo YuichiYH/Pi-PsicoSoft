@@ -693,4 +693,34 @@ a { text-decoration: none; color: var(--primary); }
         align-self: flex-start; /* Alinha o botão à esquerda */
     }
 }
-/* --- FIM DOS NOVOS ESTILOS --- */
+/* ======================================= */
+/* === 10. ANIMAÇÃO DO ÍCONE DE ACENO === */
+/* ======================================= */
+
+/* A classe que demos ao ícone no JS */
+.wave-icon {
+  display: inline-block; /* Permite que o ícone seja transformado */
+  margin-left: 8px; /* Um pequeno espaço entre o nome e o ícone */
+  
+  /* Define o ponto de origem da rotação (base da "mão") */
+  transform-origin: 70% 70%;
+  
+  /* Aplica a animação 'wave-animation' */
+  animation: wave-animation 2.5s infinite;
+  
+  /* Ajuste o tamanho do ícone se necessário */
+  /* width: 28px; */
+  /* height: 28px; */
+}
+
+/* Define os quadros-chave da animação */
+@keyframes wave-animation {
+   0% { transform: rotate( 0.0deg) }
+  10% { transform: rotate(14.0deg) }
+  20% { transform: rotate(-8.0deg) }
+  30% { transform: rotate(14.0deg) }
+  40% { transform: rotate(-4.0deg) }
+  50% { transform: rotate(10.0deg) }
+  60% { transform: rotate( 0.0deg) } /* Pausa no final */
+ 100% { transform: rotate( 0.0deg) }
+}
