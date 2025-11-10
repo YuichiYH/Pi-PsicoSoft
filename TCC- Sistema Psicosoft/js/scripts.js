@@ -5,6 +5,10 @@
 
 document.addEventListener("DOMContentLoaded", function() {
 
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+
     // --- 1. Controle do Menu Mobile ---
     const menuToggle = document.getElementById('menu-toggle');
     const mainNav = document.querySelector('.main-nav');
