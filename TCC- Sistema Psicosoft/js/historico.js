@@ -4,6 +4,8 @@
  *
  * ATUALIZAÇÃO: Agora usa 'paciente_email' (salvo no login) como
  * ClienteId para a API, conforme a estrutura da tabela.
+ * ATUALIZAÇÃO 2: Chatbot agora é um widget flutuante.
+ * ATUALIZAÇÃO 3 (CORREÇÃO): Corrigido erro de digitação (dataDtr) em parseDataHorario.
  */
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -13,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const idCliente = localStorage.getItem('paciente_cpf'); // Pega o cpf
 
     if (!idCliente) {
-        alert("Acesso negado. Por favor, faça login para continuar.");
+        // AJUSTE: Removido 'alert' para um redirecionamento silencioso.
         window.location.href = "register.html";
         return; 
     }
@@ -31,16 +33,23 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // --- 3. Controle do Chat Bot ---
+    // --- 3. Controle do Chat Bot (Widget Flutuante) ---
     const chatButton = document.getElementById('open-chat-bot');
-                
-    if (chatButton) {
+    const chatContainer = document.getElementById('chat-widget-container');
+    const chatCloseButton = document.getElementById('chat-widget-close');
+
+    if (chatButton && chatContainer && chatCloseButton) {
+        
+        // Abre/Fecha o widget ao clicar no botão FAB
         chatButton.addEventListener('click', function() {
-            const chatUrl = 'bot_web.html';
-            const windowName = 'PsicosoftChat';
-            const windowFeatures = 'width=450,height=700,top=100,left=100,resizable=yes,scrollbars=yes';
-            
-            window.open(chatUrl, windowName, windowFeatures);
+            chatContainer.classList.toggle('active');
+            chatButton.classList.toggle('chat-aberto');
+        });
+
+        // Fecha o widget ao clicar no 'X' interno
+        chatCloseButton.addEventListener('click', function() {
+            chatContainer.classList.remove('active');
+            chatButton.classList.remove('chat-aberto');
         });
     }
     
@@ -59,6 +68,41 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     // --- Fim da Lógica de Logout ---
 
+    // --- INÍCIO DA CORREÇÃO: Função Auxiliar de Data ---
+    /**
+     * Converte "dd/mm/aaaa HH:MM" para um objeto Date.
+     * Retorna null se o formato for inválido.
+     */
+    function parseDataHorario(horarioStr) {
+        try {
+            if (!horarioStr || typeof horarioStr !== 'string' || !horarioStr.includes(' ')) {
+                return null;
+            }
+            const [dataStr, horaStr] = horarioStr.split(' ');
+            
+            // ==================================================
+            // --- CORREÇÃO DO ERRO DE DIGITAÇÃO ESTAVA AQUI ---
+            if (!dataStr || !horaStr || !dataStr.includes('/') || !horaStr.includes(':')) {
+            // --- (Estava dataDtr.includes) ---
+            // ==================================================
+                return null;
+            }
+            const [dia, mesNum, ano] = dataStr.split('/');
+            const [hora, minuto] = horaStr.split(':');
+            if (!dia || !mesNum || !ano || !hora || !minuto) {
+                return null;
+            }
+             // new Date(ano, mes_zero_index, dia, hora, min)
+            const dataObj = new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia), parseInt(hora), parseInt(minuto));
+            if (isNaN(dataObj.getTime())) return null;
+            return dataObj;
+        } catch (e) {
+            console.warn("Erro ao parsear data no historico:", horarioStr, e);
+            return null;
+        }
+    }
+    // --- FIM DA CORREÇÃO ---
+
     // --- 5. Carregamento de Dados da API ---
         
     const historyList = document.querySelector('.history-list');
@@ -74,29 +118,39 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
        
-        // --- INÍCIO DA ATUALIZAÇÃO ---
-        // 1. URL atualizada para usar o 'idCliente' (que é o email)
+        // 1. URL atualizada para usar o 'idCliente' (que é o cpf)
         const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta?ClienteId=${idCliente}`;
-        // --- FIM DA ATUALIZAÇÃO ---
         
 
         try {
             historyList.innerHTML = `<p style="padding: 1rem 0;">Carregando seu histórico...</p>`;
             
-            const response = await fetch(url);
+            // --- CORREÇÃO DE CACHE ADICIONADA AQUI ---
+            const response = await fetch(url, { cache: 'no-store' });
             
             if (!response.ok) {
                 throw new Error(`Erro ${response.status}: Não foi possível buscar os dados.`);
             }
             
-            const consultas = await response.json(); 
+            let consultas = await response.json(); // Mude de const para let
             
             historyList.innerHTML = ""; 
 
-            if (!consultas || consultas.length === 0) {
+            if (!consultas || !Array.isArray(consultas) || consultas.length === 0) {
                 historyList.innerHTML = `<p style="padding: 1rem 0;">Nenhuma consulta encontrada no seu histórico.</p>`;
                 return;
             }
+
+            // --- INÍCIO DA CORREÇÃO (ORDENAÇÃO DECRESCENTE) ---
+            consultas.sort((a, b) => {
+                const dataA = parseDataHorario(a.horario);
+                const dataB = parseDataHorario(b.horario);
+                // Coloca datas inválidas no final
+                if (!dataA) return 1;
+                if (!dataB) return -1;
+                return dataB - dataA; // Ordena do mais recente (maior data) para o mais antigo (menor data)
+            });
+            // --- FIM DA CORREÇÃO ---
 
             consultas.forEach(consulta => {
                 // 4. Usando a nova função 'formatarConsultaDaAPI'
@@ -115,7 +169,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     
     /**
-     * (MODIFICADO) Converte os dados da API (GET /Consulta)
+     * (MODIFICADO E CORRIGIDO) Converte os dados da API (GET /Consulta)
      * para o formato que o HTML da página de histórico espera.
      */
     function formatarConsultaDaAPI(consulta) {
@@ -124,44 +178,73 @@ document.addEventListener("DOMContentLoaded", function() {
         const meses = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
         const mesesCompleto = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
-        // A Lambda retorna "horario" (ex: "05/11/2025 11:00")
-        const [dataStr, horaStr] = consulta.horario.split(' '); // ["05/11/2025", "11:00"]
-        const [dia, mesNum, ano] = dataStr.split('/');       // ["05", "11", "2025"]
-        const [hora, minuto] = horaStr.split(':');           // ["11", "00"]
+        // --- INÍCIO DA CORREÇÃO DE ROBUSTEZ E LÓGICA ---
+
+        // 1. (ROBUSTEZ) Função de helper para retornar um objeto de erro visível
+        function retornarErro(motivo) {
+            console.warn(`Historico: ${motivo}`, consulta);
+            return {
+                dataStatus: "canceladas", // Coloca na aba "canceladas"
+                mes: "ERR", dia: "!",
+                titulo: `Consulta Inválida (ID: ${consulta.OrderId || 'N/A'})`,
+                descricao: "O formato da data desta consulta está incorreto.",
+                classeStatus: "status-cancelada", 
+                iconeStatus: "alert-triangle",
+                textoStatus: "Inválida", 
+                isCancelada: true
+            };
+        }
+
+        // 2. (ROBUSTEZ) Tenta parsear a data primeiro
+        const dataObj = parseDataHorario(consulta.horario);
         
-        // --- INÍCIO DA LÓGICA DE DATA ---
+        // Se a data for inválida, retorna o bloco de erro
+        if (!dataObj) {
+            return retornarErro("Não foi possível parsear o 'horario'.");
+        }
         
-        // Criamos um objeto Date com a data e hora da consulta
-        const dataObj = new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia), parseInt(hora), parseInt(minuto));
+        // 3. (LÓGICA CORRIGIDA) Início da Lógica de Status
         const agora = new Date(); // Data e hora atuais
 
-        let status = "proximas";
+        let status = "proximas"; // (Status padrão para "Agendada")
         let classeStatus = "status-confirmada";
         let iconeStatus = "check-circle";
         let textoStatus = "Confirmada";
         let isCancelada = false;
 
-        // Compara a data da consulta com a data atual
-        if (dataObj < agora) {
+        // 4. (LÓGICA CORRIGIDA) Verifica "Cancelada" PRIMEIRO
+        if ((consulta.status || '').toLowerCase() === "cancelada") {
+            status = "canceladas";
+            classeStatus = "status-cancelada";
+            iconeStatus = "x-circle";
+            textoStatus = "Cancelada";
+            isCancelada = true;
+        }
+        // 5. (LÓGICA CORRIGIDA) Se não estiver cancelada, verifica se já foi "Realizada" (comparando com a HORA ATUAL)
+        else if (dataObj < agora) {
             status = "realizadas";
             classeStatus = "status-realizada";
             iconeStatus = "history";
             textoStatus = "Realizada";
         }
+        // 6. Se for no futuro (e não cancelada), é "Próxima"
+       
         
-        // NOTA: Esta API não informa sobre "Canceladas".
-        // A aba "Canceladas" ficará vazia.
+        // --- FIM DA CORREÇÃO DE ROBUSTEZ E LÓGICA ---
         
-        // --- FIM DA LÓGICA DE DATA ---
-        
+        // Extrai os dados do objeto dataObj (que é válido)
         const diaSemana = diasSemana[dataObj.getDay()];
         const mesIdx = dataObj.getMonth();
+        const dia = String(dataObj.getDate()).padStart(2, '0');
+        const horaStr = String(dataObj.getHours()).padStart(2, '0') + ":" + String(dataObj.getMinutes()).padStart(2, '0');
+        const ano = dataObj.getFullYear();
+
 
         let dadosFormatados = {
             dataStatus: status, // Para o filtro da aba
             mes: meses[mesIdx],
             dia: dia,
-            titulo: `Consulta de ${consulta.especialidade || 'Clínica'}`, // API retorna 'especialidade'
+            titulo: `Consulta de ${consulta.especialidade || 'Clínica'}`, 
             descricao: `${diaSemana}, ${dia} de ${mesesCompleto[mesIdx]} de ${ano} - ${horaStr}`,
             classeStatus: classeStatus,
             iconeStatus: iconeStatus,
@@ -221,9 +304,17 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         });
 
+
+        // (MODIFICADO) Clica na aba "Todas" por padrão ao carregar
         const abaTodas = document.querySelector('.tab-item[data-filter="todas"]');
         if (abaTodas) {
             abaTodas.click();
+        } else {
+            // Fallback se não encontrar (clica na primeira aba que achar)
+            const primeiraAba = document.querySelector('.tab-item');
+            if (primeiraAba) {
+                primeiraAba.click();
+            }
         }
     }
 
