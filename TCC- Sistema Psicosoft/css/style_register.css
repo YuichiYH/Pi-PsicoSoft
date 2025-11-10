@@ -591,3 +591,25 @@ body{
     width: 48px;
     height: 48px;
 }
+
+/* --- AJUSTE: BOTÃO DE LOGIN COM TEXTO LONGO (ADMIN) --- */
+
+.container button.loading {
+    /* Permite que o texto e o loader fiquem lado a lado */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* Reduz o padding horizontal para caber mais texto */
+    padding: 10px 20px;
+    
+    /* Ajusta o tamanho da fonte se o texto for longo */
+    font-size: 11px;
+}
+
+.container button.loading .loader {
+    /* Garante que o loader não seja grande demais */
+    width: 16px;
+    height: 16px;
+    margin-left: 10px;
+}

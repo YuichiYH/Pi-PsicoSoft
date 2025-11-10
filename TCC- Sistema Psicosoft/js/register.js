@@ -307,11 +307,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 if (responseData.success && responseData.client) {
                     
+                    // 1. Salva os dados no localStorage
                     localStorage.setItem('paciente_nome', responseData.client.name);
                     localStorage.setItem('paciente_cpf', responseData.client.cpf); 
-                    localStorage.setItem('paciente_email', email);
+                    localStorage.setItem('paciente_email', email); // O 'email' já está na variável
 
-                    window.location.href = "dashboard.html"; 
+                    // --- INÍCIO DA LÓGICA DE REDIRECIONAMENTO ---
+                    
+                    // 2. Verifica se o e-mail é o do administrador
+                    if (email.toLowerCase() === 'psicosoft_dr@gmail.com') {
+                        
+                        // 3. (Bônus) Feedback visual para o Admin
+                        // Atualiza o botão para dar as boas-vindas e mostrar a animação
+                        loginButton.innerHTML = 'Olá, Admin! Redirecionando... <span class="loader"></span>';
+                        
+                        // Adiciona um pequeno delay para a transição ser "fluida"
+                        setTimeout(() => {
+                            window.location.href = "admin_dashboard.html"; // Redireciona para o painel ADMIN
+                        }, 1000); // 1 segundo de delay
+
+                    } else {
+                        // 4. Usuário comum
+                        // O botão já diz "Entrando..."
+                        window.location.href = "dashboard.html"; // Redireciona para o painel PACIENTE
+                    }
+                    // --- FIM DA LÓGICA DE REDIRECIONAMENTO ---
+
                 } else {
                     throw new Error(responseData.message || "Login falhou.");
                 }
@@ -319,12 +340,13 @@ document.addEventListener('DOMContentLoaded', function() {
             } catch (err) {
                 console.error("Erro (Login):", err);
                 loginError.textContent = err.message;
-            
-            } finally {
+                // Se der erro, restaura o botão
                 loginButton.disabled = false;
                 loginButton.classList.remove('loading');
                 loginButton.innerHTML = 'Entre';
             }
+            // Não reative o botão aqui em caso de SUCESSO,
+            // pois o redirecionamento já estará em andamento.
         });
     } else {
         console.error("--- ERRO: Não foi possível encontrar o 'login-form'. Verifique o ID no HTML. ---");
