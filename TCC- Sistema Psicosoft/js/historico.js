@@ -203,34 +203,36 @@ document.addEventListener("DOMContentLoaded", function() {
             return retornarErro("Não foi possível parsear o 'horario'.");
         }
         
-        // 3. (LÓGICA CORRIGIDA) Início da Lógica de Status
-        const agora = new Date(); // Data e hora atuais
-
-        let status = "proximas"; // (Status padrão para "Agendada")
+        const agora = new Date();
+        let status = "proximas"; 
         let classeStatus = "status-confirmada";
         let iconeStatus = "check-circle";
-        let textoStatus = "Confirmada";
+        let textoStatus = "Agendada";
         let isCancelada = false;
 
-        // 4. (LÓGICA CORRIGIDA) Verifica "Cancelada" PRIMEIRO
+        // Verifica status da API primeiro
         if ((consulta.status || '').toLowerCase() === "cancelada") {
             status = "canceladas";
             classeStatus = "status-cancelada";
             iconeStatus = "x-circle";
             textoStatus = "Cancelada";
             isCancelada = true;
+        } else {
+            // Consulta passada
+            if (dataObj < agora) {
+                status = "realizadas";
+                classeStatus = "status-realizada";
+                iconeStatus = "history";
+                textoStatus = "Realizada";
+            } else {
+                // Consulta de hoje ou futura
+                status = "proximas";
+                classeStatus = "status-confirmada";
+                iconeStatus = "check-circle";
+                textoStatus = "Agendada";
+            }
         }
-        // 5. (LÓGICA CORRIGIDA) Se não estiver cancelada, verifica se já foi "Realizada" (comparando com a HORA ATUAL)
-        else if (dataObj < agora) {
-            status = "realizadas";
-            classeStatus = "status-realizada";
-            iconeStatus = "history";
-            textoStatus = "Realizada";
-        }
-        // 6. Se for no futuro (e não cancelada), é "Próxima"
-       
-        
-        // --- FIM DA CORREÇÃO DE ROBUSTEZ E LÓGICA ---
+
         
         // Extrai os dados do objeto dataObj (que é válido)
         const diaSemana = diasSemana[dataObj.getDay()];
