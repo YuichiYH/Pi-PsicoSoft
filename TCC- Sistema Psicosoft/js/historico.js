@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     
     /**
-     * (MODIFICADO) Converte os dados da API (GET /Consulta)
+     * (MODIFICADO E CORRIGIDO) Converte os dados da API (GET /Consulta)
      * para o formato que o HTML da página de histórico espera.
      */
     function formatarConsultaDaAPI(consulta) {
@@ -177,6 +177,9 @@ document.addEventListener("DOMContentLoaded", function() {
         
         // 3. (LÓGICA CORRIGIDA) Início da Lógica de Status
         const agora = new Date(); // Data e hora atuais
+        
+        // (LÓGICA CORRIGIDA) Define "hoje" como o início do dia
+        const hoje_inicio_dia = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
 
         let status = "proximas";
         let classeStatus = "status-confirmada";
@@ -192,14 +195,15 @@ document.addEventListener("DOMContentLoaded", function() {
             textoStatus = "Cancelada";
             isCancelada = true;
         }
-        // 5. Se não estiver cancelada, verifica se já foi "Realizada"
-        else if (dataObj < agora) {
+        // 5. (LÓGICA CORRIGIDA) Se não estiver cancelada, verifica se é "Realizada" (antes do início de hoje)
+        else if (dataObj < hoje_inicio_dia) {
             status = "realizadas";
             classeStatus = "status-realizada";
             iconeStatus = "history";
             textoStatus = "Realizada";
         }
-        // 6. Se não for nenhuma das anteriores, é "Próxima"
+        // 6. Se for hoje ou no futuro (e não cancelada), é "Próxima"
+        // (O status "proximas" já é o padrão)
         
         // --- FIM DA CORREÇÃO DE ROBUSTEZ E LÓGICA ---
         
