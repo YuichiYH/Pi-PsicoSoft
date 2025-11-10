@@ -27,11 +27,10 @@ document.addEventListener("DOMContentLoaded", function() {
     if (pacienteNomeCompleto && welcomeHeader) {
         const primeiroNome = pacienteNomeCompleto.split(' ')[0]; 
         
-        // ALTERAÇÃO: Troque .textContent por .innerHTML e adicione a tag do ícone
-        welcomeHeader.innerHTML = `Olá, ${primeiroNome} <i data-lucide="hand" class="wave-icon"></i>`;
+        // ALTERAÇÃO AQUI: Mude o "hand" para "sparkles"
+        welcomeHeader.innerHTML = `Olá, ${primeiroNome} <i data-lucide="sparkles" class="happy-icon"></i>`;
         
         // ADIÇÃO: Chame createIcons() DEPOIS de adicionar o novo ícone ao HTML
-        // Sem esta linha, o ícone não será renderizado.
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
         }

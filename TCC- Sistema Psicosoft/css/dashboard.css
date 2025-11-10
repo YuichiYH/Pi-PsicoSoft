@@ -696,31 +696,31 @@ a { text-decoration: none; color: var(--primary); }
 /* ======================================= */
 /* === 10. ANIMAÇÃO DO ÍCONE DE ACENO === */
 /* ======================================= */
+/* ======================================= */
+/* === 10. ANIMAÇÃO DO ÍCONE ALEGRE === */
+/* ======================================= */
 
 /* A classe que demos ao ícone no JS */
-.wave-icon {
+.happy-icon {
   display: inline-block; /* Permite que o ícone seja transformado */
   margin-left: 8px; /* Um pequeno espaço entre o nome e o ícone */
   
-  /* Define o ponto de origem da rotação (base da "mão") */
-  transform-origin: 70% 70%;
+  /* Remove a origem de transformação específica se não for mais uma "mão" */
+  /* transform-origin: 70% 70%; */ /* Esta linha pode ser removida ou comentada */
   
-  /* Aplica a animação 'wave-animation' */
-  animation: wave-animation 2.5s infinite;
+  /* Aplica a nova animação 'sparkle-pulse' */
+  animation: sparkle-pulse 2s infinite ease-in-out; /* Animação mais suave e contínua */
   
-  /* Ajuste o tamanho do ícone se necessário */
+  /* Ajuste o tamanho e cor do ícone se necessário */
   /* width: 28px; */
   /* height: 28px; */
+  color: #FFD700; /* Cor dourada para os brilhos, por exemplo */
+  vertical-align: middle; /* Alinha o ícone verticalmente com o texto */
 }
 
-/* Define os quadros-chave da animação */
-@keyframes wave-animation {
-   0% { transform: rotate( 0.0deg) }
-  10% { transform: rotate(14.0deg) }
-  20% { transform: rotate(-8.0deg) }
-  30% { transform: rotate(14.0deg) }
-  40% { transform: rotate(-4.0deg) }
-  50% { transform: rotate(10.0deg) }
-  60% { transform: rotate( 0.0deg) } /* Pausa no final */
- 100% { transform: rotate( 0.0deg) }
+/* Define os quadros-chave da nova animação de pulsação/escalonamento */
+@keyframes sparkle-pulse {
+   0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; } /* Aumenta um pouco e diminui a opacidade */
+ 100% { transform: scale(1); opacity: 1; }
 }
