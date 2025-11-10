@@ -315,6 +315,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 primeiraAba.click();
             }
         }
+        // ===================================================================
+        // --- FIM DA CORREÇÃO ---
+        // ===================================================================
     }
 
     // --- Ponto de Partida ---
