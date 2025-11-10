@@ -70,6 +70,7 @@ document.addEventListener("DOMContentLoaded", function() {
             event.preventDefault(); 
             localStorage.removeItem('paciente_nome');
             localStorage.removeItem('paciente_cpf');
+            localStorage.removeItem('paciente_email'); // Limpa o email também
             window.location.href = "index.html"; 
         });
     }
@@ -94,6 +95,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (!dia || !mesNum || !ano || !hora || !minuto) {
                 return null;
             }
+            // new Date(ano, mes_zero_index, dia, hora, min)
             const dataObj = new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia), parseInt(hora), parseInt(minuto));
             if (isNaN(dataObj.getTime())) return null;
             return dataObj;
@@ -130,7 +132,11 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             
             // 3. A resposta (API envia todas as consultas)
-            const todasConsultas = await response.json();
+            let todasConsultas = await response.json();
+            
+            if (!Array.isArray(todasConsultas)) {
+                 todasConsultas = []; // Garante que é um array
+            }
             
             // --- INÍCIO DA CORREÇÃO (FILTRO DE DATA E ROBUSTEZ) ---
             
@@ -142,14 +148,7 @@ document.addEventListener("DOMContentLoaded", function() {
             // 2. Filtra a lista no frontend
             const consultasFuturas = todasConsultas.filter(consulta => {
                 
-                // 3. (ROBUSTEZ) Validação da entrada.
-                // Se 'horario' não existir ou não tiver o formato "data hora", ignora este item
-                if (!consulta.horario || typeof consulta.horario !== 'string' || !consulta.horario.includes(' ')) {
-                    console.warn('Dashboard: Ignorando consulta com horario malformado.', consulta);
-                    return false; 
-                }
-                
-                // 3.1 (ROBUSTEZ) Verifica se o status é 'cancelada'
+                // 3. (ROBUSTEZ) Verifica se o status é 'cancelada'
                 if ((consulta.status || '').toLowerCase() === 'cancelada') {
                     return false; // Não mostra consultas canceladas como "próximas"
                 }
@@ -214,18 +213,18 @@ document.addEventListener("DOMContentLoaded", function() {
     function formatarConsultaDashboard(consulta) {
         const meses = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
         
-        // --- INÍCIO DA CORREÇÃO DE ROBUSTEZ ---
         // (Já validado no filtro anterior, mas como boa prática, verificamos de novo)
-        if (!consulta.horario || typeof consulta.horario !== 'string' || !consulta.horario.includes(' ')) {
+        const dataObj = parseDataHorario(consulta.horario);
+        if (!dataObj) {
              return { mes: 'ERR', dia: '!', titulo: 'Consulta Inválida', classeStatus: 'status-cancelada', iconeStatus: 'alert-triangle', textoStatus: 'Inválida' };
         }
-        // --- FIM DA CORREÇÃO DE ROBUSTEZ ---
 
-        const [dataStr, horaStr] = consulta.horario.split(' '); 
-        const [dia, mesNum, ano] = dataStr.split('/');      
+        const horaStr = String(dataObj.getHours()).padStart(2, '0') + ":" + String(dataObj.getMinutes()).padStart(2, '0');
+        const dia = String(dataObj.getDate()).padStart(2, '0');
+        const mesNum = dataObj.getMonth();
 
         let dadosFormatados = {
-            mes: meses[parseInt(mesNum, 10) - 1], // Pega o mês (ex: 11 -> 10)
+            mes: meses[mesNum],
             dia: dia,
             titulo: `Consulta de ${consulta.especialidade || 'Clínica'}`, 
             classeStatus: "status-confirmado", // Assumindo confirmada

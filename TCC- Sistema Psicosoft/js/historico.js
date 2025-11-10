@@ -86,6 +86,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (!dia || !mesNum || !ano || !hora || !minuto) {
                 return null;
             }
+             // new Date(ano, mes_zero_index, dia, hora, min)
             const dataObj = new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia), parseInt(hora), parseInt(minuto));
             if (isNaN(dataObj.getTime())) return null;
             return dataObj;
@@ -111,10 +112,8 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
        
-        // --- INÍCIO DA ATUALIZAÇÃO ---
         // 1. URL atualizada para usar o 'idCliente' (que é o cpf)
         const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta?ClienteId=${idCliente}`;
-        // --- FIM DA ATUALIZAÇÃO ---
         
 
         try {
@@ -130,7 +129,7 @@ document.addEventListener("DOMContentLoaded", function() {
             
             historyList.innerHTML = ""; 
 
-            if (!consultas || consultas.length === 0) {
+            if (!consultas || !Array.isArray(consultas) || consultas.length === 0) {
                 historyList.innerHTML = `<p style="padding: 1rem 0;">Nenhuma consulta encontrada no seu histórico.</p>`;
                 return;
             }
@@ -196,7 +195,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if (!dataObj) {
             return retornarErro("Não foi possível parsear o 'horario'.");
         }
-
+        
         // 3. (LÓGICA CORRIGIDA) Início da Lógica de Status
         const agora = new Date(); // Data e hora atuais
 
@@ -298,9 +297,8 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         });
 
-        // --- CORREÇÃO DE INICIALIZAÇÃO ---
-        // Clica na aba "Próximas" por padrão ao carregar, em vez de "Todas"
-        // (Mantido da correção anterior, pois é uma boa prática)
+        // (Mantido da correção anterior)
+        // Clica na aba "Próximas" por padrão ao carregar
         const abaProximas = document.querySelector('.tab-item[data-filter="proximas"]');
         if (abaProximas) {
             abaProximas.click();
@@ -311,7 +309,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 abaTodas.click();
             }
         }
-        // --- FIM DA CORREÇÃO ---
     }
 
     // --- Ponto de Partida ---
