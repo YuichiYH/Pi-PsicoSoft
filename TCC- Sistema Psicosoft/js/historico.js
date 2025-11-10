@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function() {
        
         // --- INÍCIO DA ATUALIZAÇÃO ---
         // 1. URL atualizada para usar o 'idCliente' (que é o email)
-        const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta?ClienteId=${idCliente}`;
+        const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta?cpf=${cpf}`;
         // --- FIM DA ATUALIZAÇÃO ---
         
 
