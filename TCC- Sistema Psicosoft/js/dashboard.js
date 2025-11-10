@@ -125,7 +125,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
         try {
             // 2. Requisição GET simples
-            const response = await fetch(url);
+            // --- CORREÇÃO DE CACHE ADICIONADA AQUI ---
+            const response = await fetch(url, { cache: 'no-store' });
             
             if (!response.ok) {
                 throw new Error(`Erro ${response.status}: Não foi possível buscar os dados.`);
