@@ -139,6 +139,7 @@ document.addEventListener("DOMContentLoaded", function() {
         
         // --- INÍCIO DA LÓGICA DE DATA ---
         
+
         // Criamos um objeto Date com a data e hora da consulta
         const dataObj = new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia), parseInt(hora), parseInt(minuto));
         const agora = new Date(); // Data e hora atuais
@@ -149,17 +150,24 @@ document.addEventListener("DOMContentLoaded", function() {
         let textoStatus = "Confirmada";
         let isCancelada = false;
 
-        // Compara a data da consulta com a data atual
-        if (dataObj < agora) {
+        // 1. (CORREÇÃO) Verifica o status de "Cancelada" PRIMEIRO.
+        if ((consulta.status || '').toLowerCase() === "cancelada") {
+            status = "canceladas";
+            classeStatus = "status-cancelada";
+            iconeStatus = "x-circle";
+            textoStatus = "Cancelada";
+            isCancelada = true;
+        }
+        // 2. Se não estiver cancelada, verifica se já foi realizada.
+        else if (dataObj < agora) {
             status = "realizadas";
             classeStatus = "status-realizada";
             iconeStatus = "history";
             textoStatus = "Realizada";
         }
-        
-        // NOTA: Esta API não informa sobre "Canceladas".
-        // A aba "Canceladas" ficará vazia.
-        
+        // 3. Se não for nenhuma das anteriores, é uma próxima consulta.
+        // (O status "proximas" já é o padrão)
+
         // --- FIM DA LÓGICA DE DATA ---
         
         const diaSemana = diasSemana[dataObj.getDay()];

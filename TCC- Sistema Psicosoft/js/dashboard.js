@@ -102,26 +102,29 @@ document.addEventListener("DOMContentLoaded", function() {
             
             // 3. A resposta (API envia todas as consultas)
             const todasConsultas = await response.json();
-            
-            // --- INÍCIO DA CORREÇÃO (FILTRO DE DATA) ---
-            
+
             const agora = new Date(); // Pega a data/hora atual
 
-            // 4. Filtra a lista no frontend
+            // 1. Cria uma data que representa o INÍCIO do dia de hoje (00:00)
+            const hoje = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
+
+            // 2. Filtra a lista no frontend
             const consultasFuturas = todasConsultas.filter(consulta => {
                 // A API retorna "horario" (ex: "10/11/2025 14:30")
+                if (!consulta.horario || !consulta.horario.includes(' ')) return false; // Ignora consultas malformadas
+
                 const [dataStr, horaStr] = consulta.horario.split(' '); // ["10/11/2025", "14:30"]
                 const [dia, mesNum, ano] = dataStr.split('/');       // ["10", "11", "2025"]
                 const [hora, minuto] = horaStr.split(':');           // ["14", "30"]
                 
-                // Cria a data da consulta (Mês é 0-indexado, por isso mesNum - 1)
+                // 3. Cria a data da consulta
                 const dataConsulta = new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia), parseInt(hora), parseInt(minuto));
                 
-                // Retorna true APENAS se a data da consulta for maior (mais nova) que agora
-                return dataConsulta > agora;
+                // 4. CORREÇÃO: A consulta é considerada "futura" se for de hoje (a qualquer hora) ou de uma data futura.
+                // Isso impede que consultas agendadas para hoje desapareçam do dashboard.
+                return dataConsulta >= hoje;
             });
-            // --- FIM DA CORREÇÃO ---
-
+    
             // Limpa a lista
             appointmentList.innerHTML = ""; 
 
