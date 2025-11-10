@@ -75,6 +75,35 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     // --- Fim da Lógica de Logout ---
 
+    // --- INÍCIO DA CORREÇÃO: Função Auxiliar de Data ---
+    /**
+     * Converte "dd/mm/aaaa HH:MM" para um objeto Date.
+     * Retorna null se o formato for inválido.
+     */
+    function parseDataHorario(horarioStr) {
+        try {
+            if (!horarioStr || typeof horarioStr !== 'string' || !horarioStr.includes(' ')) {
+                return null;
+            }
+            const [dataStr, horaStr] = horarioStr.split(' ');
+            if (!dataStr || !horaStr || !dataStr.includes('/') || !horaStr.includes(':')) {
+                return null;
+            }
+            const [dia, mesNum, ano] = dataStr.split('/');
+            const [hora, minuto] = horaStr.split(':');
+            if (!dia || !mesNum || !ano || !hora || !minuto) {
+                return null;
+            }
+            const dataObj = new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia), parseInt(hora), parseInt(minuto));
+            if (isNaN(dataObj.getTime())) return null;
+            return dataObj;
+        } catch (e) {
+            console.warn("Erro ao parsear data no dashboard:", horarioStr, e);
+            return null;
+        }
+    }
+    // --- FIM DA CORREÇÃO ---
+
 
     // --- 6. Carregamento das Próximas Consultas (MODIFICADO) ---
     
@@ -125,42 +154,30 @@ document.addEventListener("DOMContentLoaded", function() {
                     return false; // Não mostra consultas canceladas como "próximas"
                 }
 
-                const [dataStr, horaStr] = consulta.horario.split(' ');
-                
-                // 4. (ROBUSTEZ) Validação das partes
-                if (!dataStr || !horaStr || !dataStr.includes('/') || !horaStr.includes(':')) {
-                    console.warn('Dashboard: Ignorando consulta com data/hora malformada.', consulta.horario);
-                    return false;
-                }
+                const dataConsulta = parseDataHorario(consulta.horario);
 
-                const [dia, mesNum, ano] = dataStr.split('/');
-                const [hora, minuto] = horaStr.split(':');
-
-                // 5. (ROBUSTEZ) Validação final dos números
-                if (!dia || !mesNum || !ano || !hora || !minuto) {
+                // 4. (ROBUSTEZ) Se o parse falhar, ignora
+                if (!dataConsulta) {
                     console.warn('Dashboard: Ignorando consulta com data/hora inválida.', consulta.horario);
                     return false;
                 }
-
-                try {
-                    // 6. Cria a data da consulta
-                    const dataConsulta = new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia), parseInt(hora), parseInt(minuto));
-                    
-                    // 6.1 (ROBUSTEZ) Verifica se a data é válida
-                    if (isNaN(dataConsulta.getTime())) {
-                        throw new Error("Data inválida resultante do parse");
-                    }
-                    
-                    // 7. (LÓGICA CORRETA) Retorna true se a consulta for de hoje (qualquer hora) ou de um dia futuro.
-                    return dataConsulta >= hoje_inicio_dia;
-
-                } catch (e) {
-                    // Se a data for inválida (ex: "aa/bb/cccc"), ignora
-                    console.warn('Dashboard: Erro ao parsear data, ignorando consulta:', consulta.horario, e);
-                    return false;
-                }
+                
+                // 5. (LÓGICA CORRETA) Retorna true se a consulta for de hoje (qualquer hora) ou de um dia futuro.
+                return dataConsulta >= hoje_inicio_dia;
             });
             // --- FIM DA CORREÇÃO ---
+            
+            // --- INÍCIO DA CORREÇÃO (ORDENAÇÃO CRESCENTE) ---
+            consultasFuturas.sort((a, b) => {
+                const dataA = parseDataHorario(a.horario);
+                const dataB = parseDataHorario(b.horario);
+                // Coloca datas inválidas no final
+                if (!dataA) return 1;
+                if (!dataB) return -1;
+                return dataA - dataB; // Ordena do mais próximo (menor data) para o mais distante (maior data)
+            });
+            // --- FIM DA CORREÇÃO ---
+
 
             // Limpa a lista
             appointmentList.innerHTML = ""; 

@@ -67,6 +67,35 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     // --- Fim da Lógica de Logout ---
 
+    // --- INÍCIO DA CORREÇÃO: Função Auxiliar de Data ---
+    /**
+     * Converte "dd/mm/aaaa HH:MM" para um objeto Date.
+     * Retorna null se o formato for inválido.
+     */
+    function parseDataHorario(horarioStr) {
+        try {
+            if (!horarioStr || typeof horarioStr !== 'string' || !horarioStr.includes(' ')) {
+                return null;
+            }
+            const [dataStr, horaStr] = horarioStr.split(' ');
+            if (!dataStr || !horaStr || !dataStr.includes('/') || !horaStr.includes(':')) {
+                return null;
+            }
+            const [dia, mesNum, ano] = dataStr.split('/');
+            const [hora, minuto] = horaStr.split(':');
+            if (!dia || !mesNum || !ano || !hora || !minuto) {
+                return null;
+            }
+            const dataObj = new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia), parseInt(hora), parseInt(minuto));
+            if (isNaN(dataObj.getTime())) return null;
+            return dataObj;
+        } catch (e) {
+            console.warn("Erro ao parsear data no historico:", horarioStr, e);
+            return null;
+        }
+    }
+    // --- FIM DA CORREÇÃO ---
+
     // --- 5. Carregamento de Dados da API ---
         
     const historyList = document.querySelector('.history-list');
@@ -97,7 +126,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 throw new Error(`Erro ${response.status}: Não foi possível buscar os dados.`);
             }
             
-            const consultas = await response.json(); 
+            let consultas = await response.json(); // Mude de const para let
             
             historyList.innerHTML = ""; 
 
@@ -105,6 +134,17 @@ document.addEventListener("DOMContentLoaded", function() {
                 historyList.innerHTML = `<p style="padding: 1rem 0;">Nenhuma consulta encontrada no seu histórico.</p>`;
                 return;
             }
+
+            // --- INÍCIO DA CORREÇÃO (ORDENAÇÃO DECRESCENTE) ---
+            consultas.sort((a, b) => {
+                const dataA = parseDataHorario(a.horario);
+                const dataB = parseDataHorario(b.horario);
+                // Coloca datas inválidas no final
+                if (!dataA) return 1;
+                if (!dataB) return -1;
+                return dataB - dataA; // Ordena do mais recente (maior data) para o mais antigo (menor data)
+            });
+            // --- FIM DA CORREÇÃO ---
 
             consultas.forEach(consulta => {
                 // 4. Usando a nova função 'formatarConsultaDaAPI'
@@ -149,37 +189,16 @@ document.addEventListener("DOMContentLoaded", function() {
             };
         }
 
-        // 2. (ROBUSTEZ) Validação da entrada
-        if (!consulta.horario || typeof consulta.horario !== 'string' || !consulta.horario.includes(' ')) {
-            return retornarErro("Ignorando consulta com 'horario' malformado.");
+        // 2. (ROBUSTEZ) Tenta parsear a data primeiro
+        const dataObj = parseDataHorario(consulta.horario);
+        
+        // Se a data for inválida, retorna o bloco de erro
+        if (!dataObj) {
+            return retornarErro("Não foi possível parsear o 'horario'.");
         }
 
-        const [dataStr, horaStr] = consulta.horario.split(' ');
-        
-        if (!dataStr || !horaStr || !dataStr.includes('/') || !horaStr.includes(':')) {
-             return retornarErro("Ignorando consulta com data/hora malformada.");
-        }
-
-        const [dia, mesNum, ano] = dataStr.split('/');
-        const [hora, minuto] = horaStr.split(':');
-
-        if (!dia || !mesNum || !ano || !hora || !minuto) {
-             return retornarErro("Ignorando consulta com data/hora inválida.");
-        }
-        
-        let dataObj;
-        try {
-            dataObj = new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia), parseInt(hora), parseInt(minuto));
-            if (isNaN(dataObj.getTime())) throw new Error("Data inválida resultante do parse"); 
-        } catch(e) {
-            return retornarErro(`Erro ao parsear data: ${e.message}`);
-        }
-        
         // 3. (LÓGICA CORRIGIDA) Início da Lógica de Status
         const agora = new Date(); // Data e hora atuais
-        
-        // (LÓGICA CORRIGIDA) Define "hoje" como o início do dia
-        const hoje_inicio_dia = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
 
         let status = "proximas";
         let classeStatus = "status-confirmada";
@@ -195,20 +214,25 @@ document.addEventListener("DOMContentLoaded", function() {
             textoStatus = "Cancelada";
             isCancelada = true;
         }
-        // 5. (LÓGICA CORRIGIDA) Se não estiver cancelada, verifica se é "Realizada" (antes do início de hoje)
-        else if (dataObj < hoje_inicio_dia) {
+        // 5. (LÓGICA CORRIGIDA) Se não estiver cancelada, verifica se já foi "Realizada" (comparando com a HORA ATUAL)
+        else if (dataObj < agora) {
             status = "realizadas";
             classeStatus = "status-realizada";
             iconeStatus = "history";
             textoStatus = "Realizada";
         }
-        // 6. Se for hoje ou no futuro (e não cancelada), é "Próxima"
+        // 6. Se for no futuro (e não cancelada), é "Próxima"
         // (O status "proximas" já é o padrão)
         
         // --- FIM DA CORREÇÃO DE ROBUSTEZ E LÓGICA ---
         
+        // Extrai os dados do objeto dataObj (que é válido)
         const diaSemana = diasSemana[dataObj.getDay()];
         const mesIdx = dataObj.getMonth();
+        const dia = String(dataObj.getDate()).padStart(2, '0');
+        const horaStr = String(dataObj.getHours()).padStart(2, '0') + ":" + String(dataObj.getMinutes()).padStart(2, '0');
+        const ano = dataObj.getFullYear();
+
 
         let dadosFormatados = {
             dataStatus: status, // Para o filtro da aba
@@ -276,6 +300,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // --- CORREÇÃO DE INICIALIZAÇÃO ---
         // Clica na aba "Próximas" por padrão ao carregar, em vez de "Todas"
+        // (Mantido da correção anterior, pois é uma boa prática)
         const abaProximas = document.querySelector('.tab-item[data-filter="proximas"]');
         if (abaProximas) {
             abaProximas.click();
