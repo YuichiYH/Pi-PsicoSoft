@@ -5,6 +5,7 @@
  * ATUALIZAÇÃO: Agora usa 'paciente_email' (salvo no login) como
  * ClienteId para a API, conforme a estrutura da tabela.
  * ATUALIZAÇÃO 2: Chatbot agora é um widget flutuante.
+ * ATUALIZAÇÃO 3 (CORREÇÃO): Aba "Todas" agora é a padrão para evitar confusão.
  */
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -200,7 +201,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // 3. (LÓGICA CORRIGIDA) Início da Lógica de Status
         const agora = new Date(); // Data e hora atuais
 
-        let status = "proximas";
+        let status = "proximas"; // (Status padrão para "Agendada")
         let classeStatus = "status-confirmada";
         let iconeStatus = "check-circle";
         let textoStatus = "Confirmada";
@@ -298,16 +299,20 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         });
 
-        // (Mantido da correção anterior)
-        // Clica na aba "Próximas" por padrão ao carregar
-        const abaProximas = document.querySelector('.tab-item[data-filter="proximas"]');
-        if (abaProximas) {
-            abaProximas.click();
+        // ===================================================================
+        // --- INÍCIO DA CORREÇÃO ---
+        // Alterado o clique padrão de "Próximas" para "Todas"
+        // ===================================================================
+        
+        // (MODIFICADO) Clica na aba "Todas" por padrão ao carregar
+        const abaTodas = document.querySelector('.tab-item[data-filter="todas"]');
+        if (abaTodas) {
+            abaTodas.click();
         } else {
-            // Fallback se não encontrar
-            const abaTodas = document.querySelector('.tab-item[data-filter="todas"]');
-            if (abaTodas) {
-                abaTodas.click();
+            // Fallback se não encontrar (clica na primeira aba que achar)
+            const primeiraAba = document.querySelector('.tab-item');
+            if (primeiraAba) {
+                primeiraAba.click();
             }
         }
     }
