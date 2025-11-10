@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
        
         // 1. URL atualizada para usar o 'idCliente' (que é o cpf)
-        const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta?ClienteId=${idCliente}`;
+        const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta?ClienteId=${pacienteCPF}`;
         
 
         try {
