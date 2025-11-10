@@ -5,7 +5,6 @@
  * ATUALIZAÇÃO: Agora usa 'paciente_email' (salvo no login) como
  * ClienteId para a API, conforme a estrutura da tabela.
  * ATUALIZAÇÃO 2: Chatbot agora é um widget flutuante.
- * ATUALIZAÇÃO 3 (CORREÇÃO): Corrigido erro de digitação (dataDtr) em parseDataHorario.
  */
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -81,9 +80,8 @@ document.addEventListener("DOMContentLoaded", function() {
             const [dataStr, horaStr] = horarioStr.split(' ');
             
             // ==================================================
-            // --- CORREÇÃO DO ERRO DE DIGITAÇÃO ESTAVA AQUI ---
+            // --- CORREÇÃO DO ERRO DE DIGITAÇÃO APLICADA AQUI ---
             if (!dataStr || !horaStr || !dataStr.includes('/') || !horaStr.includes(':')) {
-            // --- (Estava dataDtr.includes) ---
             // ==================================================
                 return null;
             }
@@ -119,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
        
         // 1. URL atualizada para usar o 'idCliente' (que é o cpf)
-        const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta?ClienteId=${pacienteCPF}`;
+        const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta?ClienteId=${idCliente}`;
         
 
         try {
@@ -203,36 +201,34 @@ document.addEventListener("DOMContentLoaded", function() {
             return retornarErro("Não foi possível parsear o 'horario'.");
         }
         
-        const agora = new Date();
-        let status = "proximas"; 
+        // 3. (LÓGICA CORRIGIDA) Início da Lógica de Status
+        const agora = new Date(); // Data e hora atuais
+
+        let status = "proximas"; // (Status padrão para "Agendada")
         let classeStatus = "status-confirmada";
         let iconeStatus = "check-circle";
-        let textoStatus = "Agendada";
+        let textoStatus = "Confirmada";
         let isCancelada = false;
 
-        // Verifica status da API primeiro
+        // 4. (LÓGICA CORRIGIDA) Verifica "Cancelada" PRIMEIRO
         if ((consulta.status || '').toLowerCase() === "cancelada") {
             status = "canceladas";
             classeStatus = "status-cancelada";
             iconeStatus = "x-circle";
             textoStatus = "Cancelada";
             isCancelada = true;
-        } else {
-            // Consulta passada
-            if (dataObj < agora) {
-                status = "realizadas";
-                classeStatus = "status-realizada";
-                iconeStatus = "history";
-                textoStatus = "Realizada";
-            } else {
-                // Consulta de hoje ou futura
-                status = "proximas";
-                classeStatus = "status-confirmada";
-                iconeStatus = "check-circle";
-                textoStatus = "Agendada";
-            }
         }
-
+        // 5. (LÓGICA CORRIGIDA) Se não estiver cancelada, verifica se já foi "Realizada" (comparando com a HORA ATUAL)
+        else if (dataObj < agora) {
+            status = "realizadas";
+            classeStatus = "status-realizada";
+            iconeStatus = "history";
+            textoStatus = "Realizada";
+        }
+        // 6. Se for no futuro (e não cancelada), é "Próxima"
+        // (O status "proximas" já é o padrão)
+        
+        // --- FIM DA CORREÇÃO DE ROBUSTEZ E LÓGICA ---
         
         // Extrai os dados do objeto dataObj (que é válido)
         const diaSemana = diasSemana[dataObj.getDay()];
@@ -306,7 +302,11 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         });
 
-
+        // ===================================================================
+        // --- INÍCIO DA CORREÇÃO (A única alteração necessária no seu arquivo original) ---
+        // Alterado o clique padrão de "Próximas" para "Todas"
+        // ===================================================================
+        
         // (MODIFICADO) Clica na aba "Todas" por padrão ao carregar
         const abaTodas = document.querySelector('.tab-item[data-filter="todas"]');
         if (abaTodas) {
@@ -318,6 +318,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 primeiraAba.click();
             }
         }
+        // ===================================================================
+        // --- FIM DA CORREÇÃO ---
+        // ===================================================================
     }
 
     // --- Ponto de Partida ---

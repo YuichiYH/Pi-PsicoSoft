@@ -143,21 +143,29 @@ document.addEventListener("DOMContentLoaded", function() {
             
             const agora = new Date(); // Pega a data/hora atual
 
-           // Define o início e o fim do dia atual
-            const hoje_inicio = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate(), 0, 0, 0);
-            const hoje_fim = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate(), 23, 59, 59);
+            // 1. (LÓGICA CORRETA) Cria uma data que representa o INÍCIO do dia de hoje (00:00)
+            const hoje_inicio_dia = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
 
-            // Filtra a lista no frontend
+            // 2. Filtra a lista no frontend
             const consultasFuturas = todasConsultas.filter(consulta => {
-                if ((consulta.status || '').toLowerCase() === 'cancelada') return false;
+                
+                // 3. (ROBUSTEZ) Verifica se o status é 'cancelada'
+                if ((consulta.status || '').toLowerCase() === 'cancelada') {
+                    return false; // Não mostra consultas canceladas como "próximas"
+                }
 
                 const dataConsulta = parseDataHorario(consulta.horario);
-                if (!dataConsulta) return false;
 
-                // Mantém consultas de hoje (mesmo já passadas) e futuras
-                return dataConsulta >= hoje_inicio;
+                // 4. (ROBUSTEZ) Se o parse falhar, ignora
+                if (!dataConsulta) {
+                    console.warn('Dashboard: Ignorando consulta com data/hora inválida.', consulta.horario);
+                    return false;
+                }
+                
+                // 5. (LÓGICA CORRETA) Retorna true se a consulta for de hoje (qualquer hora) ou de um dia futuro.
+                return dataConsulta >= hoje_inicio_dia;
             });
-
+            // --- FIM DA CORREÇÃO ---
             
             // --- INÍCIO DA CORREÇÃO (ORDENAÇÃO CRESCENTE) ---
             consultasFuturas.sort((a, b) => {
