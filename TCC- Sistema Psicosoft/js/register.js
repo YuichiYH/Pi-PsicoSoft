@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
 
-        return true; // Todos os campos são válidos
+        return true; 
     }
 
     // Listener do formulário de cadastro atualizado
