@@ -166,10 +166,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    
-    // =============================================================================
-    //  INÍCIO DA CORREÇÃO (DENTRO DE SCRIPT_BOT.JS)
-    // =============================================================================
     /**
      * Parseia a string [API_CALL:...] e executa a chamada fetch real.
      * @param {string} apiCallString - A string no formato [API_CALL:METODO|URL|BODY_JSON]
@@ -235,8 +231,31 @@ document.addEventListener('DOMContentLoaded', () => {
             chatbox.scrollTop = chatbox.scrollHeight;
             
             try {
+                // Verifica se a API call que ACABOU de ser executada foi a de Rotas
+                if (url.includes('/RotasClinicas') && responseData.clinicas && responseData.origem) {
+                    try {
+                        // O mapa é exibido APENAS aqui.
+                        document.getElementById('map-container').style.display = 'block';
+                        renderMap(responseData.clinicas, responseData.origem);
+                        
+                        const followupQuestion = "O mapa foi atualizado com as rotas. Qual o **NOME COMPLETO da clínica** você deseja agendar sua consulta presencial?";
+                        
+                        // Adiciona o follow-up ao histórico
+                        setTimeout(() => { showTypingIndicator(); }, 500); 
+                        setTimeout(() => {
+                            hideTypingIndicator();
+                            appendMessage(followupQuestion, 'bot-message');
+                            conversationHistory.push({ role: 'model', parts: [{ text: followupQuestion }] });
+                        }, 1200); 
+
+                    } catch (mapError) {
+                        console.error("Erro ao tentar renderizar o mapa:", mapError);
+                        appendMessage("Desculpe, houve um erro ao tentar carregar o mapa de clínicas.", 'bot-message');
+                        conversationHistory.push({ role: 'model', parts: [{ text: "Erro ao carregar mapa." }] });
+                    }
+
                 // Verifica se a API call que ACABOU de ser executada foi a de Histórico
-                if (url.includes('/Consulta/HistoricoChat')) {
+                } else if (url.includes('/Consulta/HistoricoChat')) {
                     
                     // Pega a penúltima mensagem do histórico (a última é a do bot, ex: "Claro! Vou mostrar...")
                     // A penúltima é a do usuário (ex: "cancelar")
@@ -340,6 +359,68 @@ document.addEventListener('DOMContentLoaded', () => {
         if (userInput) userInput.focus();
     }
 
+    // =============================================================================
+    // FUNÇÃO PARA RENDERIZAR O MAPA DE CLÍNICAS E ROTAS
+    // =============================================================================
+    function renderMap(clinicas, origem) {
+        const mapContainer = document.getElementById('map-container');
+        const mapElement = document.getElementById('map');
+        
+        // Verifica se o SDK do Google Maps está carregado
+        if (!mapContainer || !mapElement || typeof google === 'undefined' || !google.maps.Map) {
+            console.error("Google Maps SDK não carregado ou elementos DOM ausentes. Não é possível renderizar o mapa.");
+            mapContainer.style.display = 'none'; 
+            return;
+        }
+        
+        // 1. Mostra o container do mapa
+        mapContainer.style.display = 'block';
+        
+        // 2. Inicializa o Mapa
+        const map = new google.maps.Map(mapElement, {
+            center: { lat: origem.lat, lng: origem.lng }, 
+            zoom: 12,
+            // mapId: "DEMO_MAP_ID" (Opcional)
+        });
+
+        // 3. Adiciona o marcador de origem (o paciente)
+        new google.maps.Marker({
+            position: { lat: origem.lat, lng: origem.lng },
+            map: map,
+            title: "Sua Localização",
+            icon: {
+                url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png' // Ícone azul padrão
+            }
+        });
+
+        // 4. Adiciona marcadores e rotas para cada clínica
+        clinicas.forEach((clinica, index) => {
+            const destino = { lat: parseFloat(clinica.lat), lng: parseFloat(clinica.lng) };
+
+            // Marcador da Clínica
+            new google.maps.Marker({
+                position: destino,
+                map: map,
+                title: clinica.nome,
+                label: (index + 1).toString(), // Número da clínica
+                animation: google.maps.Animation.DROP
+            });
+
+            // Desenha a Rota (Polyline)
+            if (clinica.polyline && google.maps.geometry) {
+                new google.maps.Polyline({
+                    // Decodifica a string Polyline compactada que veio da Lambda
+                    path: google.maps.geometry.encoding.decodePath(clinica.polyline),
+                    geodesic: true,
+                    strokeColor: '#007bff', // Cor da rota (azul Psicosoft)
+                    strokeOpacity: 0.8,
+                    strokeWeight: 4,
+                    map: map
+                });
+            }
+        });
+    }
+    
     function getGeolocation() {
         if (navigator.geolocation) {
             // Tenta obter a posição atual
@@ -368,6 +449,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn("Geolocalização não suportada neste navegador.");
         }
     }
+    // =============================================================================
 
     // =============================================================================
     // Event Listeners (Ouvintes de Eventos)
