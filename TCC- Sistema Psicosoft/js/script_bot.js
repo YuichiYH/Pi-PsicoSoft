@@ -114,19 +114,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // 2. Adiciona ao histórico
             conversationHistory.push({ role: 'user', parts: [{ text: text }] });
 
-            // --- ATUALIZAÇÃO 1: Coleta dados do localStorage ---
-            const userName = localStorage.getItem('paciente_nome');
-            const userCPF = localStorage.getItem('paciente_cpf');
-
-            // 3. Envia para o backend (AGORA COM NOME E CPF)
+            // 3. Envia para o backend
             const response = await fetch(GEMINI_BACKEND_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    history: conversationHistory,
-                    nome: userName,
-                    cpf: userCPF 
-                })
+                body: JSON.stringify({ history: conversationHistory })
             });
 
             if (!response.ok) {
@@ -143,6 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
             hideTypingIndicator();
         }
     };
+
+    // [COLE ESTAS DUAS NOVAS FUNÇÕES NO LUGAR]
 
     /**
      * Processa a resposta recebida da API.
@@ -303,19 +297,10 @@ document.addEventListener('DOMContentLoaded', () => {
         showTypingIndicator(); 
         
         try {
-            // --- ATUALIZAÇÃO 2: Envia dados do usuário já na saudação ---
-            const userName = localStorage.getItem('paciente_nome');
-            const userCPF = localStorage.getItem('paciente_cpf');
-
             const response = await fetch(GEMINI_BACKEND_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    history: [], 
-                    initialMessage: "SAUDACAO_INICIAL",
-                    nome: userName,
-                    cpf: userCPF
-                }) 
+                body: JSON.stringify({ history: [], initialMessage: "SAUDACAO_INICIAL" }) 
             });
 
             if (!response.ok) throw new Error('Falha na saudação inicial');
