@@ -121,7 +121,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({ 
                     history: conversationHistory,
                     pacienteNome: pacienteNome,
-                    pacienteCPF: pacienteCPF
+                    pacienteCPF: pacienteCPF,
+                    userLatitude: userLocation.latitude,
+                    userLongitude: userLocation.longitude
                 })
             });
 
