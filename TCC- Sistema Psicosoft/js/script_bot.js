@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (userText.includes('cancelar') || userText.includes('desmarcar')) {
                             
                             // Esta é a pergunta que você solicitou
-                            const followupQuestion = "Aqui estão suas consultas. Você gostaria de cancelar alguma delas? Se sim, por favor, me informe o código (OrderId).";
+                            const followupQuestion = "Aqui estão suas consultas. Você gostaria de cancelar alguma delas? Se sim, por favor, me informe o código da consulta.";
                             
                             // Adiciona a pergunta com um pequeno delay para parecer natural
                             setTimeout(() => {
