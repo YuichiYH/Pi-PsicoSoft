@@ -2,9 +2,9 @@
  * dashboard.js
  * Funcionalidade do menu mobile, chat bot, proteção de rota e carregamento de consultas.
  *
- * ATUALIZAÇÃO: Adicionado filtro de data no frontend para garantir
+ *  Adicionado filtro de data no frontend para garantir
  * que APENAS consultas futuras sejam exibidas no painel.
- * ATUALIZAÇÃO 2: Chatbot agora é um widget flutuante.
+ *  Chatbot agora é um widget flutuante.
  */
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -13,12 +13,10 @@ document.addEventListener("DOMContentLoaded", function() {
     const pacienteCPF = localStorage.getItem('paciente_cpf');
 
     if (!pacienteCPF) {
-        // AJUSTE: Removido 'alert' para um redirecionamento silencioso.
+        // Removido 'alert' para um redirecionamento silencioso.
         window.location.href = "register.html";
         return; 
     }
-    // --- Fim do Script de Proteção ---
-
 
     // --- 2. Personalização do Painel ---
     const pacienteNomeCompleto = localStorage.getItem('paciente_nome'); 
@@ -35,7 +33,6 @@ document.addEventListener("DOMContentLoaded", function() {
             lucide.createIcons();
         }
     }
-    // --- Fim da Personalização ---
 
 
     // --- 3. Controle do Menu Mobile ---
@@ -81,9 +78,7 @@ document.addEventListener("DOMContentLoaded", function() {
             window.location.href = "index.html"; 
         });
     }
-    // --- Fim da Lógica de Logout ---
-
-    // --- INÍCIO DA CORREÇÃO: Função Auxiliar de Data ---
+   -
     /**
      * Converte "dd/mm/aaaa HH:MM" para um objeto Date.
      * Retorna null se o formato for inválido.
@@ -111,10 +106,8 @@ document.addEventListener("DOMContentLoaded", function() {
             return null;
         }
     }
-    // --- FIM DA CORREÇÃO ---
 
-
-    // --- 6. Carregamento das Próximas Consultas (MODIFICADO) ---
+    // --- 6. Carregamento das Próximas Consultas ---
     
     const appointmentList = document.querySelector('.appointment-list');
 
@@ -122,8 +115,7 @@ document.addEventListener("DOMContentLoaded", function() {
      * Busca e renderiza as próximas consultas do paciente logado.
      */
     async function carregarProximasConsultas() {
-        if (!appointmentList) return; // Sai se o elemento não existir
-
+        if (!appointmentList) return; 
         // Mostra feedback de carregamento
         appointmentList.innerHTML = '<li style="padding: 1rem; color: #718096;">Carregando consultas...</li>';
         
@@ -132,7 +124,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
         try {
             // 2. Requisição GET simples
-            // --- CORREÇÃO DE CACHE ADICIONADA AQUI ---
             const response = await fetch(url, { cache: 'no-store' });
             
             if (!response.ok) {
@@ -143,36 +134,31 @@ document.addEventListener("DOMContentLoaded", function() {
             let todasConsultas = await response.json();
             
             if (!Array.isArray(todasConsultas)) {
-                 todasConsultas = []; // Garante que é um array
+                 todasConsultas = []; 
             }
-            
-            // --- INÍCIO DA CORREÇÃO (FILTRO DE DATA E ROBUSTEZ) ---
             
             const agora = new Date(); // Pega a data/hora atual
 
-            // 1. (LÓGICA CORRETA) Cria uma data que representa o INÍCIO do dia de hoje (00:00)
             const hoje_inicio_dia = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
 
             // 2. Filtra a lista no frontend
             const consultasFuturas = todasConsultas.filter(consulta => {
                 
-                // 3. (ROBUSTEZ) Verifica se o status é 'cancelada'
                 if ((consulta.status || '').toLowerCase() === 'cancelada') {
-                    return false; // Não mostra consultas canceladas como "próximas"
+                    return false;
                 }
 
                 const dataConsulta = parseDataHorario(consulta.horario);
 
-                // 4. (ROBUSTEZ) Se o parse falhar, ignora
                 if (!dataConsulta) {
                     console.warn('Dashboard: Ignorando consulta com data/hora inválida.', consulta.horario);
                     return false;
                 }
                 
-                // 5. (LÓGICA CORRETA) Retorna true se a consulta for de hoje (qualquer hora) ou de um dia futuro.
+                // Retorna true se a consulta for de hoje (qualquer hora) ou de um dia futuro.
                 return dataConsulta >= hoje_inicio_dia;
             });
-            // --- FIM DA CORREÇÃO ---
+      
             
             // --- INÍCIO DA CORREÇÃO (ORDENAÇÃO CRESCENTE) ---
             consultasFuturas.sort((a, b) => {
