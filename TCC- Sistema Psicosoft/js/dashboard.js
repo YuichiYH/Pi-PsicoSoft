@@ -13,11 +13,10 @@ document.addEventListener("DOMContentLoaded", function() {
     const pacienteCPF = localStorage.getItem('paciente_cpf');
 
     if (!pacienteCPF) {
-        // AJUSTE: Removido 'alert' para um redirecionamento silencioso.
         window.location.href = "register.html";
         return; 
     }
-    // --- Fim do Script de Proteção ---
+    
 
 
     // --- 2. Personalização do Painel ---
@@ -26,16 +25,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (pacienteNomeCompleto && welcomeHeader) {
         const primeiroNome = pacienteNomeCompleto.split(' ')[0]; 
-        
-        // ALTERAÇÃO AQUI: Mude o "hand" para "sparkles"
-        welcomeHeader.innerHTML = `Olá, ${primeiroNome} <i data-lucide="sparkles" class="happy-icon"></i>`;
-        
-        // ADIÇÃO: Chame createIcons() DEPOIS de adicionar o novo ícone ao HTML
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-        }
+        welcomeHeader.textContent = `Olá, ${primeiroNome} 👋`;
     }
-    // --- Fim da Personalização ---
 
 
     // --- 3. Controle do Menu Mobile ---
@@ -83,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     // --- Fim da Lógica de Logout ---
 
-    // --- INÍCIO DA CORREÇÃO: Função Auxiliar de Data ---
+    // Função Auxiliar de Data ---
     /**
      * Converte "dd/mm/aaaa HH:MM" para um objeto Date.
      * Retorna null se o formato for inválido.
@@ -111,10 +102,8 @@ document.addEventListener("DOMContentLoaded", function() {
             return null;
         }
     }
-    // --- FIM DA CORREÇÃO ---
 
-
-    // --- 6. Carregamento das Próximas Consultas (MODIFICADO) ---
+    // --- 6. Carregamento das Próximas Consultas ---
     
     const appointmentList = document.querySelector('.appointment-list');
 
@@ -146,35 +135,22 @@ document.addEventListener("DOMContentLoaded", function() {
                  todasConsultas = []; // Garante que é um array
             }
             
-            // --- INÍCIO DA CORREÇÃO (FILTRO DE DATA E ROBUSTEZ) ---
-            
             const agora = new Date(); // Pega a data/hora atual
 
-            // 1. (LÓGICA CORRETA) Cria uma data que representa o INÍCIO do dia de hoje (00:00)
-            const hoje_inicio_dia = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
-
-            // 2. Filtra a lista no frontend
+            // 4. Filtra a lista no frontend
             const consultasFuturas = todasConsultas.filter(consulta => {
+                // A API retorna "horario" (ex: "10/11/2025 14:30")
+                const [dataStr, horaStr] = consulta.horario.split(' '); // ["10/11/2025", "14:30"]
+                const [dia, mesNum, ano] = dataStr.split('/');       // ["10", "11", "2025"]
+                const [hora, minuto] = horaStr.split(':');           // ["14", "30"]
                 
-                // 3. (ROBUSTEZ) Verifica se o status é 'cancelada'
-                if ((consulta.status || '').toLowerCase() === 'cancelada') {
-                    return false; // Não mostra consultas canceladas como "próximas"
-                }
-
-                const dataConsulta = parseDataHorario(consulta.horario);
-
-                // 4. (ROBUSTEZ) Se o parse falhar, ignora
-                if (!dataConsulta) {
-                    console.warn('Dashboard: Ignorando consulta com data/hora inválida.', consulta.horario);
-                    return false;
-                }
+                // Cria a data da consulta (Mês é 0-indexado, por isso mesNum - 1)
+                const dataConsulta = new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia), parseInt(hora), parseInt(minuto));
                 
-                // 5. (LÓGICA CORRETA) Retorna true se a consulta for de hoje (qualquer hora) ou de um dia futuro.
-                return dataConsulta >= hoje_inicio_dia;
+                // Retorna true APENAS se a data da consulta for maior (mais nova) que agora
+                return dataConsulta > agora;
             });
-            // --- FIM DA CORREÇÃO ---
             
-            // --- INÍCIO DA CORREÇÃO (ORDENAÇÃO CRESCENTE) ---
             consultasFuturas.sort((a, b) => {
                 const dataA = parseDataHorario(a.horario);
                 const dataB = parseDataHorario(b.horario);
@@ -183,9 +159,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (!dataB) return -1;
                 return dataA - dataB; // Ordena do mais próximo (menor data) para o mais distante (maior data)
             });
-            // --- FIM DA CORREÇÃO ---
-
-
+            
             // Limpa a lista
             appointmentList.innerHTML = ""; 
 
@@ -216,12 +190,11 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     /**
-     * (MODIFICADO) Converte os dados da Lambda /Consulta em um formato para o HTML.
+     *  Converte os dados da Lambda /Consulta em um formato para o HTML.
      */
     function formatarConsultaDashboard(consulta) {
         const meses = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
         
-        // (Já validado no filtro anterior, mas como boa prática, verificamos de novo)
         const dataObj = parseDataHorario(consulta.horario);
         if (!dataObj) {
              return { mes: 'ERR', dia: '!', titulo: 'Consulta Inválida', classeStatus: 'status-cancelada', iconeStatus: 'alert-triangle', textoStatus: 'Inválida' };
