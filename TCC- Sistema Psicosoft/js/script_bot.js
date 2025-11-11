@@ -113,12 +113,24 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // 2. Adiciona ao histórico
             conversationHistory.push({ role: 'user', parts: [{ text: text }] });
+            
+            // --- INÍCIO DA ATUALIZAÇÃO ---
+            // Pega os dados do localStorage
+            const pacienteNome = localStorage.getItem('paciente_nome') || 'Paciente';
+            const pacienteCPF = localStorage.getItem('paciente_cpf') || 'CPF_NAO_ENCONTRADO';
+            // --- FIM DA ATUALIZAÇÃO ---
 
-            // 3. Envia para o backend
+            // 3. Envia para o backend (AGORA COM OS DADOS DO PACIENTE)
             const response = await fetch(GEMINI_BACKEND_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ history: conversationHistory })
+                // --- ATUALIZAÇÃO NO BODY ---
+                body: JSON.stringify({ 
+                    history: conversationHistory,
+                    pacienteNome: pacienteNome,
+                    pacienteCPF: pacienteCPF
+                })
+                // --- FIM DA ATUALIZAÇÃO ---
             });
 
             if (!response.ok) {
@@ -135,8 +147,6 @@ document.addEventListener('DOMContentLoaded', () => {
             hideTypingIndicator();
         }
     };
-
-    // [COLE ESTAS DUAS NOVAS FUNÇÕES NO LUGAR]
 
     /**
      * Processa a resposta recebida da API.
@@ -297,10 +307,23 @@ document.addEventListener('DOMContentLoaded', () => {
         showTypingIndicator(); 
         
         try {
+            // --- INÍCIO DA ATUALIZAÇÃO ---
+            // Pega os dados do localStorage para a saudação
+            const pacienteNome = localStorage.getItem('paciente_nome') || 'Paciente';
+            const pacienteCPF = localStorage.getItem('paciente_cpf') || 'CPF_NAO_ENCONTRADO';
+            // --- FIM DA ATUALIZAÇÃO ---
+
             const response = await fetch(GEMINI_BACKEND_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ history: [], initialMessage: "SAUDACAO_INICIAL" }) 
+                // --- ATUALIZAÇÃO NO BODY ---
+                body: JSON.stringify({ 
+                    history: [], 
+                    initialMessage: "SAUDACAO_INICIAL",
+                    pacienteNome: pacienteNome,
+                    pacienteCPF: pacienteCPF
+                }) 
+                // --- FIM DA ATUALIZAÇÃO ---
             });
 
             if (!response.ok) throw new Error('Falha na saudação inicial');
