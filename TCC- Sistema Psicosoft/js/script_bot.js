@@ -35,6 +35,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const API_GATEWAY_BASE_URL = 'https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha';
     const GEMINI_BACKEND_URL = API_GATEWAY_BASE_URL + '/chat';
     let conversationHistory = [];
+    
+    // ==============================================================================
+    //  VARIÁVEL DE LOCALIZAÇÃO USUÁRIO
+    // ==============================================================================
+    let userLocation = {
+        latitude: null,
+        longitude: null,
+        status: 'pending' // 'pending', 'granted', 'denied'
+    };
 
     // =============================================================================
     // Funções da Interface (UI)
@@ -223,9 +232,6 @@ document.addEventListener('DOMContentLoaded', () => {
             chatbox.appendChild(messageDiv);
             chatbox.scrollTop = chatbox.scrollHeight;
             
-            
-            // --- INÍCIO DA CORREÇÃO: Follow-up de Cancelamento ---
-            // (Esta é a nova lógica que você precisa)
             try {
                 // Verifica se a API call que ACABOU de ser executada foi a de Histórico
                 if (url.includes('/Consulta/HistoricoChat')) {
@@ -261,8 +267,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (e) {
                 console.error("Erro ao tentar adicionar follow-up de cancelamento:", e);
             }
-            // --- FIM DA CORREÇÃO ---
-
 
             // Adiciona a resposta final (a lista/mensagem de sucesso) ao histórico
             const historyText = responseData.response ? "Histórico de consultas enviado ao usuário." : finalContent;
@@ -276,10 +280,6 @@ document.addEventListener('DOMContentLoaded', () => {
             conversationHistory.push({ role: 'model', parts: [{ text: errorMessage }] });
         }
     }
-    // =============================================================================
-    //  FIM DA CORREÇÃO
-    // =============================================================================
-
 
     /**
      * Reinicia o chat, limpa o histórico e começa de novo.
@@ -338,6 +338,35 @@ document.addEventListener('DOMContentLoaded', () => {
         if (userInput) userInput.focus();
     }
 
+    function getGeolocation() {
+        if (navigator.geolocation) {
+            // Tenta obter a posição atual
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    // Sucesso: armazena a lat/lng
+                    userLocation.latitude = position.coords.latitude;
+                    userLocation.longitude = position.coords.longitude;
+                    userLocation.status = 'granted';
+                    console.log("Localização obtida com sucesso:", userLocation);
+                },
+                (error) => {
+                    // Erro: armazena o status 'denied'
+                    userLocation.status = 'denied';
+                    console.warn("Permissão de geolocalização negada/erro:", error.message);
+                    // NOTA: Se o usuário negar, a Lambda usará o FALLBACK!
+                },
+                {
+                    enableHighAccuracy: false, // Não precisa de alta precisão
+                    timeout: 5000, 
+                    maximumAge: 0
+                }
+            );
+        } else {
+            userLocation.status = 'unsupported';
+            console.warn("Geolocalização não suportada neste navegador.");
+        }
+    }
+
     // =============================================================================
     // Event Listeners (Ouvintes de Eventos)
     // (Todas as funções de menu e envio são mantidas como estão)
@@ -375,11 +404,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Inicialização ---
+
+    // 1. Tenta obter a geolocalização assim que o script é carregado
+    getGeolocation(); 
+
     const savedTheme = localStorage.getItem('chat-theme');
     if (savedTheme) {
         document.documentElement.setAttribute('data-theme', savedTheme);
     }
     window.addEventListener('load', () => {
+        // 2. Inicia o chat após tentar obter a localização (independente do resultado)
         startChat();
     });
 
