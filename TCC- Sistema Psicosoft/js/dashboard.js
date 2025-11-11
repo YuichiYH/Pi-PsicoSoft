@@ -9,6 +9,7 @@
 
 document.addEventListener("DOMContentLoaded", function() {
 
+
     // --- 1. Script de Proteção de Rota (Guard) ---
     const pacienteCPF = localStorage.getItem('paciente_cpf');
 
@@ -111,9 +112,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     const appointmentList = document.querySelector('.appointment-list');
 
-    /**
-     * Busca e renderiza as próximas consultas do paciente logado.
-     */
+    
     async function carregarProximasConsultas() {
         if (!appointmentList) return; 
         // Mostra feedback de carregamento
