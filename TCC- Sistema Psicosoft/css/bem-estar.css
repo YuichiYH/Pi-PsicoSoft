@@ -2,6 +2,7 @@
  * bem-estar.css
  * Estilos para a página de Dicas de Bem-Estar.
  * ATUALIZAÇÃO: Substituído o grid estático por um layout moderno de "Deck de Cartões".
+ * ATUALIZAÇÃO 2: Reintroduzida a animação de brilho (palette-glow) nos cards.
  */
 
 /* --- 1. Variáveis Globais e Reset (da Paleta Oficial) --- */
@@ -116,13 +117,17 @@ main {
     margin: 5px 0; transition: all 0.3s ease;
 }
 
-/* --- 3. Animação de Brilho (REMOVIDA) --- */
-/* @keyframes palette-glow ... foi removido */
-
-/* --- 4. Grid de Dicas (REMOVIDO) --- */
-/* .tip-grid ... foi removido */
-/* .tip-card ... foi removido */
-/* .featured-card ... foi removido */
+/* --- 3. Animação de Brilho (REINTRODUZIDA) --- */
+@keyframes palette-glow {
+    0%, 100% {
+        /* Brilho Roxo (#7A7EBF) */
+        box-shadow: 0 0 30px 8px rgba(122, 126, 191, 0.7);
+    }
+    50% {
+        /* Brilho Verde (#5BA6A6) */
+        box-shadow: 0 0 30px 8px rgba(91, 166, 166, 0.7);
+    }
+}
 
 
 /* --- INÍCIO DOS NOVOS ESTILOS DO DECK DE CARTÕES --- */
@@ -149,7 +154,7 @@ main {
     background-color: var(--card-bg);
     border-radius: 16px;
     padding: 2.5rem;
-    box-shadow: var(--shadow-md);
+    /* Box-shadow padrão removido para dar lugar à animação */
     border: 1px solid var(--border-color);
     
     display: flex;
@@ -164,6 +169,9 @@ main {
     opacity: 0;
     transform: translateY(30px) scale(0.9);
     pointer-events: none; /* Não clicável por padrão */
+
+    /* APLICA A ANIMAÇÃO DE BRILHO SOLICITADA */
+    animation: palette-glow 4s ease-in-out infinite;
 }
 
 /* Estilo do Card Ativo (no topo da pilha) */
@@ -172,6 +180,7 @@ main {
     transform: translateY(0) scale(1);
     z-index: 10;
     pointer-events: auto; /* Apenas o ativo é clicável */
+    animation-play-state: running; /* Garante que a animação rode */
 }
 
 /* Estilo do Próximo Card (logo abaixo do topo) */
@@ -180,6 +189,7 @@ main {
     transform: translateY(15px) scale(0.95); /* Levemente visível abaixo */
     z-index: 9;
     pointer-events: none;
+    animation-play-state: paused; /* Pausa o brilho dos cards de baixo */
 }
 
 /* Estilo do Card que foi Descartado (saindo) */
@@ -188,6 +198,7 @@ main {
     opacity: 0;
     z-index: 8;
     pointer-events: none;
+    animation-play-state: paused;
 }
 
 /* Estilo do Card que foi Trazido de Volta (voltando) */
@@ -196,6 +207,7 @@ main {
     opacity: 0;
     z-index: 8;
     pointer-events: none;
+    animation-play-state: paused;
 }
 
 
