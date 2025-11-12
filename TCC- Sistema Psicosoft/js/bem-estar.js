@@ -1,7 +1,6 @@
 /*
  * bem-estar.js
- * Funcionalidade do menu mobile, chat bot e logout.
- * (A lógica complexa do Deck de Dicas foi removida a pedido.)
+ * Funcionalidade do menu mobile, chat bot, logout e a nova lógica de Foco nas Dicas.
  */
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -60,9 +59,45 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // --- 4. Lógica do Deck de Dicas (REMOVIDA) ---
-    // (Toda a lógica de nextCard, prevCard, updateCardClasses foi removida)
+    // --- 4. Lógica de Foco nas Dicas (NOVA) ---
+    const mainContainer = document.querySelector('main .container');
+    const featuredCard = document.querySelector('.featured-card');
+    const gridCards = document.querySelectorAll('.tip-grid .tip-card');
+    
+    // Combina a Dica da Semana e os cards do grid em uma única lista
+    const allCards = [featuredCard, ...gridCards];
 
+    allCards.forEach(card => {
+        card.addEventListener('click', (e) => {
+            const clickedCard = e.currentTarget;
+
+            // 1. Verifica se o card clicado já está focado
+            if (clickedCard.classList.contains('focused')) {
+                // Se sim, remove o foco dele e do container
+                mainContainer.classList.remove('tip-focused');
+                clickedCard.classList.remove('focused');
+                
+                // Devolve o brilho padrão apenas para a Dica da Semana
+                featuredCard.classList.add('animated-border');
+                
+            } else {
+                // Se não, foca no novo card
+                mainContainer.classList.add('tip-focused');
+                
+                // Remove o foco e o brilho de TODOS os cards
+                allCards.forEach(c => {
+                    c.classList.remove('focused');
+                    c.classList.remove('animated-border');
+                });
+                
+                // Adiciona o foco e o brilho APENAS no card clicado
+                clickedCard.classList.add('focused');
+                clickedCard.classList.add('animated-border');
+            }
+        });
+    });
+
+    
     // Ativa os ícones (Lucide)
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
