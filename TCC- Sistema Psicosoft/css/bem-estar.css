@@ -199,7 +199,9 @@ main {
 }
 
 
-/* --- INÍCIO DAS NOVAS REGRAS DE FOCO E BRILHO --- */
+/* --- INÍCIO DAS NOVAS REGRAS DE FOCO E BRILHO (CORRIGIDAS) --- */
+
+/* 1. O Overlay de Foco */
 .tip-focus-overlay {
     display: none;
     position: fixed;
@@ -218,29 +220,27 @@ body.tip-focused .tip-focus-overlay {
     opacity: 1;
 }
 
-/* Garante que o brilho esteja sempre ativo no card com esta classe */
+/* 2. Classe que ATIVA o brilho */
 .tip-card.animated-border {
     animation: palette-glow 4s ease-in-out infinite;
     border-color: transparent;
-    animation-play-state: running !important; /* Assegura que a animação não pare */
 }
 
-/* Quando o body está focado, remove o brilho e opacifica os não focados */
+/* 3. Quando o body está focado, apaga TODOS os cards */
 body.tip-focused .tip-card {
     opacity: 0.3;
-    animation: none !important; /* Remove o brilho de todos os cards por padrão */
+    animation: none; /* Remove o brilho de todos */
     cursor: default;
 }
 
-/* O card focado anula as regras acima para opacidade e ganha brilho */
-.tip-card.focused {
+/* 4. A REGRA CORRIGIDA: Sobrescreve a regra anterior para o card focado */
+body.tip-focused .tip-card.focused {
     opacity: 1 !important;
     transform: scale(1.05) !important;
     position: relative;
     z-index: 1001;
     cursor: pointer;
-    animation: palette-glow 4s ease-in-out infinite !important; /* Ativa o brilho no card focado */
-    border-color: transparent !important; /* Garante que a borda não atrapalhe */
+    /* A classe 'animated-border' adicionada via JS garantirá que a animação seja reativada */
 }
 /* --- FIM DAS NOVAS REGRAS DE FOCO E BRILHO --- */
 
