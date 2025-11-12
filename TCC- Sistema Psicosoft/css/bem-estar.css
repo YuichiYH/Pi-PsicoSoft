@@ -304,7 +304,7 @@ body.tip-focused .tip-card.focused {
     border-radius: 50%;
     width: 30px;
     height: 30px;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     cursor: pointer;
