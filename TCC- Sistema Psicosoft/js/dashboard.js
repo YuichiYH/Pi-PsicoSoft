@@ -242,3 +242,73 @@ document.addEventListener("DOMContentLoaded", function() {
     carregarProximasConsultas();
 
 });
+
+// --- 7. LÓGICA DO CARROSSEL DE INFORMAÇÕES (ADICIONADO) ---
+const slidesContainer = document.querySelector(".info-carousel-slides");
+const slides = document.querySelectorAll(".carousel-slide");
+const prevButton = document.querySelector(".carousel-nav.prev");
+const nextButton = document.querySelector(".carousel-nav.next");
+const paginationContainer = document.querySelector(".carousel-pagination");
+
+if (slides.length > 0) {
+    let currentSlide = 0;
+    let autoPlayInterval = null;
+
+    // Função para mostrar um slide específico
+    const showSlide = (index) => {
+        slides.forEach((slide, i) => {
+            slide.classList.remove("active");
+            if (i === index) {
+                slide.classList.add("active");
+            }
+        });
+        // Atualiza a paginação
+        const dots = document.querySelectorAll(".pagination-dot");
+        dots.forEach((dot, i) => {
+            dot.classList.toggle("active", i === index);
+        });
+        currentSlide = index;
+    };
+
+    // Navegação manual
+    prevButton.addEventListener("click", () => {
+        const newSlide = (currentSlide - 1 + slides.length) % slides.length;
+        showSlide(newSlide);
+        resetAutoPlay();
+    });
+
+    nextButton.addEventListener("click", () => {
+        const newSlide = (currentSlide + 1) % slides.length;
+        showSlide(newSlide);
+        resetAutoPlay();
+    });
+    
+    // Criação da Paginação
+    slides.forEach((_, i) => {
+        const dot = document.createElement("div");
+        dot.classList.add("pagination-dot");
+        dot.addEventListener("click", () => {
+            showSlide(i);
+            resetAutoPlay();
+        });
+        paginationContainer.appendChild(dot);
+    });
+
+    // Autoplay
+    const startAutoPlay = () => {
+        autoPlayInterval = setInterval(() => {
+            const newSlide = (currentSlide + 1) % slides.length;
+            showSlide(newSlide);
+        }, 5000); // Muda a cada 5 segundos
+    };
+
+    const resetAutoPlay = () => {
+        clearInterval(autoPlayInterval);
+        startAutoPlay();
+    };
+
+    // Inicia o carrossel
+    showSlide(0);
+    startAutoPlay();
+    lucide.createIcons(); // Recria os ícones do Lucide, caso necessário
+}

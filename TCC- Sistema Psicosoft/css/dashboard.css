@@ -693,34 +693,114 @@ a { text-decoration: none; color: var(--primary); }
         align-self: flex-start; /* Alinha o botão à esquerda */
     }
 }
-/* ======================================= */
-/* === 10. ANIMAÇÃO DO ÍCONE DE ACENO === */
-/* ======================================= */
-/* ======================================= */
-/* === 10. ANIMAÇÃO DO ÍCONE ALEGRE === */
-/* ======================================= */
 
-/* A classe que demos ao ícone no JS */
-.happy-icon {
-  display: inline-block; /* Permite que o ícone seja transformado */
-  margin-left: 8px; /* Um pequeno espaço entre o nome e o ícone */
-  
-  /* Remove a origem de transformação específica se não for mais uma "mão" */
-  /* transform-origin: 70% 70%; */ /* Esta linha pode ser removida ou comentada */
-  
-  /* Aplica a nova animação 'sparkle-pulse' */
-  animation: sparkle-pulse 2s infinite ease-in-out; /* Animação mais suave e contínua */
-  
-  /* Ajuste o tamanho e cor do ícone se necessário */
-  /* width: 28px; */
-  /* height: 28px; */
-  color: #FFD700; /* Cor dourada para os brilhos, por exemplo */
-  vertical-align: middle; /* Alinha o ícone verticalmente com o texto */
+
+/* --- 11. ESTILOS DO CARROSSEL DE INFORMAÇÕES (ADICIONADO) --- */
+.info-carousel-container {
+    position: relative;
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    overflow: hidden; /* Essencial para o carrossel */
+    animation: slideInFromLeft 0.6s ease-out;
 }
 
-/* Define os quadros-chave da nova animação de pulsação/escalonamento */
-@keyframes sparkle-pulse {
-   0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.1); opacity: 0.8; } /* Aumenta um pouco e diminui a opacidade */
- 100% { transform: scale(1); opacity: 1; }
+.info-carousel-slides {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.carousel-slide {
+    min-width: 100%;
+    box-sizing: border-box;
+    padding: 0 40px; /* Espaço para as setas não sobreporem o texto */
+    text-align: center;
+    display: none; /* Esconde todos por padrão */
+    flex-direction: column;
+    align-items: center;
+}
+
+.carousel-slide.active {
+    display: flex; /* Mostra apenas o slide ativo */
+}
+
+.carousel-slide h3 {
+    color: var(--primary);
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.carousel-slide p {
+    font-size: 0.95rem;
+    max-width: 450px;
+    margin: 0 auto;
+    color: var(--text-light);
+}
+
+.carousel-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: var(--background);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-light);
+    transition: all 0.3s ease;
+}
+.carousel-nav:hover {
+    background-color: var(--primary);
+    color: var(--card-bg);
+    border-color: var(--primary);
+}
+
+.carousel-nav.prev {
+    left: 1rem;
+}
+
+.carousel-nav.next {
+    right: 1rem;
+}
+
+.carousel-pagination {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+}
+
+.pagination-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--border-color);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.pagination-dot.active {
+    background-color: var(--primary);
+}
+
+/* Responsividade do Carrossel */
+@media (max-width: 768px) {
+    .info-carousel-container {
+        padding: 1.5rem 1rem;
+    }
+    .carousel-slide {
+        padding: 0 10px; /* Reduz o padding lateral no mobile */
+    }
+    .carousel-nav {
+        display: none; /* Esconde as setas no mobile, navegação será por swipe (futuro) ou dots */
+    }
 }
