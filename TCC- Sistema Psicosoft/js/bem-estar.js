@@ -59,44 +59,61 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // --- 4. Lógica de Foco nas Dicas (NOVA) ---
-    const mainContainer = document.querySelector('main .container');
+    // --- 4. Lógica de Foco nas Dicas (NOVA E CORRIGIDA) ---
+    const body = document.body;
+    const focusOverlay = document.getElementById('tip-focus-overlay');
     const featuredCard = document.querySelector('.featured-card');
     const gridCards = document.querySelectorAll('.tip-grid .tip-card');
-    
-    // Combina a Dica da Semana e os cards do grid em uma única lista
     const allCards = [featuredCard, ...gridCards];
 
-    allCards.forEach(card => {
-        card.addEventListener('click', (e) => {
-            const clickedCard = e.currentTarget;
+    // Função para redefinir tudo para o estado padrão
+    function resetFocus() {
+        body.classList.remove('tip-focused');
+        allCards.forEach(card => {
+            card.classList.remove('focused');
+            card.classList.remove('animated-border'); // Remove brilho de todos
+        });
+        
+        // Recoloca o brilho apenas no card da semana (estado padrão)
+        if (featuredCard) {
+            featuredCard.classList.add('animated-border');
+        }
+    }
 
-            // 1. Verifica se o card clicado já está focado
-            if (clickedCard.classList.contains('focused')) {
-                // Se sim, remove o foco dele e do container
-                mainContainer.classList.remove('tip-focused');
-                clickedCard.classList.remove('focused');
-                
-                // Devolve o brilho padrão apenas para a Dica da Semana
-                featuredCard.classList.add('animated-border');
-                
+    // Adiciona o listener para cada card
+    allCards.forEach(card => {
+        if (!card) return; // Segurança
+        
+        card.addEventListener('click', (e) => {
+            e.stopPropagation(); // Impede que o clique "vaze" para o overlay
+            
+            const isAlreadyFocused = card.classList.contains('focused');
+
+            if (isAlreadyFocused) {
+                // Se clicar no card que já está focado, reseta tudo
+                resetFocus();
             } else {
-                // Se não, foca no novo card
-                mainContainer.classList.add('tip-focused');
-                
-                // Remove o foco e o brilho de TODOS os cards
+                // Se clicar em um novo card:
+                // 1. Remove o foco e brilho de todos
                 allCards.forEach(c => {
                     c.classList.remove('focused');
                     c.classList.remove('animated-border');
                 });
                 
-                // Adiciona o foco e o brilho APENAS no card clicado
-                clickedCard.classList.add('focused');
-                clickedCard.classList.add('animated-border');
+                // 2. Adiciona o estado de foco ao body
+                body.classList.add('tip-focused');
+                
+                // 3. Adiciona o foco e o brilho APENAS ao card clicado
+                card.classList.add('focused');
+                card.classList.add('animated-border');
             }
         });
     });
 
+    // Adiciona o listener no overlay para fechar o foco
+    if (focusOverlay) {
+        focusOverlay.addEventListener('click', resetFocus);
+    }
     
     // Ativa os ícones (Lucide)
     if (typeof lucide !== 'undefined') {

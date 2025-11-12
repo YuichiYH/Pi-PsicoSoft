@@ -196,34 +196,46 @@ main {
 .tip-card.animated-border {
     animation: palette-glow 4s ease-in-out infinite;
     border-color: transparent;
-    /* Garante que o brilho não seja pausado por outras regras */
     animation-play-state: running !important;
 }
 
-/* 2. Classe de Foco: Adicionada via JS */
-.tip-card.focused {
-    opacity: 1 !important;
-    transform: scale(1.03) !important;
-    box-shadow: var(--shadow-lg) !important;
-    /* Adiciona o brilho quando focado */
-    animation: palette-glow 4s ease-in-out infinite;
-    border-color: transparent;
+/* 2. O Overlay de Foco (NOVO) */
+.tip-focus-overlay {
+    display: none; /* Escondido por padrão */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* Fundo escurecido */
+    backdrop-filter: blur(3px);
+    z-index: 1000; /* Abaixo do card focado, acima de todo o resto */
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+}
+body.tip-focused .tip-focus-overlay {
+    display: block;
+    opacity: 1;
 }
 
 /* 3. Classe do Container: Adicionada via JS quando um card é focado */
-.container.tip-focused .featured-card,
-.container.tip-focused .tip-grid .tip-card {
+body.tip-focused .featured-card,
+body.tip-focused .tip-grid .tip-card {
     /* Diminui todos os cards */
-    opacity: 0.4;
+    opacity: 0.3;
     transform: scale(1.0); /* Reseta o scale do hover */
-    animation: none; /* Remove o brilho da Dica da Semana */
+    animation: none; /* Remove o brilho de todos */
+    cursor: default;
 }
 
 /* 4. Regra de Exceção: O card focado deve se sobressair */
-.container.tip-focused .tip-card.focused {
+.tip-card.focused {
     opacity: 1 !important;
-    transform: scale(1.03) !important;
-    z-index: 10; /* Garante que ele fique por cima */
+    transform: scale(1.05) !important;
+    z-index: 1001; /* Acima do overlay */
+    position: relative; /* Garante que o z-index funcione */
+    cursor: pointer;
+    /* O brilho é adicionado via JS (classe 'animated-border') */
 }
 /* --- FIM DAS NOVAS REGRAS DE FOCO E BRILHO --- */
 
@@ -244,7 +256,8 @@ main {
     justify-content: center;
     box-shadow: var(--shadow-lg);
     cursor: pointer;
-    z-index: 100;
+    /* z-index ajustado para ficar abaixo do overlay de foco */
+    z-index: 999; 
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .chat-fab:hover {
@@ -269,7 +282,8 @@ main {
     transform: translateY(20px) scale(0.95);
     transition: all 0.3s ease-out;
     pointer-events: none;
-    z-index: 998;
+    /* z-index ajustado para ficar abaixo do overlay de foco */
+    z-index: 998; 
 }
 .chat-container-flutuante.active {
     opacity: 1;
@@ -336,8 +350,7 @@ main {
 }
 
 /* --- INÍCIO DOS NOVOS ESTILOS (Refatoração UI/UX) --- */
-
-/* 1. Cabeçalho da Página (Botão Voltar e Título com Ícone) */
+/* (Esta seção permanece idêntica à anterior, mantendo o layout da navbar) */
 .page-header-container {
     display: flex;
     align-items: center;
@@ -346,14 +359,12 @@ main {
     padding-bottom: 1.5rem;
     margin-bottom: 2rem;
 }
-
 .welcome-header {
-    margin-bottom: 0; /* Remove margem do título */
+    margin-bottom: 0;
     display: flex;
     align-items: center;
     gap: 1rem;
 }
-
 .page-icon {
     width: 48px;
     height: 48px;
@@ -362,8 +373,6 @@ main {
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
 }
-
-/* Botão de Voltar */
 .btn-back {
     display: flex;
     align-items: center;
@@ -386,24 +395,21 @@ main {
     width: 20px;
     height: 20px;
 }
-
-/* 2. Refatoração da Navbar (Ícones + Texto) */
 .main-nav ul {
-    gap: 0.5rem; /* Reduz o espaçamento entre os itens */
+    gap: 0.5rem;
 }
 .main-nav li {
     vertical-align: top;
 }
-
 .main-nav a {
     display: flex;
-    flex-direction: column; /* Ícone em cima, texto embaixo */
+    flex-direction: column;
     align-items: center;
-    gap: 0.25rem; /* Espaço entre ícone e texto */
+    gap: 0.25rem;
     padding: 0.5rem 0.8rem;
     border-radius: 8px;
-    min-width: 80px; /* Largura mínima para alinhamento */
-    font-size: 0.8rem; /* Texto menor */
+    min-width: 80px;
+    font-size: 0.8rem;
     color: var(--text-light);
     border-bottom: 3px solid transparent;
 }
@@ -411,15 +417,12 @@ main {
     width: 22px;
     height: 22px;
 }
-
 .main-nav a:hover,
 .main-nav a.active {
     color: var(--primary);
     background-color: var(--background);
     border-bottom-color: var(--primary);
 }
-
-/* 3. Ajuste do Logout (para parecer com os outros) */
 .btn-logout {
     flex-direction: column;
     gap: 0.25rem;
@@ -436,14 +439,12 @@ main {
     width: 22px;
     height: 22px;
 }
-
-/* 4. Ajustes da Navbar Mobile */
 @media (max-width: 768px) {
     .main-nav a,
     .btn-logout {
-        flex-direction: row; /* Volta ao layout de ícone + texto */
+        flex-direction: row;
         min-width: 0;
-        font-size: 1rem; /* Tamanho de fonte normal */
+        font-size: 1rem;
         justify-content: flex-start;
         border-bottom: 1px solid var(--border-color);
         border-radius: 0;
@@ -451,15 +452,13 @@ main {
     
     .main-nav a.active,
     .main-nav a:hover {
-        border-bottom-color: var(--border-color); /* Remove a borda colorida no mobile */
+        border-bottom-color: var(--border-color);
     }
 
     .main-nav li:last-child a,
     .main-nav li:last-child .btn-logout {
-        border-bottom: none; /* Remove borda do último item */
+        border-bottom: none;
     }
-
-    /* Ajuste do Título da Página no Mobile */
     .page-header-container {
         flex-direction: column;
         align-items: flex-start;
@@ -473,7 +472,7 @@ main {
         height: 40px;
     }
     .btn-back {
-        align-self: flex-start; /* Alinha o botão à esquerda */
+        align-self: flex-start;
     }
 }
 /* --- FIM DOS NOVOS ESTILOS --- */
