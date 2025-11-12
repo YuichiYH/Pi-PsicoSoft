@@ -1,6 +1,6 @@
 /*
  * bem-estar.js
- * Funcionalidade do menu mobile, chat bot e logout.
+ * Funcionalidade do menu mobile, chat bot, logout e o novo Deck de Dicas.
  */
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -58,5 +58,70 @@ document.addEventListener("DOMContentLoaded", function() {
             window.location.href = "index.html"; 
         });
     }
+
+    // --- 4. Lógica do Deck de Dicas ---
+    const stack = document.querySelector(".tip-card-stack");
+    const cards = Array.from(stack.querySelectorAll(".tip-card-item")).reverse(); // Inverte para que o índice 0 seja o do topo
+    const nextTipBtn = document.getElementById("next-tip");
+    const prevTipBtn = document.getElementById("prev-tip");
+
+    let currentCardIndex = 0;
+
+    const updateCardClasses = () => {
+        cards.forEach((card, index) => {
+            card.classList.remove("active", "is-next", "is-dismissed", "is-returning");
+
+            if (index === currentCardIndex) {
+                card.classList.add("active");
+                // Se foi um "voltar", anima o retorno
+                if (card.dataset.returning === "true") {
+                    card.classList.add("is-returning");
+                    setTimeout(() => card.classList.remove("is-returning"), 10); // Remove a classe de animação
+                    delete card.dataset.returning;
+                }
+            } else if (index === currentCardIndex + 1) {
+                card.classList.add("is-next");
+            }
+        });
+
+        // Desabilita o botão de voltar se estiver no primeiro card
+        prevTipBtn.disabled = (currentCardIndex === 0);
+    };
+
+    const nextCard = () => {
+        if (currentCardIndex < cards.length - 1) {
+            const currentCard = cards[currentCardIndex];
+            currentCard.classList.add("is-dismissed"); // Animação de saída
+            
+            currentCardIndex++;
+            updateCardClasses();
+        } else {
+            // Opcional: Reinicia o deck
+            cards.forEach(card => card.classList.remove("is-dismissed"));
+            currentCardIndex = 0;
+            updateCardClasses();
+        }
+    };
+
+    const prevCard = () => {
+        if (currentCardIndex > 0) {
+            currentCardIndex--;
+            const newActiveCard = cards[currentCardIndex];
+            newActiveCard.dataset.returning = "true"; // Marca para animação de retorno
+            updateCardClasses();
+        }
+    };
+
+    if (stack) {
+        nextTipBtn.addEventListener("click", nextCard);
+        prevTipBtn.addEventListener("click", prevCard);
+
+        // Inicializa o estado dos cards
+        updateCardClasses();
+    }
     
+    // Ativa os ícones recém-adicionados
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
 });
