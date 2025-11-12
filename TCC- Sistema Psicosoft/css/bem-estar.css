@@ -1,8 +1,7 @@
 /*
  * bem-estar.css
  * Estilos para a página de Dicas de Bem-Estar.
- * ATUALIZAÇÃO: Substituído o grid estático por um layout moderno de "Deck de Cartões".
- * ATUALIZAÇÃO 2: Reintroduzida a animação de brilho (palette-glow) nos cards.
+ * Utiliza a paleta oficial e a animação de brilho.
  */
 
 /* --- 1. Variáveis Globais e Reset (da Paleta Oficial) --- */
@@ -117,7 +116,7 @@ main {
     margin: 5px 0; transition: all 0.3s ease;
 }
 
-/* --- 3. Animação de Brilho (REINTRODUZIDA) --- */
+/* --- 3. Animação de Brilho (A PEDIDO DO CLIENTE) --- */
 @keyframes palette-glow {
     0%, 100% {
         /* Brilho Roxo (#7A7EBF) */
@@ -129,90 +128,37 @@ main {
     }
 }
 
-
-/* --- INÍCIO DOS NOVOS ESTILOS DO DECK DE CARTÕES --- */
-.tip-deck-container {
-    max-width: 500px; /* Largura máxima do deck */
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+/* --- 4. Grid de Dicas (Layout Original Restaurado) --- */
+.tip-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem; /* Espaço abaixo da Dica da Semana */
 }
 
-.tip-card-stack {
-    position: relative;
-    width: 100%;
-    height: 400px; /* Altura fixa para o empilhamento */
-    perspective: 1000px; /* Para animações 3D, se desejado */
-    margin-bottom: 2rem;
-}
-
-.tip-card-item {
-    position: absolute;
-    width: 100%;
-    height: 100%;
+.tip-card {
     background-color: var(--card-bg);
-    border-radius: 16px;
-    padding: 2.5rem;
-    /* Box-shadow padrão removido para dar lugar à animação */
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: var(--shadow-sm);
     border: 1px solid var(--border-color);
-    
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    
-    /* Transições fluidas */
-    transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out;
-    
-    /* Posição inicial (empilhado) */
-    opacity: 0;
-    transform: translateY(30px) scale(0.9);
-    pointer-events: none; /* Não clicável por padrão */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-    /* APLICA A ANIMAÇÃO DE BRILHO SOLICITADA */
+/* Efeito de hover suave */
+.tip-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* APLICA A ANIMAÇÃO DE BRILHO A QUALQUER CARD COM ESTA CLASSE */
+.tip-card.animated-border {
     animation: palette-glow 4s ease-in-out infinite;
+    /* Faz o brilho ficar mais visível */
+    border-color: transparent;
 }
 
-/* Estilo do Card Ativo (no topo da pilha) */
-.tip-card-item.active {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    z-index: 10;
-    pointer-events: auto; /* Apenas o ativo é clicável */
-    animation-play-state: running; /* Garante que a animação rode */
-}
-
-/* Estilo do Próximo Card (logo abaixo do topo) */
-.tip-card-item.is-next {
-    opacity: 1;
-    transform: translateY(15px) scale(0.95); /* Levemente visível abaixo */
-    z-index: 9;
-    pointer-events: none;
-    animation-play-state: paused; /* Pausa o brilho dos cards de baixo */
-}
-
-/* Estilo do Card que foi Descartado (saindo) */
-.tip-card-item.is-dismissed {
-    transform: translateX(100%) rotate(10deg); /* Animação de saída */
-    opacity: 0;
-    z-index: 8;
-    pointer-events: none;
-    animation-play-state: paused;
-}
-
-/* Estilo do Card que foi Trazido de Volta (voltando) */
-.tip-card-item.is-returning {
-    transform: translateX(-100%) rotate(-10deg); /* Posição inicial de retorno */
-    opacity: 0;
-    z-index: 8;
-    pointer-events: none;
-    animation-play-state: paused;
-}
-
-
-/* Conteúdo interno do Card */
-.tip-card-item .card-icon {
+.tip-card .card-icon {
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -222,72 +168,39 @@ main {
     background-color: var(--primary-light);
     color: var(--primary);
     margin-bottom: 1.5rem;
-    flex-shrink: 0;
 }
-.tip-card-item .card-icon svg {
+.tip-card .card-icon svg {
     width: 24px;
     height: 24px;
 }
-.tip-card-item h3 {
+.tip-card h3 {
     color: var(--text-dark);
     margin-bottom: 0.5rem;
 }
-.tip-card-item p {
-    color: var(--text-light);
-}
 
-/* Navegação do Deck */
-.tip-deck-nav {
+/* --- 5. Card de Destaque (Layout Original Restaurado) --- */
+.featured-card {
     display: flex;
-    justify-content: center;
-    gap: 1rem;
-    width: 100%;
-}
-
-.deck-nav-btn {
-    font-family: 'Lato', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    padding: 0.8rem 1.5rem;
-    border-radius: 50px;
-    border: none;
-    cursor: pointer;
-    display: flex;
+    flex-direction: row;
     align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s ease;
-}
-.deck-nav-btn svg {
-    width: 18px;
-    height: 18px;
+    gap: 1.5rem;
+    padding: 2rem;
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 2rem; /* Adicionado espaço para o grid */
 }
 
-/* Botão "Próximo" */
-#next-tip {
+.featured-card .card-icon {
     background-color: var(--primary);
     color: var(--card-bg);
-}
-#next-tip:hover {
-    background-color: #6a6eac; /* Tom mais escuro */
-    transform: translateY(-2px);
+    flex-shrink: 0;
 }
 
-/* Botão "Voltar" */
-#prev-tip {
-    background-color: var(--background);
-    color: var(--text-light);
-    border: 1px solid var(--border-color);
+.featured-card h3 {
+    color: var(--primary);
 }
-#prev-tip:hover {
-    background-color: var(--card-bg);
-    color: var(--text-dark);
-}
-#prev-tip:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-/* --- FIM DOS NOVOS ESTILOS DO DECK DE CARTÕES --- */
-
 
 /* --- 6. Chatbot (Padrão) --- */
 .chat-fab {
@@ -386,13 +299,13 @@ main {
 
     /* Página */
     h1 { font-size: 1.8rem; }
-
-    /* Deck de Cartões Mobile */
-    .tip-card-stack {
-        height: 380px; /* Um pouco mais baixo no mobile */
+    .tip-grid {
+        grid-template-columns: 1fr;
     }
-    .tip-card-item {
-        padding: 2rem 1.5rem; /* Menos padding lateral */
+    .featured-card {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
     }
 }
 
