@@ -63,8 +63,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const body = document.body;
     const focusOverlay = document.getElementById('tip-focus-overlay');
     const featuredCard = document.querySelector('.featured-card');
-    const gridCards = document.querySelectorAll('.tip-grid .tip-card');
-    const allCards = [featuredCard, ...gridCards];
+    const allCards = document.querySelectorAll('.tip-card');
 
     // Função para redefinir tudo para o estado padrão
     function resetFocus() {
@@ -82,28 +81,24 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Adiciona o listener para cada card
     allCards.forEach(card => {
-        if (!card) return; // Segurança
-        
         card.addEventListener('click', (e) => {
-            e.stopPropagation(); // Impede que o clique "vaze" para o overlay
+            // Impede que o clique "vaze" para o overlay
+            e.stopPropagation(); 
             
             const isAlreadyFocused = card.classList.contains('focused');
 
+            // 1. Remove o foco e brilho de todos antes de decidir o que fazer
+            allCards.forEach(c => {
+                c.classList.remove('focused');
+                c.classList.remove('animated-border');
+            });
+
             if (isAlreadyFocused) {
-                // Se clicar no card que já está focado, reseta tudo
+                // Se já estava focado, apenas reseta o estado geral
                 resetFocus();
             } else {
-                // Se clicar em um novo card:
-                // 1. Remove o foco e brilho de todos
-                allCards.forEach(c => {
-                    c.classList.remove('focused');
-                    c.classList.remove('animated-border');
-                });
-                
-                // 2. Adiciona o estado de foco ao body
+                // Se não estava focado, foca no novo card
                 body.classList.add('tip-focused');
-                
-                // 3. Adiciona o foco e o brilho APENAS ao card clicado
                 card.classList.add('focused');
                 card.classList.add('animated-border');
             }

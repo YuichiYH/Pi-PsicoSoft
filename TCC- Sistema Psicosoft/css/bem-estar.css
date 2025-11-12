@@ -119,21 +119,19 @@ main {
 /* --- 3. Animação de Brilho (A PEDIDO DO CLIENTE) --- */
 @keyframes palette-glow {
     0%, 100% {
-        /* Brilho Roxo (#7A7EBF) */
         box-shadow: 0 0 30px 8px rgba(122, 126, 191, 0.7);
     }
     50% {
-        /* Brilho Verde (#5BA6A6) */
         box-shadow: 0 0 30px 8px rgba(91, 166, 166, 0.7);
     }
 }
 
-/* --- 4. Grid de Dicas (Layout Original Restaurado) --- */
+/* --- 4. Grid de Dicas e Layout dos Cards --- */
 .tip-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
-    margin-top: 1.5rem; /* Espaço abaixo da Dica da Semana */
+    margin-top: 1.5rem;
 }
 
 .tip-card {
@@ -142,74 +140,76 @@ main {
     padding: 2rem;
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--border-color);
-    cursor: pointer; /* Adicionado cursor para indicar interatividade */
-    
-    /* TRANSIÇÃO SUAVE PARA TODAS AS PROPRIEDADES */
-    transition: transform 0.4s ease-in-out, 
-                box-shadow 0.4s ease-in-out, 
+    cursor: pointer;
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
+                box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
                 opacity 0.4s ease-in-out;
 }
 
-/* ESTADO PADRÃO DOS CARDS DO GRID (OPACO) */
+/* NOVO: Layout para os cards do grid (ícone centralizado) */
 .tip-grid .tip-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
     opacity: 0.6;
 }
 .tip-grid .tip-card:hover {
-    opacity: 1; /* Fica 100% opaco no hover, antes do clique */
+    opacity: 1;
     transform: translateY(-5px);
     box-shadow: var(--shadow-lg);
 }
 
+.tip-card .card-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    flex-shrink: 0;
+}
+.tip-card .card-icon svg {
+    width: 24px;
+    height: 24px;
+}
+.tip-card h3 {
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
 
-/* --- 5. Card de Destaque (Layout Original Restaurado) --- */
+/* --- 5. Card de Destaque --- */
 .featured-card {
     display: flex;
-    flex-direction: row;
     align-items: center;
     gap: 1.5rem;
-    padding: 2rem;
-    background-color: var(--card-bg);
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-sm);
-    margin-bottom: 2rem; /* Adicionado espaço para o grid */
+    margin-bottom: 2rem;
 }
 .featured-card:hover {
     transform: translateY(-5px);
     box-shadow: var(--shadow-lg);
 }
-
 .featured-card .card-icon {
     background-color: var(--primary);
     color: var(--card-bg);
-    flex-shrink: 0;
 }
-
 .featured-card h3 {
     color: var(--primary);
 }
 
 
 /* --- INÍCIO DAS NOVAS REGRAS DE FOCO E BRILHO --- */
-
-/* 1. Classe de Brilho: Aplicada ao card focado ou ao default */
-.tip-card.animated-border {
-    animation: palette-glow 4s ease-in-out infinite;
-    border-color: transparent;
-    animation-play-state: running !important;
-}
-
-/* 2. O Overlay de Foco (NOVO) */
 .tip-focus-overlay {
-    display: none; /* Escondido por padrão */
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.4); /* Fundo escurecido */
+    background-color: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(3px);
-    z-index: 1000; /* Abaixo do card focado, acima de todo o resto */
+    z-index: 1000;
     opacity: 0;
     transition: opacity 0.4s ease-in-out;
 }
@@ -218,24 +218,23 @@ body.tip-focused .tip-focus-overlay {
     opacity: 1;
 }
 
-/* 3. Classe do Container: Adicionada via JS quando um card é focado */
-body.tip-focused .featured-card,
-body.tip-focused .tip-grid .tip-card {
-    /* Diminui todos os cards */
+.tip-card.animated-border {
+    animation: palette-glow 4s ease-in-out infinite;
+    border-color: transparent;
+}
+
+body.tip-focused .tip-card {
     opacity: 0.3;
-    transform: scale(1.0); /* Reseta o scale do hover */
-    animation: none; /* Remove o brilho de todos */
+    animation: none;
     cursor: default;
 }
 
-/* 4. Regra de Exceção: O card focado deve se sobressair */
 .tip-card.focused {
     opacity: 1 !important;
     transform: scale(1.05) !important;
-    z-index: 1001; /* Acima do overlay */
-    position: relative; /* Garante que o z-index funcione */
+    position: relative;
+    z-index: 1001;
     cursor: pointer;
-    /* O brilho é adicionado via JS (classe 'animated-border') */
 }
 /* --- FIM DAS NOVAS REGRAS DE FOCO E BRILHO --- */
 
@@ -256,7 +255,6 @@ body.tip-focused .tip-grid .tip-card {
     justify-content: center;
     box-shadow: var(--shadow-lg);
     cursor: pointer;
-    /* z-index ajustado para ficar abaixo do overlay de foco */
     z-index: 999; 
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -282,7 +280,6 @@ body.tip-focused .tip-grid .tip-card {
     transform: translateY(20px) scale(0.95);
     transition: all 0.3s ease-out;
     pointer-events: none;
-    /* z-index ajustado para ficar abaixo do overlay de foco */
     z-index: 998; 
 }
 .chat-container-flutuante.active {
@@ -349,8 +346,7 @@ body.tip-focused .tip-grid .tip-card {
     }
 }
 
-/* --- INÍCIO DOS NOVOS ESTILOS (Refatoração UI/UX) --- */
-/* (Esta seção permanece idêntica à anterior, mantendo o layout da navbar) */
+/* --- Refatoração UI/UX --- */
 .page-header-container {
     display: flex;
     align-items: center;
@@ -475,4 +471,3 @@ body.tip-focused .tip-grid .tip-card {
         align-self: flex-start;
     }
 }
-/* --- FIM DOS NOVOS ESTILOS --- */
