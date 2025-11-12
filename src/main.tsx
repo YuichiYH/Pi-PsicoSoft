@@ -16,8 +16,8 @@ const theme = createTheme({
       main: '#9adcb9', // Tons intermediários / gráficos
     },
     background: {
-      default: '#fafcd3', // Cor de fundo clara
-      paper: '#efeba9',   // Detalhes, realces e fundos de cards
+      default: '#f5f5f5',   // NOVO: Fundo da página (cinza neutro)
+      paper: '#f2f0f0',     // NOVO: Cor dos cards/gráficos
     },
     text: {
       primary: '#332e1d', // Cor primária (tons escuros)

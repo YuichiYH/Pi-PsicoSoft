@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Profile from './pages/Profile'
 import Employee from './pages/Employee'
-import Login from './pages/Login'
+import Login from './pages/Login/Login'
 import './App.css'
 
 function App() {

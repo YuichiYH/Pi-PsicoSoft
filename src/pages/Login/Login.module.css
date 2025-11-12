@@ -3,10 +3,12 @@
     align-items: center;
     justify-content: center;
     min-height: 100vh;
+    /* Garante que o fundo da página de login também seja o novo */
+    background-color: var(--background); 
 }
 
 .loginCard {
-    /* Cor de fundo do card: #efeba9 */
+    /* Cor de fundo do card: #f2f0f0 */
     background-color: var(--card-background); 
     padding: 16px;
     border-radius: 12px;

@@ -1,12 +1,12 @@
 :root {
   /* Paleta de Cores Principal */
-  --background: #fafcd3; /* Cor de fundo clara */
+  --background: #f5f5f5; /* Fundo da página */
   --foreground: #332e1d; /* Cor primária (tons escuros / texto) */
   --primary-dark: #332e1d;
   --primary-accent: #5ac7aa;
   --intermediate: #9adcb9;
-  --light-background: #fafcd3;
-  --card-background: #efeba9;
+  --light-background: #f5f5f5; /* Fundo da página */
+  --card-background: #f2f0f0;  /* Fundo dos cards */
 }
 
 html,
@@ -17,7 +17,7 @@ body {
 
 body {
   color: var(--foreground);
-  background: var(--background);
+  background: var(--background); /* Aplica o fundo global */
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
