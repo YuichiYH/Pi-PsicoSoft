@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function() {
             // 1. Remove o foco e brilho de todos antes de decidir o que fazer
             allCards.forEach(c => {
                 c.classList.remove('focused');
-                c.classList.remove('animated-border');
+                c.classList.remove('animated-border'); // Remove o brilho de todos os cards
             });
 
             if (isAlreadyFocused) {
@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 // Se não estava focado, foca no novo card
                 body.classList.add('tip-focused');
                 card.classList.add('focused');
-                card.classList.add('animated-border');
+                card.classList.add('animated-border'); // Adiciona o brilho APENAS ao card clicado
             }
         });
     });
