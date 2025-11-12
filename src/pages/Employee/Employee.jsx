@@ -12,7 +12,8 @@ import Dashboard from './components/Dashboard';
 import styles from './Employee.module.css';
 
 function Employee() {
-    const [activeTab, setActiveTab] = useState(0);
+    // Alterado para '2' para que o Dashboard seja a aba padrão
+    const [activeTab, setActiveTab] = useState(2);
 
     const handleTabChange = (event, newValue) => {
         setActiveTab(newValue);
@@ -20,13 +21,15 @@ function Employee() {
 
     return (
         <div className={styles.principal}>
-        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Box sx={{ width: '100%' }}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <Tabs 
                         value={activeTab} 
                         onChange={handleTabChange}
                         aria-label="employee tabs"
+                        textColor="primary"
+                        indicatorColor="primary"
                     >
                         <Tab label="Gestão de Filas" />
                         <Tab label="Métricas" />

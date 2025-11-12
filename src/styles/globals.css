@@ -1,6 +1,12 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Paleta de Cores Principal */
+  --background: #fafcd3; /* Cor de fundo clara */
+  --foreground: #332e1d; /* Cor primária (tons escuros / texto) */
+  --primary-dark: #332e1d;
+  --primary-accent: #5ac7aa;
+  --intermediate: #9adcb9;
+  --light-background: #fafcd3;
+  --card-background: #efeba9;
 }
 
 html,
@@ -26,10 +32,4 @@ body {
 a {
   color: inherit;
   text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
 }

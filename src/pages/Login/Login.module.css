@@ -1,0 +1,24 @@
+.loginContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.loginCard {
+    /* Cor de fundo do card: #efeba9 */
+    background-color: var(--card-background); 
+    padding: 16px;
+    border-radius: 12px;
+}
+
+.title {
+    /* Cor primária escura: #332e1d */
+    color: var(--primary-dark);
+    font-weight: 700 !important;
+}
+
+.subtitle {
+     /* Cor de destaque: #5ac7aa */
+    color: var(--primary-accent);
+}

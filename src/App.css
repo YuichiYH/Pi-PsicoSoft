@@ -18,17 +18,4 @@
   }
 }
 
-
-.nav {
-  width: 100%;
-  background: linear-gradient(135deg, #0855ad, #00c4ff);
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-
-}
-
+/* O .nav foi removido pois App.jsx não o utiliza mais */
