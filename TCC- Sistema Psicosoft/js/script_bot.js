@@ -419,7 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 content: pinElement.element,
             });
 
-            // Conteúdo formatado para a clínica com estilo aprimorado e ícone de carro ---
+            // --- Conteúdo formatado para a clínica ---
             const contentString = `
                 <div id="infoWindowContent" style="padding: 5px 10px 5px 10px; max-width: 250px;">
                     <h4 style="margin: 0 0 5px 0; font-size: 15px; font-weight: bold; color: #333;">${clinica.nome}</h4>
@@ -428,13 +428,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p style="margin: 0 0 8px 0; font-size: 13px; color: #555;">${clinica.cidade} - ${clinica.estado}</p>
                     
                     <div style="display: flex; align-items: center; font-size: 13px; color: #777;">
-                        <img src="https://maps.gstatic.com/tactile/omnibox/car-red-small.png" alt="Carro" style="width: 16px; height: 16px; margin-right: 5px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#555" width="16" height="16" style="margin-right: 5px;">
+                            <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l14-.01-1.3-4.33c-.09-.28-.35-.46-.64-.46h-11c-.28 0-.55.18-.64.46L5 11z"/>
+                        </svg>
                         <span>${clinica.duracao} (${clinica.distancia})</span>
                     </div>
                 </div>
             `;
             
-            // --- Adiciona evento de clique para a Clínica ---
+            // O ouvinte de evento (addListener) permanece inalterado logo abaixo
             clinicMarker.addListener("click", () => {
                 infoWindow.close();
                 infoWindow.setContent(contentString);
