@@ -377,10 +377,11 @@ document.addEventListener('DOMContentLoaded', () => {
         mapContainer.style.display = 'block';
         
         // 2. Inicializa o Mapa
+        // NOTA: Para usar Advanced Markers, é obrigatório definir um Map ID.
         const map = new google.maps.Map(mapElement, {
             center: { lat: origem.lat, lng: origem.lng }, 
             zoom: 12,
-            // mapId: "DEMO_MAP_ID" (Opcional)
+            mapId: "d6184030db5995351120a20f"
         });
 
         // 3. Adiciona o marcador de origem (o paciente) - Usando AdvancedMarkerElement
@@ -394,9 +395,9 @@ document.addEventListener('DOMContentLoaded', () => {
         clinicas.forEach((clinica, index) => {
             const destino = { lat: parseFloat(clinica.lat), lng: parseFloat(clinica.lng) };
 
-            // Marcador da Clínica - Usando AdvancedMarkerElement (não depreciado)
+            // Marcador da Clínica - Usando AdvancedMarkerElement
             const pinElement = new google.maps.marker.PinElement({
-                glyph: (index + 1).toString(), // Número da clínica
+                glyphText: (index + 1).toString(), // Número da clínica
                 background: '#4CAF50', // Cor de fundo verde (PsicoSoft)
                 borderColor: '#388E3C', // Cor da borda
                 glyphColor: '#FFFFFF', // Cor do número
