@@ -376,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 1. Mostra o container do mapa
         mapContainer.style.display = 'block';
         
-        // 2. Inicializa o Mapa
+        // 2. Inicializa o Mapa (Seu Map ID já está aqui)
         const map = new google.maps.Map(mapElement, {
             center: { lat: origem.lat, lng: origem.lng }, 
             zoom: 12,
@@ -391,12 +391,13 @@ document.addEventListener('DOMContentLoaded', () => {
             position: { lat: origem.lat, lng: origem.lng },
             map: map,
             title: "Sua Localização",
+            gmpClickable: true, 
         });
 
-        // --- Adiciona evento de clique para a Origem ---
+        // Adiciona evento de clique para a Origem
         originMarker.addListener("click", () => {
             infoWindow.close();
-            infoWindow.setContent("Você"); // Conteúdo: "Você"
+            infoWindow.setContent("Você");
             infoWindow.open(map, originMarker);
         });
 
@@ -412,14 +413,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 glyphColor: '#FFFFFF', 
             });
 
+            // Define o estilo para garantir que o elemento PinElement reconheça o toque
+            pinElement.element.style.cursor = 'pointer'; 
+
             const clinicMarker = new google.maps.marker.AdvancedMarkerElement({
                 position: destino,
                 map: map,
                 title: clinica.nome,
                 content: pinElement.element,
+                gmpClickable: true, 
             });
 
-            // --- Conteúdo formatado para a clínica ---
+            // Conteúdo formatado para a clínica
             const contentString = `
                 <div id="infoWindowContent" style="padding: 5px 10px 5px 10px; max-width: 250px;">
                     <h4 style="margin: 0 0 5px 0; font-size: 15px; font-weight: bold; color: #333;">${clinica.nome}</h4>
@@ -436,12 +441,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
             
-            // O ouvinte de evento (addListener) permanece inalterado logo abaixo
+            // Adiciona evento de clique para a Clínica
             clinicMarker.addListener("click", () => {
                 infoWindow.close();
                 infoWindow.setContent(contentString);
                 infoWindow.open(map, clinicMarker);
             });
+
 
             // Desenha a Rota (Polyline)
             if (clinica.polyline && google.maps.geometry) {
