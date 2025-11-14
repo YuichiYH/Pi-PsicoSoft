@@ -365,8 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 1. Cria o HTML da nova mensagem do bot para o mapa
         const mapMessageHTML = `
-            <div class="message bot-message">
-                <img src="/img/psicosoft_logo.png" alt="Bot Profile" class="profile-pic">
+            <div class="message bot-message map-message">
                 <div class="message-content map-message-content">
                     <p class="bot-text map-title-info" style="margin-bottom: 5px;">Rotas mais curtas a partir da sua localização:</p>
                     <div id="map-${Date.now()}" class="map-inserted" style="height: 300px; width: 100%; border-radius: 8px; margin-top: 5px;"></div>
