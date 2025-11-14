@@ -234,8 +234,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Verifica se a API call que ACABOU de ser executada foi a de Rotas
                 if (url.includes('/clinica/rotas') && responseData.clinicas && responseData.origem) {
                     try {
-                        // O mapa é exibido APENAS aqui.
-                        document.getElementById('map-container').style.display = 'block';
                         renderMap(responseData.clinicas, responseData.origem);
                         
                         const followupQuestion = "O mapa foi atualizado com as rotas. Qual o **NOME COMPLETO da clínica** você deseja agendar sua consulta presencial?";
