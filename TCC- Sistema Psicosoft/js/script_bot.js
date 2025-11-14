@@ -383,7 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
             mapId: "d6184030db5995351120a20f"
         });
 
-        // --- NOVO: Cria um InfoWindow para ser reutilizado ---
+        // --- Cria um InfoWindow para ser reutilizado ---
         const infoWindow = new google.maps.InfoWindow();
 
         // 3. Adiciona o marcador de origem (o paciente) - Ponto Vermelho
@@ -393,7 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
             title: "Sua Localização",
         });
 
-        // --- NOVO: Adiciona evento de clique para a Origem ---
+        // --- Adiciona evento de clique para a Origem ---
         originMarker.addListener("click", () => {
             infoWindow.close();
             infoWindow.setContent("Você"); // Conteúdo: "Você"
@@ -419,19 +419,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 content: pinElement.element,
             });
 
-            // --- NOVO: Cria o conteúdo formatado para a clínica ---
+            // --- Cria o conteúdo formatado para a clínica ---
             const contentString = `
                 <div id="content">
                     <h6 id="firstHeading" class="firstHeading" style="margin-bottom: 5px;">${clinica.nome}</h6>
                     <div id="bodyContent">
-                        <p style="margin: 0; font-size: 14px;">${clinica.rua}, ${clinica.numero}</p>
-                        <p style="margin: 0; font-size: 14px;">${clinica.bairro}</p>
+                        <p style="margin: 0; font-size: 14px;">${clinica.endereco}</p>
+                        <p style="margin: 0; font-size: 14px;">${clinica.cidade} - ${clinica.estado}</p>
                         <p style="margin-top: 5px; font-size: 12px; color: #555;">Duração: ${clinica.duracao} (${clinica.distancia})</p>
                     </div>
                 </div>
             `;
             
-            // --- NOVO: Adiciona evento de clique para a Clínica ---
+            // --- Adiciona evento de clique para a Clínica ---
+            clinicMarker.addListener("click", () => {
+                infoWindow.close();
+                infoWindow.setContent(contentString);
+                infoWindow.open(map, clinicMarker);
+            });
+            
+            // --- Adiciona evento de clique para a Clínica ---
             clinicMarker.addListener("click", () => {
                 infoWindow.close();
                 infoWindow.setContent(contentString);
