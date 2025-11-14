@@ -383,27 +383,31 @@ document.addEventListener('DOMContentLoaded', () => {
             // mapId: "DEMO_MAP_ID" (Opcional)
         });
 
-        // 3. Adiciona o marcador de origem (o paciente)
-        new google.maps.Marker({
+        // 3. Adiciona o marcador de origem (o paciente) - Usando AdvancedMarkerElement
+        new google.maps.marker.AdvancedMarkerElement({
             position: { lat: origem.lat, lng: origem.lng },
             map: map,
             title: "Sua Localização",
-            icon: {
-                url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png' // Ícone azul padrão
-            }
         });
 
         // 4. Adiciona marcadores e rotas para cada clínica
         clinicas.forEach((clinica, index) => {
             const destino = { lat: parseFloat(clinica.lat), lng: parseFloat(clinica.lng) };
 
-            // Marcador da Clínica
-            new google.maps.Marker({
+            // Marcador da Clínica - Usando AdvancedMarkerElement (não depreciado)
+            const pinElement = new google.maps.marker.PinElement({
+                glyph: (index + 1).toString(), // Número da clínica
+                background: '#4CAF50', // Cor de fundo verde (PsicoSoft)
+                borderColor: '#388E3C', // Cor da borda
+                glyphColor: '#FFFFFF', // Cor do número
+            });
+
+            new google.maps.marker.AdvancedMarkerElement({
                 position: destino,
                 map: map,
                 title: clinica.nome,
-                label: (index + 1).toString(), // Número da clínica
-                animation: google.maps.Animation.DROP
+                content: pinElement.element,
+                // A propriedade 'animation' não é suportada no AdvancedMarkerElement
             });
 
             // Desenha a Rota (Polyline)
