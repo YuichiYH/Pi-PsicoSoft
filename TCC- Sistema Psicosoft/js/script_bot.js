@@ -377,47 +377,74 @@ document.addEventListener('DOMContentLoaded', () => {
         mapContainer.style.display = 'block';
         
         // 2. Inicializa o Mapa
-        // NOTA: Para usar Advanced Markers, é obrigatório definir um Map ID.
         const map = new google.maps.Map(mapElement, {
             center: { lat: origem.lat, lng: origem.lng }, 
             zoom: 12,
             mapId: "d6184030db5995351120a20f"
         });
 
-        // 3. Adiciona o marcador de origem (o paciente) - Usando AdvancedMarkerElement
-        new google.maps.marker.AdvancedMarkerElement({
+        // --- NOVO: Cria um InfoWindow para ser reutilizado ---
+        const infoWindow = new google.maps.InfoWindow();
+
+        // 3. Adiciona o marcador de origem (o paciente) - Ponto Vermelho
+        const originMarker = new google.maps.marker.AdvancedMarkerElement({
             position: { lat: origem.lat, lng: origem.lng },
             map: map,
             title: "Sua Localização",
+        });
+
+        // --- NOVO: Adiciona evento de clique para a Origem ---
+        originMarker.addListener("click", () => {
+            infoWindow.close();
+            infoWindow.setContent("Você"); // Conteúdo: "Você"
+            infoWindow.open(map, originMarker);
         });
 
         // 4. Adiciona marcadores e rotas para cada clínica
         clinicas.forEach((clinica, index) => {
             const destino = { lat: parseFloat(clinica.lat), lng: parseFloat(clinica.lng) };
 
-            // Marcador da Clínica - Usando AdvancedMarkerElement
+            // Marcador da Clínica - Ponto Verde
             const pinElement = new google.maps.marker.PinElement({
-                glyphText: (index + 1).toString(), // Número da clínica
-                background: '#4CAF50', // Cor de fundo verde (PsicoSoft)
-                borderColor: '#388E3C', // Cor da borda
-                glyphColor: '#FFFFFF', // Cor do número
+                glyphText: (index + 1).toString(), 
+                background: '#4CAF50', 
+                borderColor: '#388E3C', 
+                glyphColor: '#FFFFFF', 
             });
 
-            new google.maps.marker.AdvancedMarkerElement({
+            const clinicMarker = new google.maps.marker.AdvancedMarkerElement({
                 position: destino,
                 map: map,
                 title: clinica.nome,
                 content: pinElement.element,
-                // A propriedade 'animation' não é suportada no AdvancedMarkerElement
             });
+
+            // --- NOVO: Cria o conteúdo formatado para a clínica ---
+            const contentString = `
+                <div id="content">
+                    <h6 id="firstHeading" class="firstHeading" style="margin-bottom: 5px;">${clinica.nome}</h6>
+                    <div id="bodyContent">
+                        <p style="margin: 0; font-size: 14px;">${clinica.rua}, ${clinica.numero}</p>
+                        <p style="margin: 0; font-size: 14px;">${clinica.bairro}</p>
+                        <p style="margin-top: 5px; font-size: 12px; color: #555;">Duração: ${clinica.duracao} (${clinica.distancia})</p>
+                    </div>
+                </div>
+            `;
+            
+            // --- NOVO: Adiciona evento de clique para a Clínica ---
+            clinicMarker.addListener("click", () => {
+                infoWindow.close();
+                infoWindow.setContent(contentString);
+                infoWindow.open(map, clinicMarker);
+            });
+
 
             // Desenha a Rota (Polyline)
             if (clinica.polyline && google.maps.geometry) {
                 new google.maps.Polyline({
-                    // Decodifica a string Polyline compactada que veio da Lambda
                     path: google.maps.geometry.encoding.decodePath(clinica.polyline),
                     geodesic: true,
-                    strokeColor: '#007bff', // Cor da rota (azul Psicosoft)
+                    strokeColor: '#007bff', 
                     strokeOpacity: 0.8,
                     strokeWeight: 4,
                     map: map
