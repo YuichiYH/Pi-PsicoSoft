@@ -419,14 +419,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 content: pinElement.element,
             });
 
-            // --- Cria o conteúdo formatado para a clínica ---
+            // Conteúdo formatado para a clínica com estilo aprimorado e ícone de carro ---
             const contentString = `
-                <div id="content">
-                    <h6 id="firstHeading" class="firstHeading" style="margin-bottom: 5px;">${clinica.nome}</h6>
-                    <div id="bodyContent">
-                        <p style="margin: 0; font-size: 14px;">${clinica.endereco}</p>
-                        <p style="margin: 0; font-size: 14px;">${clinica.cidade} - ${clinica.estado}</p>
-                        <p style="margin-top: 5px; font-size: 12px; color: #555;">Duração: ${clinica.duracao} (${clinica.distancia})</p>
+                <div id="infoWindowContent" style="padding: 5px 10px 5px 10px; max-width: 250px;">
+                    <h4 style="margin: 0 0 5px 0; font-size: 15px; font-weight: bold; color: #333;">${clinica.nome}</h4>
+                    
+                    <p style="margin: 0; font-size: 13px; color: #555;">${clinica.endereco}</p>
+                    <p style="margin: 0 0 8px 0; font-size: 13px; color: #555;">${clinica.cidade} - ${clinica.estado}</p>
+                    
+                    <div style="display: flex; align-items: center; font-size: 13px; color: #777;">
+                        <img src="https://maps.gstatic.com/tactile/omnibox/car-red-small.png" alt="Carro" style="width: 16px; height: 16px; margin-right: 5px;">
+                        <span>${clinica.duracao} (${clinica.distancia})</span>
                     </div>
                 </div>
             `;
@@ -437,14 +440,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 infoWindow.setContent(contentString);
                 infoWindow.open(map, clinicMarker);
             });
-            
-            // --- Adiciona evento de clique para a Clínica ---
-            clinicMarker.addListener("click", () => {
-                infoWindow.close();
-                infoWindow.setContent(contentString);
-                infoWindow.open(map, clinicMarker);
-            });
-
 
             // Desenha a Rota (Polyline)
             if (clinica.polyline && google.maps.geometry) {
