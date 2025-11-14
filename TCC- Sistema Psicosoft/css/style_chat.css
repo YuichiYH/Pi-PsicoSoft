@@ -235,6 +235,17 @@ body {
     width: 100%;
 }
 
+.gm-style-iw-ch {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    height: auto !important;
+}
+
+.gm-style-iw {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
 [data-theme="dark"] .bot-message {
     color: var(--cor-texto-principal);
 }
