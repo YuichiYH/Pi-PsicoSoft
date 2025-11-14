@@ -210,7 +210,7 @@ body {
 
 /* Zera tudo que cria espaço extra só para a mensagem de mapa */
 .map-message {
-    padding: 0 !important;
+    padding: 12px 18px;
     line-height: normal !important;
     white-space: normal !important;
     box-shadow: none !important;
