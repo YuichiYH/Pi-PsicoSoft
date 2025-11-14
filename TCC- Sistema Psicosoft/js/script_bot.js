@@ -376,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 1. Mostra o container do mapa
         mapContainer.style.display = 'block';
         
-        // 2. Inicializa o Mapa (Seu Map ID já está aqui)
+        // 2. Inicializa o Mapa
         const map = new google.maps.Map(mapElement, {
             center: { lat: origem.lat, lng: origem.lng }, 
             zoom: 12,
