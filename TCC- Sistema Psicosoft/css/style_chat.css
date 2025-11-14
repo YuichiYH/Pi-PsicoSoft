@@ -210,16 +210,20 @@ body {
 
 /* 1. Força a mensagem do mapa a não reservar espaço para a imagem de perfil */
 .message.bot-message.map-message {
-    /* Define o grid/layout da mensagem. */
     grid-template-columns: 0px 1fr !important; 
     padding: 0 10px;
 }
 
 /* 2. Garante que o conteúdo do mapa ocupe 100% da sua nova área */
 .message.bot-message.map-message .message-content.map-message-content {
-    
     margin-left: 0 !important; 
-    padding: 10px; 
+    padding: 0 10px 5px 10px; 
+}
+
+/* NOVO CSS: Ajusta o título para remover margin-top e adicionar padding de topo */
+.message.bot-message.map-message .map-title-info {
+    margin-top: 0 !important; 
+    padding-top: 8px;
 }
 
 /* 3. Garante que o elemento do mapa dentro do HTML injetado esteja correto */
