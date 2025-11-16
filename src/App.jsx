@@ -1,42 +1,11 @@
-// src/App.jsx
-
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Link as RouterLink, // Renomeado para evitar conflito
-  useLocation
-} from 'react-router-dom';
-import {
-  Box,
-  Drawer,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  CssBaseline,
-  AppBar,
-  Toolbar,
-  Typography
-} from '@mui/material';
-import {
-  Home as HomeIcon,
-  Dashboard as DashboardIcon,
-  Queue as QueueIcon,
-  Person as PersonIcon
-} from '@mui/icons-material';
-
-// 1. Importe as páginas
-// (Assumindo a nova estrutura de pastas)
-// import Home from './pages/Home';
-// import Profile from './pages/Profile';
-import Dashboard from './pages/Employee/components/Dashboard/Dashboard';
-import QueueManagement from './pages/Employee/components/QueueManagement/QueueManagement';
-
-import './App.css';
-
-const drawerWidth = 240;
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom'
+import { Button } from '@mui/material'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import Profile from './pages/Profile'
+import Employee from './pages/Employee'
+import './App.css'
+import Home from './pages/Home'
+import Navbar from './components/navbar'
 
 // Componente de layout principal
 function AppLayout() {
@@ -158,7 +127,16 @@ function AppLayout() {
 function App() {
   return (
     <Router>
-      <AppLayout />
+      <div className="App">
+        {/* <NavigationButtons /> */}
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home/>} />
+          <Route path="/home" element={<Home/>} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/employee" element={<Employee />} />
+        </Routes>
+      </div>
     </Router>
   );
 }
