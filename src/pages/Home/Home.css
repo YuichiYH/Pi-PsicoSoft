@@ -52,7 +52,7 @@ html[data-theme="dark"] .btn.ghost{border-color:rgba(255,255,255,.12)}
 
 /* Hero */
 .hero{ padding: 80px 0 32px; }
-.hero-grid{display:grid; grid-template-columns:1.1fr 0.9fr; gap:32px; align-items:center}
+.hero-grid{display:grid;  align-items:center}
 .eyebrow{color:var(--color-accent); font-weight:700; letter-spacing:.08em; text-transform:uppercase; font-size:.85rem}
 .title{font-size:clamp(28px,4vw,48px); margin:10px 0 12px; line-height:1.15}
 .subtitle{color:var(--color-muted); font-size:1.05rem; max-width:55ch}
@@ -106,7 +106,7 @@ html[data-theme="dark"] .footer-inner{border-color:rgba(255,255,255,.08)}
   .media-placeholder{height:220px}
 }
 
-/* Botão antigo da Home (mantido se quiser usar em outra seção) */
+/* Botão antigo da Home */
 .home-container {
   display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:60vh;
   color: var(--color-primary);
@@ -116,7 +116,6 @@ html[data-theme="dark"] .footer-inner{border-color:rgba(255,255,255,.08)}
   color: white; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer;
 }
 .back-btn:hover { background-color: var(--color-primary-600); }
-
 
 /* transforma botões da navbar em "links" sem sublinhado */
 .linkbtn{
@@ -144,4 +143,33 @@ html[data-theme="dark"] .footer-inner{border-color:rgba(255,255,255,.08)}
 }
 .link.asbtn:hover{
   text-decoration: underline;
+}
+
+/* Hero image (mantida para seção hero) */
+.hero-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Nova classe para imagem do card */
+
+.media-placeholder {
+  height: 280px;        /* Altura fixa do card */
+  width: 100%;          /* Largura total */
+  overflow: hidden;     /* Esconde qualquer sobra */
+  border-radius: 8px;   /* Bordas arredondadas */
+  display: flex;        /* Centraliza a imagem */
+  justify-content: center;
+  align-items: center;
+  background: #fff;     /* Fundo branco para não aparecer listras */
+}
+
+.hero-image {
+  max-width: 100%;      /* Limita largura */
+  max-height: 100%;     /* Limita altura */
+  object-fit: contain;  /* Mostra a imagem inteira sem cortar */
+  display: block;
 }

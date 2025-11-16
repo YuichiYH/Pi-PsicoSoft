@@ -3,29 +3,29 @@
 import { createTheme } from '@mui/material/styles';
 
 // Sua paleta de cores:
-// #ffb884 (Pêssego/Laranja claro)
+// #023E8A (Pêssego/Laranja claro)
 // #f5df98 (Amarelo claro)
-// #fff8d4 (Creme/Off-white)
+// #F5F7FB (Creme/Off-white)
 // #c0d1c2 (Verde/Cinza Mute)
-// #2e4347 (Azul/Cinza Escuro)
+// #0B1221 (Azul/Cinza Escuro)
 
 const theme = createTheme({
   palette: {
     // Modo 'light' é o padrão
     primary: {
-      main: '#ffb884', // Cor principal de ações (botões, links)
-      contrastText: '#2e4347', // Texto para usar sobre a cor primária
+      main: '#023E8A', // Cor principal de ações (botões, links)
+      contrastText: '#ffffff', // Texto para usar sobre a cor primária
     },
     secondary: {
       main: '#c0d1c2', // Cor secundária (ações menos importantes)
-      contrastText: '#2e4347',
+      contrastText: '#0B1221',
     },
     background: {
-      default: '#fff8d4', // Cor de fundo da página
+      default: '#F5F7FB', // Cor de fundo da página
       paper: '#ffffff',   // Cor de fundo dos 'Cards', 'Dialogs', 'Menus'
     },
     text: {
-      primary: '#2e4347',   // Cor principal de texto
+      primary: '#0B1221',   // Cor principal de texto
       secondary: '#5a7175', // Cor de texto secundário (um pouco mais clara)
     },
     info: {
