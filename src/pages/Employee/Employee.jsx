@@ -14,12 +14,14 @@ import {
 } from '@mui/material';
 import {
     Dashboard as DashboardIcon,
+    BarChart as MetricsIcon,
     Queue as QueueIcon
 } from '@mui/icons-material';
 
 // Importamos os componentes que serão as "páginas"
 import MetricsPanel from './components/MetricsPanel';
 import QueueManagement from './components/QueueManagement';
+import Dashboard from './components/Dashboard';
 
 const drawerWidth = 240; // Largura do menu lateral
 
@@ -32,6 +34,11 @@ function Employee() {
             text: 'Dashboard',
             icon: <DashboardIcon />,
             view: 'dashboard'
+        },
+        {
+            text: 'Métricas',
+            icon: <MetricsIcon />,
+            view: 'metrics'
         },
         {
             text: 'Gestão de Filas',
@@ -72,7 +79,7 @@ function Employee() {
                     '& .MuiDrawer-paper': {
                         width: drawerWidth,
                         boxSizing: 'border-box',
-                        backgroundColor: '#2e4347', // Cor escura da sua paleta
+                        backgroundColor: 'background.paper', // Cor escura da sua paleta
                         color: '#fff8d4' // Cor clara da sua paleta
                     },
                 }}
@@ -116,7 +123,8 @@ function Employee() {
                 <Toolbar /> {/* Espaçador para o conteúdo ficar abaixo do AppBar */}
                 
                 {/* Renderização condicional da página */}
-                {activeView === 'dashboard' && <MetricsPanel />}
+                {activeView === 'dashboard' && <Dashboard />}
+                {activeView === 'metrics' && <MetricsPanel />}
                 {activeView === 'queue' && <QueueManagement />}
             </Box>
         </Box>
