@@ -1,0 +1,147 @@
+/* Base */
+:root{
+  --color-bg:#F5F7FB;
+  --color-surface:#ffffff;
+  --color-text:#0B1221;
+  --color-muted:#6B7280;
+  --color-primary:#023E8A;   /* azul da sua paleta */
+  --color-primary-600:#0077B6;
+  --color-accent:#00C2A8;
+  --radius:14px;
+  --shadow:0 10px 25px rgba(0,0,0,.08);
+  --container: 1200px;
+  --gap:28px;
+}
+html[data-theme="dark"]{
+  --color-bg:#121826;
+  --color-surface:#101523;
+  --color-text:#E6E8EF;
+  --color-muted:#9AA4B2;
+  --shadow:0 10px 25px rgba(0,0,0,.35);
+}
+.page{background:var(--color-bg); color:var(--color-text); min-height:100vh}
+.container{max-width:var(--container); margin:0 auto; padding:0 20px}
+
+/* Navbar */
+.nav{
+  position:sticky; top:0; z-index:50; backdrop-filter:saturate(180%) blur(12px);
+  background:linear-gradient(to bottom, rgba(255,255,255,.9), rgba(255,255,255,.6));
+  border-bottom:1px solid rgba(0,0,0,.05);
+}
+html[data-theme="dark"] .nav{
+  background:linear-gradient(to bottom, rgba(16,21,35,.9), rgba(16,21,35,.6));
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+.nav-inner{display:flex; align-items:center; justify-content:space-between; height:64px; padding:0 20px}
+.brand{display:flex; align-items:center; gap:10px; font-weight:700}
+.brand-logo{
+  width:34px; height:34px; border-radius:8px; background:linear-gradient(135deg,var(--color-primary),var(--color-accent));
+  box-shadow:var(--shadow);
+}
+.nav-center{display:flex; gap:18px; align-items:center}
+.nav-center a{padding:8px 12px; border-radius:10px; color:var(--color-muted); text-decoration:none}
+.nav-center a.active, .nav-center a:hover{color:var(--color-text); background:rgba(2,62,138,.12)}
+.nav-right{display:flex; align-items:center; gap:10px}
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:10px 16px; border-radius:12px; border:1px solid transparent; cursor:pointer; font-weight:600}
+.btn.primary{background:var(--color-primary); color:#fff}
+.btn.primary:hover{background:var(--color-primary-600)}
+.btn.ghost{background:transparent; color:var(--color-text); border:1px solid rgba(0,0,0,.08)}
+html[data-theme="dark"] .btn.ghost{border-color:rgba(255,255,255,.12)}
+.user-chip{display:flex; align-items:center; gap:8px; color:var(--color-muted)}
+.user-chip img{width:28px; height:28px; border-radius:999px}
+
+/* Hero */
+.hero{ padding: 80px 0 32px; }
+.hero-grid{display:grid; grid-template-columns:1.1fr 0.9fr; gap:32px; align-items:center}
+.eyebrow{color:var(--color-accent); font-weight:700; letter-spacing:.08em; text-transform:uppercase; font-size:.85rem}
+.title{font-size:clamp(28px,4vw,48px); margin:10px 0 12px; line-height:1.15}
+.subtitle{color:var(--color-muted); font-size:1.05rem; max-width:55ch}
+.hero-actions{margin-top:22px; display:flex; gap:12px; flex-wrap:wrap}
+.hero-media{background:var(--color-surface); border-radius:var(--radius); box-shadow:var(--shadow); padding:8px; overflow:hidden}
+.media-placeholder{
+  height:320px; border-radius:10px;
+  background:repeating-linear-gradient(-45deg, rgba(2,62,138,.18) 0 12px, rgba(0,194,168,.18) 12px 24px);
+  display:flex; align-items:center; justify-content:center; color:var(--color-muted); font-weight:600;
+}
+
+/* Sections */
+section{padding:56px 0}
+.section-head{display:flex; justify-content:space-between; align-items:flex-end; gap:16px; margin-bottom:24px; flex-wrap:wrap}
+.section-title{font-size:1.6rem; margin:0}
+.section-desc{color:var(--color-muted); max-width:70ch}
+.grid-2{display:grid; grid-template-columns:1fr 1fr; gap:var(--gap)}
+.grid-4{display:grid; grid-template-columns:repeat(4,1fr); gap:var(--gap)}
+.card{
+  background:var(--color-surface); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow);
+  border:1px solid rgba(0,0,0,.04);
+}
+html[data-theme="dark"] .card{border-color:rgba(255,255,255,.06)}
+.card h3{margin:6px 0 6px; font-size:1.05rem}
+.muted{color:var(--color-muted)}
+.badge{display:inline-block; padding:6px 10px; border-radius:999px; background:rgba(2,62,138,.12); color:var(--color-primary); font-weight:700; font-size:.78rem}
+.gallery{display:grid; grid-template-columns:repeat(2,1fr); gap:var(--gap)}
+.gallery .shot{
+  border-radius:12px; overflow:hidden; background:#dfe7ff20; height:220px; display:flex; align-items:center; justify-content:center; color:var(--color-muted); border:1px dashed rgba(0,0,0,.12)
+}
+html[data-theme="dark"] .gallery .shot{border-color:rgba(255,255,255,.18)}
+.member{display:flex; flex-direction:column; align-items:center; text-align:center; gap:10px}
+.avatar{width:84px; height:84px; border-radius:50%; background:linear-gradient(135deg,var(--color-primary),var(--color-accent)); box-shadow:var(--shadow)}
+.role{font-size:.9rem; color:var(--color-muted)}
+.link{font-size:.9rem; color:var(--color-primary)}
+
+/* Footer */
+footer{padding:36px 0 56px; color:var(--color-muted)}
+.footer-inner{display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; border-top:1px solid rgba(0,0,0,.08); padding-top:20px}
+html[data-theme="dark"] .footer-inner{border-color:rgba(255,255,255,.08)}
+
+/* Responsivo */
+@media (max-width: 980px){
+  .hero-grid{grid-template-columns:1fr}
+  .grid-4{grid-template-columns:1fr 1fr}
+}
+@media (max-width: 640px){
+  .nav-center{display:none}
+  .grid-2, .grid-4{grid-template-columns:1fr}
+  .gallery{grid-template-columns:1fr}
+  .media-placeholder{height:220px}
+}
+
+/* Botão antigo da Home (mantido se quiser usar em outra seção) */
+.home-container {
+  display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:60vh;
+  color: var(--color-primary);
+}
+.back-btn {
+  margin-top: 20px; padding: 12px 20px; background-color: var(--color-primary);
+  color: white; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer;
+}
+.back-btn:hover { background-color: var(--color-primary-600); }
+
+
+/* transforma botões da navbar em "links" sem sublinhado */
+.linkbtn{
+  background: transparent;
+  border: 0;
+  color: var(--color-muted, #6B7280);
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font: inherit;
+}
+.linkbtn:hover{
+  color: var(--color-text, #0B1221);
+  background: rgba(2,62,138,.12);
+}
+
+/* link com cara de botão nos cards */
+.link.asbtn{
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: var(--color-primary, #023E8A);
+  cursor: pointer;
+  font-weight: 700;
+}
+.link.asbtn:hover{
+  text-decoration: underline;
+}

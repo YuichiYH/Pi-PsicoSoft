@@ -4,6 +4,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import Profile from './pages/Profile'
 import Employee from './pages/Employee'
 import './App.css'
+import Home from './pages/Home'
+import Navbar from './components/navbar'
 
 // Componente para os botões de navegação
 function NavigationButtons() {
@@ -49,10 +51,11 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <NavigationButtons />
-
+        {/* <NavigationButtons /> */}
+        <Navbar />
         <Routes>
-          <Route path="/" element={<div>Página Inicial</div>} />
+          <Route path="/" element={<Home/>} />
+          <Route path="/home" element={<Home/>} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/employee" element={<Employee />} />
         </Routes>
