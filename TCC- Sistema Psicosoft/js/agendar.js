@@ -169,10 +169,10 @@ document.addEventListener("DOMContentLoaded", function() {
     async function carregarHorariosDisponiveis(funcionarioId, dataSelecionada) {
         timeSlotsGrid.innerHTML = '<p style="color: var(--text-light); grid-column: 1 / -1;">Carregando horários disponíveis...</p>';
         
-        const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta?FuncionarioId=${encodeURIComponent(funcionarioId)}&_cacheBust=${new Date().getTime()}`;
+        const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta?FuncionarioId=${encodeURIComponent(funcionarioId)}`;
         
         try {
-            const response = await fetch(url, { cache: 'no-store' });
+           const response = await fetch(url, { cache: 'no-store' });
             if (!response.ok) {
                 throw new Error('Não foi possível buscar os horários.');
             }

@@ -436,7 +436,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if (!timeSlotsGrid) return;
         timeSlotsGrid.innerHTML = '<p style="color: var(--text-light); grid-column: 1 / -1;">Carregando horários...</p>';
         
-        const url = `${API_URL}?FuncionarioId=${encodeURIComponent(funcionarioId)}&_cacheBust=${new Date().getTime()}`;
+        const url = `${API_URL}?FuncionarioId=${encodeURIComponent(funcionarioId)}`;
         
         try {
             const response = await fetch(url, { cache: 'no-store' });
