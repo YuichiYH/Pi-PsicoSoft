@@ -439,7 +439,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const url = `${API_URL}?FuncionarioId=${encodeURIComponent(funcionarioId)}`;
         
         try {
-            const response = await fetch(url);
+            const response = await fetch(url, { cache: 'no-store' });
             if (!response.ok) {
                 throw new Error('Não foi possível buscar os horários.');
             }

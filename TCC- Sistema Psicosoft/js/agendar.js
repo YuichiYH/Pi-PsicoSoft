@@ -172,7 +172,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const url = `https://6blopd43v4.execute-api.us-east-1.amazonaws.com/Alpha/Consulta?FuncionarioId=${encodeURIComponent(funcionarioId)}`;
         
         try {
-            const response = await fetch(url);
+            const response = await fetch(url, { cache: 'no-store' });
             if (!response.ok) {
                 throw new Error('Não foi possível buscar os horários.');
             }
