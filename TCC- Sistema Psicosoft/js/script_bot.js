@@ -1,4 +1,5 @@
 // --- AJUSTE: SCRIPT DE PROTEÇÃO DE ROTA (GUARD) ---
+// (Este script de proteção no topo do arquivo está correto e deve ser mantido)
 (function() {
     const pacienteCPF = localStorage.getItem('paciente_cpf');
     if (!pacienteCPF) {
@@ -20,6 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const sendButton = document.getElementById('send-button');
     const typingIndicator = document.getElementById('typing-indicator');
     
+    // (Seletores do Menu, etc... todo o início do arquivo é mantido)
+    // ...
     const menuToggle = document.getElementById('menu-toggle');
     const chatMenu = document.getElementById('chat-menu');
     const themeToggle = document.getElementById('theme-toggle');
@@ -46,23 +49,101 @@ document.addEventListener('DOMContentLoaded', () => {
     // Funções da Interface (UI)
     // =============================================================================
 
+    /**
+     * NOVO: Renderiza a mensagem, convertendo tabelas Markdown em HTML
+     * e mantendo o restante do texto seguro.
+     */
+    const renderBotMessage = (text, messageDiv) => {
+        const lines = text.split('\n');
+        let currentTable = null;
+
+        lines.forEach(line => {
+            line = line.trim();
+            
+            // Verifica se é uma linha de tabela Markdown
+            if (line.startsWith('|') && line.endsWith('|')) {
+                // Se não temos uma tabela, criamos uma
+                if (!currentTable) {
+                    currentTable = document.createElement('table');
+                    currentTable.classList.add('bot-table'); // Adiciona uma classe para estilização
+                }
+                
+                const row = document.createElement('tr');
+                
+                // Separa as células. filter(Boolean) remove strings vazias (início/fim)
+                const cells = line.split('|').filter(Boolean); 
+                
+                cells.forEach(cellContent => {
+                    const cell = document.createElement('td');
+                    cell.textContent = cellContent.trim();
+                    row.appendChild(cell);
+                });
+                
+                currentTable.appendChild(row);
+
+            } else {
+                // Se a linha NÃO é uma tabela, e nós estávamos em uma tabela...
+                if (currentTable) {
+                    // ...fecha a tabela anterior e a adiciona ao div
+                    messageDiv.appendChild(currentTable);
+                    currentTable = null;
+                }
+                
+                // Adiciona a linha de texto normal (se não estiver vazia)
+                // Usamos <p> para manter a quebra de linha
+                if (line.length > 0) {
+                    const p = document.createElement('p');
+                    p.textContent = line;
+                    messageDiv.appendChild(p);
+                } else if (messageDiv.children.length > 0) {
+                     // Se for uma linha vazia (quebra de linha intencional), adiciona um <br>
+                     messageDiv.appendChild(document.createElement('br'));
+                }
+            }
+        });
+        
+        // Se a mensagem terminar com uma tabela, adiciona ela
+        if (currentTable) {
+            messageDiv.appendChild(currentTable);
+        }
+    };
+
+    /**
+     * Adiciona uma nova mensagem ao chatbox
+     * (MODIFICADO: Agora usa 'renderBotMessage' para texto do bot)
+     */
     const appendMessage = (text, className) => {
         const messageDiv = document.createElement('div');
         messageDiv.classList.add('message', className);
-        messageDiv.textContent = text; 
+
+        if (className === 'bot-message') {
+            // Usa o novo renderizador que entende Markdown
+            renderBotMessage(text, messageDiv);
+        } else {
+            // Mensagens do usuário são sempre texto plano (mais seguro)
+            messageDiv.textContent = text; 
+        }
+
         chatbox.appendChild(messageDiv);
         chatbox.scrollTop = chatbox.scrollHeight; 
     };
 
+    /**
+     * Mostra o indicador "digitando..."
+     */
     const showTypingIndicator = () => {
         typingIndicator.style.display = 'flex';
         chatbox.scrollTop = chatbox.scrollHeight;
     };
 
+    /**
+     * Esconde o indicador "digitando..."
+     */
     const hideTypingIndicator = () => {
         typingIndicator.style.display = 'none';
     };
 
+    // (Lógica do Textarea)
     const resetTextareaHeight = () => {
         userInput.style.height = 'auto';
     };
@@ -76,6 +157,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Funções de Lógica do Bot
     // =============================================================================
 
+    /**
+     * Função principal para enviar a mensagem
+     */
     const sendMessage = async () => {
         const text = userInput.value.trim();
         if (text === '') return;
@@ -121,157 +205,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    /**
+     * Processa a resposta recebida da API.
+     */
     function processApiResponse(data) {
         hideTypingIndicator();
         
         const botResponseText = data.response; 
         const apiCallString = data.apiCall;     
 
+        // 1. Sempre exibe a resposta de texto do bot
         if (botResponseText) {
             appendMessage(botResponseText, 'bot-message');
+            // Adiciona a resposta *de texto* do bot ao histórico
             conversationHistory.push({ role: 'model', parts: [{ text: botResponseText }] });
         }
 
+        // 2. Se houver uma apiCall, executa ela
         if (apiCallString) {
             console.log("Ação de API detectada:", apiCallString);
             executeApiCall(apiCallString);
         }
     }
 
-    // =============================================================================
-    // Lógica para buscar e exibir horários (COM FORMATAÇÃO MELHORADA)
-    // =============================================================================
-
-    /**
-     * Helper para converter "dd/mm/aaaa" ou "dd/mm/aaaa HH:MM" em um objeto Date.
-     */
-    function parseDataHorario(horarioStr) {
-        try {
-            if (!horarioStr || typeof horarioStr !== 'string') return null;
-            
-            const partes = horarioStr.split(' ');
-            const dataStr = partes[0];
-            const horaStr = partes[1] || '00:00'; 
-            
-            if (!dataStr || !horaStr || !dataStr.includes('/') || !horaStr.includes(':')) return null;
-
-            const [dia, mesNum, ano] = dataStr.split('/');
-            const [hora, minuto] = horaStr.split(':');
-            
-            if (!dia || !mesNum || !ano || !hora || !minuto) return null;
-
-            const dataObj = new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia), parseInt(hora), parseInt(minuto));
-            if (isNaN(dataObj.getTime())) return null;
-            return dataObj;
-        } catch (e) {
-            console.warn("Erro ao parsear data no script_bot:", horarioStr, e);
-            return null;
-        }
-    }
-
-    /**
-     * Intercepta a API_CALL, busca horários na API e exibe a lista no chat.
-     * @param {string} url - A URL da API (ex: .../Consulta?FuncionarioId=...)
-     * @param {string} dataSelecionadaStr - A data no formato "dd/mm/aaaa"
-     */
-    async function fetchAndDisplayHorarios(url, dataSelecionadaStr) {
-        showTypingIndicator();
-        
-        try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error('Não foi possível buscar os horários do profissional.');
-            }
-            
-            const todasConsultas = await response.json();
-            
-            // 1. Encontrar horários já ocupados
-            const horariosOcupados = new Set();
-            todasConsultas.forEach(consulta => {
-                const [dataStr, horaStr] = consulta.horario.split(' ');
-                if (dataStr === dataSelecionadaStr) {
-                    horariosOcupados.add(horaStr);
-                }
-            });
-
-            const dataSelecionadaObj = parseDataHorario(dataSelecionadaStr);
-            if (!dataSelecionadaObj) {
-                throw new Error('Data selecionada em formato inválido.');
-            }
-
-            // --- [ALTERADO] --- Lógica de formatação (Manhã/Tarde)
-            
-            // 3. Gerar todos os horários e filtrar
-            const horariosManha = [];
-            const horariosTarde = [];
-            const agora = new Date(); 
-
-            // Loop das 07:00 às 17:30
-            for (let hora = 7; hora <= 17; hora++) {
-                for (let minuto = 0; minuto < 60; minuto += 30) {
-                    
-                    const horaStr = hora.toString().padStart(2, '0');
-                    const minutoStr = minuto.toString().padStart(2, '0');
-                    const slotTimeStr = `${horaStr}:${minutoStr}`;
-
-                    const slotDateTime = new Date(
-                        dataSelecionadaObj.getFullYear(),
-                        dataSelecionadaObj.getMonth(),
-                        dataSelecionadaObj.getDate(),
-                        hora,
-                        minuto
-                    );
-
-                    // Validação: Não está ocupado E não está no passado
-                    if (!horariosOcupados.has(slotTimeStr) && slotDateTime > agora) {
-                        if (hora < 12) {
-                            horariosManha.push(slotTimeStr);
-                        } else {
-                            horariosTarde.push(slotTimeStr);
-                        }
-                    }
-                }
-            }
-            
-            hideTypingIndicator();
-            let botMessage = "";
-
-            // 4. Montar a resposta formatada
-            if (horariosManha.length === 0 && horariosTarde.length === 0) {
-                botMessage = `Puxa, parece que não há horários disponíveis para o dia ${dataSelecionadaStr}. Por favor, escolha outra data.`;
-            } else {
-                botMessage = `Claro! Para o dia ${dataSelecionadaStr}, temos estes horários:\n\n`; // Adiciona espaço
-                
-                if (horariosManha.length > 0) {
-                    // Formato: "☀️ Manhã: 09:00, 09:30, 10:00"
-                    botMessage += `☀️ *Manhã:* ${horariosManha.join(', ')}\n`;
-                }
-                if (horariosTarde.length > 0) {
-                    // Formato: "🌙 Tarde: 13:00, 13:30, 14:00"
-                    botMessage += `🌙 *Tarde:* ${horariosTarde.join(', ')}`;
-                }
-                
-                botMessage += "\n\nQual horário você prefere?";
-            }
-            // --- Fim da alteração de formatação ---
-
-            // 5. Enviar a lista para o chat e para o histórico
-            appendMessage(botMessage, 'bot-message');
-            conversationHistory.push({ role: 'model', parts: [{ text: botMessage }] });
-
-        } catch (error) {
-            hideTypingIndicator();
-            console.error('Erro ao buscar/exibir horários:', error);
-            const errorMsg = `Desculpe, tive um problema ao verificar os horários (${error.message}). Por favor, tente pedir o dia novamente.`;
-            appendMessage(errorMsg, 'bot-message');
-            conversationHistory.push({ role: 'model', parts: [{ text: errorMsg }] });
-        }
-    }
-    
-    // =============================================================================
-    // FUNÇÃO executeApiCall (Atualizada)
-    // =============================================================================
-    
     /**
      * Parseia a string [API_CALL:...] e executa a chamada fetch real.
      * @param {string} apiCallString - A string no formato [API_CALL:METODO|URL|BODY_JSON]
@@ -280,9 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         try {
             // 1. Parse da string (LÓGICA ATUALIZADA E MAIS ROBUSTA)
-            // Remove "[API_CALL:" e "]"
             const innerString = apiCallString.substring(10, apiCallString.length - 1).trim();
-            
             const firstPipeIndex = innerString.indexOf('|');
             const secondPipeIndex = innerString.indexOf('|', firstPipeIndex + 1);
 
@@ -295,22 +249,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const method = innerString.substring(0, firstPipeIndex).trim();
             const url = innerString.substring(firstPipeIndex + 1, secondPipeIndex).trim();
             const bodyString = innerString.substring(secondPipeIndex + 1).trim(); 
-
-            // =================================================================
-            // --- Interceptador do GET_HORARIOS (Mantido) ---
-            // =================================================================
-            if (method === 'GET_HORARIOS') {
-                console.log(`Interceptada API Call: ${method} para ${url}`);
-                const body = JSON.parse(bodyString);
-                const dataSelecionadaStr = body.Data; // Extrai a data (ex: "20/11/2025")
-                
-                // Chama a nova função helper e encerra esta execução
-                await fetchAndDisplayHorarios(url, dataSelecionadaStr);
-                return; // Importante: não continua para o fetch padrão abaixo
-            }
-            // =================================================================
-            
-            // Se não for GET_HORARIOS, continua com a lógica normal de POST...
 
             if (bodyString.charAt(0) !== '{' || bodyString.charAt(bodyString.length - 1) !== '}') {
                 console.error("String do Body extraída parece inválida:", bodyString);
@@ -379,6 +317,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Verifica se a API call que ACABOU de ser executada foi a de Histórico
                 } else if (url.includes('/Consulta/HistoricoChat')) {
                     
+                    // Pega a penúltima mensagem do histórico (a última é a do bot, ex: "Claro! Vou mostrar...")
+                    // A penúltima é a do usuário (ex: "cancelar")
                     const lastUserMessage = conversationHistory.length > 1 ? conversationHistory[conversationHistory.length - 2] : null;
 
                     if (lastUserMessage && lastUserMessage.role === 'user') {
@@ -387,17 +327,21 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Verifica se a intenção do usuário era realmente "cancelar"
                         if (userText.includes('cancelar') || userText.includes('desmarcar')) {
                             
+                            // Esta é a pergunta que você solicitou
                             const followupQuestion = "Aqui estão suas consultas. Você gostaria de cancelar alguma delas? Se sim, por favor, me informe o código da consulta.";
                             
+                            // Adiciona a pergunta com um pequeno delay para parecer natural
                             setTimeout(() => {
                                 showTypingIndicator();
-                            }, 500); 
+                            }, 500); // Mostra "digitando" por 0.5s
 
                             setTimeout(() => {
                                 hideTypingIndicator();
+                                // Adiciona a pergunta como uma nova mensagem do bot
                                 appendMessage(followupQuestion, 'bot-message');
+                                // Adiciona esta pergunta ao histórico para o Gemini ter contexto
                                 conversationHistory.push({ role: 'model', parts: [{ text: followupQuestion }] });
-                            }, 1200); 
+                            }, 1200); // Adiciona a mensagem após 1.2s
                         }
                     }
                 }
@@ -417,7 +361,6 @@ document.addEventListener('DOMContentLoaded', () => {
             conversationHistory.push({ role: 'model', parts: [{ text: errorMessage }] });
         }
     }
-
 
     /**
      * Reinicia o chat, limpa o histórico e começa de novo.
@@ -475,11 +418,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =============================================================================
-    // FUNÇÃO PARA RENDERIZAR O MAPA DE CLÍNICAS E ROTAS
+    // FUNÇÃO PARA RENDERIZAR O MAPA DE CLÍNICAS E ROTAS DENTRO DE UMA MENSAGEM DO BOT
     // =============================================================================
     function renderMap(clinicas, origem) {
         const chatbox = document.getElementById('chatbox');
         
+        // 1. Cria o HTML da nova mensagem do bot para o mapa
         const mapMessageHTML = `
             <div class="message bot-message map-message">
                 <div class="message-content map-message-content">
@@ -489,29 +433,37 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
 
+        // 2. Adiciona a nova mensagem do mapa ao chatbox
         chatbox.insertAdjacentHTML('beforeend', mapMessageHTML);
         
+        // 3. Identifica o ID do novo div do mapa (usando um timestamp para garantir unicidade)
         const mapId = chatbox.lastElementChild.querySelector('.map-inserted').id;
         const mapElement = document.getElementById(mapId);
 
+        // Verifica se o SDK do Google Maps está carregado
         if (!mapElement || typeof google === 'undefined' || !google.maps.Map) {
             console.error("Google Maps SDK não carregado ou elemento DOM do mapa ausente. Não é possível renderizar o mapa.");
+            // Oculta o container da mensagem se não puder renderizar o mapa
             if (mapElement) {
                 mapElement.closest('.message').style.display = 'none';
             }
             return;
         }
         
+        // 4. Scrolla para o final do chat
         chatbox.scrollTop = chatbox.scrollHeight;
 
+        // 5. Inicializa o Mapa
         const map = new google.maps.Map(mapElement, {
             center: { lat: origem.lat, lng: origem.lng }, 
             zoom: 12,
             mapId: "d6184030db5995351120a20f"
         });
 
+        // --- Cria um InfoWindow para ser reutilizado ---
         const infoWindow = new google.maps.InfoWindow();
 
+        // 6. Adiciona o marcador de origem (o paciente) - Ponto Vermelho
         const originMarker = new google.maps.marker.AdvancedMarkerElement({
             position: { lat: origem.lat, lng: origem.lng },
             map: map,
@@ -519,15 +471,18 @@ document.addEventListener('DOMContentLoaded', () => {
             gmpClickable: true,
         });
 
+        // Adiciona evento de clique para a Origem
         originMarker.addListener("click", () => {
             infoWindow.close();
-            infoWindow.setContent("Você"); 
+            infoWindow.setContent("Você"); // Conteúdo: "Você"
             infoWindow.open(map, originMarker);
         });
 
+        // 7. Adiciona marcadores e rotas para cada clínica
         clinicas.forEach((clinica, index) => {
             const destino = { lat: parseFloat(clinica.lat), lng: parseFloat(clinica.lng) };
 
+            // Marcador da Clínica - Ponto Verde
             const pinElement = new google.maps.marker.PinElement({
                 glyphText: (index + 1).toString(), 
                 background: '#4CAF50', 
@@ -545,6 +500,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 gmpClickable: true, 
             });
 
+            // Conteúdo formatado para a clínica (com SVG corrigido e estilo)
             const contentString = `
                 <div id="infoWindowContent" style="padding: 5px 10px 5px 10px; max-width: 250px;">
                     <h4 style="margin: 0 0 5px 0; font-size: 15px; font-weight: bold; color: #333;">${clinica.nome}</h4>
@@ -559,12 +515,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
             
+            // Adiciona evento de clique para a Clínica
             clinicMarker.addListener("click", () => {
                 infoWindow.close();
                 infoWindow.setContent(contentString);
                 infoWindow.open(map, clinicMarker);
             });
 
+
+            // Desenha a Rota (Polyline)
             if (clinica.polyline && google.maps.geometry) {
                 new google.maps.Polyline({
                     path: google.maps.geometry.encoding.decodePath(clinica.polyline),
@@ -580,19 +539,23 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function getGeolocation() {
         if (navigator.geolocation) {
+            // Tenta obter a posição atual
             navigator.geolocation.getCurrentPosition(
                 (position) => {
+                    // Sucesso: armazena a lat/lng
                     userLocation.latitude = position.coords.latitude;
                     userLocation.longitude = position.coords.longitude;
                     userLocation.status = 'granted';
                     console.log("Localização obtida com sucesso:", userLocation);
                 },
                 (error) => {
+                    // Erro: armazena o status 'denied'
                     userLocation.status = 'denied';
                     console.warn("Permissão de geolocalização negada/erro:", error.message);
+                    // NOTA: Se o usuário negar, a Lambda usará o FALLBACK!
                 },
                 {
-                    enableHighAccuracy: false, 
+                    enableHighAccuracy: false, // Não precisa de alta precisão
                     timeout: 30000, 
                     maximumAge: 0
                 }
@@ -602,6 +565,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn("Geolocalização não suportada neste navegador.");
         }
     }
+    // =============================================================================
 
     // =============================================================================
     // Event Listeners (Ouvintes de Eventos)
@@ -639,12 +603,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Inicialização ---
+
+    // 1. Tenta obter a geolocalização assim que o script é carregado
     getGeolocation(); 
+
     const savedTheme = localStorage.getItem('chat-theme');
     if (savedTheme) {
         document.documentElement.setAttribute('data-theme', savedTheme);
     }
     window.addEventListener('load', () => {
+        // 2. Inicia o chat após tentar obter a localização (independente do resultado)
         startChat();
     });
 
