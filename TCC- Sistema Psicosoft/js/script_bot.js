@@ -166,6 +166,126 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // =============================================================================
+    // NOVAS FUNÇÕES: Lógica para buscar e exibir horários
+    // (Adicionadas conforme solicitado)
+    // =============================================================================
+
+    /**
+     * Helper para converter "dd/mm/aaaa" ou "dd/mm/aaaa HH:MM" em um objeto Date.
+     */
+    function parseDataHorario(horarioStr) {
+        try {
+            if (!horarioStr || typeof horarioStr !== 'string') return null;
+            
+            const partes = horarioStr.split(' ');
+            const dataStr = partes[0];
+            const horaStr = partes[1] || '00:00'; // Padrão 00:00 se só a data for fornecida
+            
+            if (!dataStr || !horaStr || !dataStr.includes('/') || !horaStr.includes(':')) return null;
+
+            const [dia, mesNum, ano] = dataStr.split('/');
+            const [hora, minuto] = horaStr.split(':');
+            
+            if (!dia || !mesNum || !ano || !hora || !minuto) return null;
+
+            const dataObj = new Date(parseInt(ano), parseInt(mesNum) - 1, parseInt(dia), parseInt(hora), parseInt(minuto));
+            if (isNaN(dataObj.getTime())) return null;
+            return dataObj;
+        } catch (e) {
+            console.warn("Erro ao parsear data no script_bot:", horarioStr, e);
+            return null;
+        }
+    }
+
+    /**
+     * Intercepta a API_CALL, busca horários na API e exibe a lista no chat.
+     * @param {string} url - A URL da API (ex: .../Consulta?FuncionarioId=...)
+     * @param {string} dataSelecionadaStr - A data no formato "dd/mm/aaaa"
+     */
+    async function fetchAndDisplayHorarios(url, dataSelecionadaStr) {
+        showTypingIndicator();
+        
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error('Não foi possível buscar os horários do profissional.');
+            }
+            
+            const todasConsultas = await response.json();
+            
+            // 1. Encontrar horários já ocupados
+            const horariosOcupados = new Set();
+            todasConsultas.forEach(consulta => {
+                const [dataStr, horaStr] = consulta.horario.split(' ');
+                if (dataStr === dataSelecionadaStr) {
+                    horariosOcupados.add(horaStr);
+                }
+            });
+
+            // 2. Definir o objeto Date para a data selecionada (para comparar horários passados)
+            const dataSelecionadaObj = parseDataHorario(dataSelecionadaStr);
+            if (!dataSelecionadaObj) {
+                throw new Error('Data selecionada em formato inválido.');
+            }
+
+            // 3. Gerar todos os horários e filtrar
+            const horariosDisponiveis = [];
+            const agora = new Date(); // Hora atual do cliente
+
+            // Loop das 07:00 às 17:30
+            for (let hora = 7; hora <= 17; hora++) {
+                for (let minuto = 0; minuto < 60; minuto += 30) {
+                    
+                    const horaStr = hora.toString().padStart(2, '0');
+                    const minutoStr = minuto.toString().padStart(2, '0');
+                    const slotTimeStr = `${horaStr}:${minutoStr}`;
+
+                    // Cria um objeto Date para este slot específico
+                    const slotDateTime = new Date(
+                        dataSelecionadaObj.getFullYear(),
+                        dataSelecionadaObj.getMonth(),
+                        dataSelecionadaObj.getDate(),
+                        hora,
+                        minuto
+                    );
+
+                    // Validação: Não está ocupado E não está no passado
+                    if (!horariosOcupados.has(slotTimeStr) && slotDateTime > agora) {
+                        horariosDisponiveis.push(slotTimeStr);
+                    }
+                }
+            }
+            
+            hideTypingIndicator();
+            let botMessage = "";
+
+            // 4. Montar a resposta
+            if (horariosDisponiveis.length === 0) {
+                botMessage = `Puxa, parece que não há horários disponíveis para o dia ${dataSelecionadaStr}. Por favor, escolha outra data.`;
+            } else {
+                // Formata a lista para exibição
+                const listaHorarios = horariosDisponiveis.map(h => `- ${h}`).join('\n');
+                botMessage = `Ótimo! Para o dia ${dataSelecionadaStr}, os horários disponíveis são:\n${listaHorarios}\n\nQual horário você prefere?`;
+            }
+
+            // 5. Enviar a lista para o chat e para o histórico
+            appendMessage(botMessage, 'bot-message');
+            conversationHistory.push({ role: 'model', parts: [{ text: botMessage }] });
+
+        } catch (error) {
+            hideTypingIndicator();
+            console.error('Erro ao buscar/exibir horários:', error);
+            const errorMsg = `Desculpe, tive um problema ao verificar os horários (${error.message}). Por favor, tente pedir o dia novamente.`;
+            appendMessage(errorMsg, 'bot-message');
+            conversationHistory.push({ role: 'model', parts: [{ text: errorMsg }] });
+        }
+    }
+    
+    // =============================================================================
+    // FUNÇÃO executeApiCall (Atualizada)
+    // =============================================================================
+    
     /**
      * Parseia a string [API_CALL:...] e executa a chamada fetch real.
      * @param {string} apiCallString - A string no formato [API_CALL:METODO|URL|BODY_JSON]
@@ -174,7 +294,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         try {
             // 1. Parse da string (LÓGICA ATUALIZADA E MAIS ROBUSTA)
+            // Remove "[API_CALL:" e "]"
             const innerString = apiCallString.substring(10, apiCallString.length - 1).trim();
+            
             const firstPipeIndex = innerString.indexOf('|');
             const secondPipeIndex = innerString.indexOf('|', firstPipeIndex + 1);
 
@@ -187,6 +309,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const method = innerString.substring(0, firstPipeIndex).trim();
             const url = innerString.substring(firstPipeIndex + 1, secondPipeIndex).trim();
             const bodyString = innerString.substring(secondPipeIndex + 1).trim(); 
+
+            // =================================================================
+            // --- [NOVO] --- Interceptador do GET_HORARIOS
+            // =================================================================
+            if (method === 'GET_HORARIOS') {
+                console.log(`Interceptada API Call: ${method} para ${url}`);
+                const body = JSON.parse(bodyString);
+                const dataSelecionadaStr = body.Data; // Extrai a data (ex: "20/11/2025")
+                
+                // Chama a nova função helper e encerra esta execução
+                await fetchAndDisplayHorarios(url, dataSelecionadaStr);
+                return; // Importante: não continua para o fetch padrão abaixo
+            }
+            // =================================================================
+            
+            // Se não for GET_HORARIOS, continua com a lógica normal de POST...
 
             if (bodyString.charAt(0) !== '{' || bodyString.charAt(bodyString.length - 1) !== '}') {
                 console.error("String do Body extraída parece inválida:", bodyString);
@@ -299,6 +437,7 @@ document.addEventListener('DOMContentLoaded', () => {
             conversationHistory.push({ role: 'model', parts: [{ text: errorMessage }] });
         }
     }
+
 
     /**
      * Reinicia o chat, limpa o histórico e começa de novo.
