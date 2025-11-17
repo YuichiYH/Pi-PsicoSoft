@@ -1,5 +1,4 @@
 // --- AJUSTE: SCRIPT DE PROTEÇÃO DE ROTA (GUARD) ---
-// (Este script de proteção no topo do arquivo está correto e deve ser mantido)
 (function() {
     const pacienteCPF = localStorage.getItem('paciente_cpf');
     if (!pacienteCPF) {
@@ -21,8 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const sendButton = document.getElementById('send-button');
     const typingIndicator = document.getElementById('typing-indicator');
     
-    // (Seletores do Menu, etc... todo o início do arquivo é mantido)
-    // ...
     const menuToggle = document.getElementById('menu-toggle');
     const chatMenu = document.getElementById('chat-menu');
     const themeToggle = document.getElementById('theme-toggle');
@@ -49,10 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Funções da Interface (UI)
     // =============================================================================
 
-    /**
-     * Adiciona uma nova mensagem ao chatbox
-     * (Esta função é mantida exatamente como está)
-     */
     const appendMessage = (text, className) => {
         const messageDiv = document.createElement('div');
         messageDiv.classList.add('message', className);
@@ -61,25 +54,15 @@ document.addEventListener('DOMContentLoaded', () => {
         chatbox.scrollTop = chatbox.scrollHeight; 
     };
 
-    /**
-     * Mostra o indicador "digitando..."
-     * (Esta função é mantida exatamente como está)
-     */
     const showTypingIndicator = () => {
         typingIndicator.style.display = 'flex';
         chatbox.scrollTop = chatbox.scrollHeight;
     };
 
-    /**
-     * Esconde o indicador "digitando..."
-     * (Esta função é mantida exatamente como está)
-     */
     const hideTypingIndicator = () => {
         typingIndicator.style.display = 'none';
     };
 
-    // (Lógica do Textarea - mantida)
-    // ...
     const resetTextareaHeight = () => {
         userInput.style.height = 'auto';
     };
@@ -93,10 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Funções de Lógica do Bot
     // =============================================================================
 
-    /**
-     * Função principal para enviar a mensagem
-     * (Esta função é mantida exatamente como está)
-     */
     const sendMessage = async () => {
         const text = userInput.value.trim();
         if (text === '') return;
@@ -142,24 +121,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    /**
-     * Processa a resposta recebida da API.
-     * (Esta função é mantida exatamente como está)
-     */
     function processApiResponse(data) {
         hideTypingIndicator();
         
         const botResponseText = data.response; 
         const apiCallString = data.apiCall;     
 
-        // 1. Sempre exibe a resposta de texto do bot
         if (botResponseText) {
             appendMessage(botResponseText, 'bot-message');
-            // Adiciona a resposta *de texto* do bot ao histórico
             conversationHistory.push({ role: 'model', parts: [{ text: botResponseText }] });
         }
 
-        // 2. Se houver uma apiCall, executa ela
         if (apiCallString) {
             console.log("Ação de API detectada:", apiCallString);
             executeApiCall(apiCallString);
@@ -167,8 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =============================================================================
-    // NOVAS FUNÇÕES: Lógica para buscar e exibir horários
-    // (Adicionadas conforme solicitado)
+    // Lógica para buscar e exibir horários (COM FORMATAÇÃO MELHORADA)
     // =============================================================================
 
     /**
@@ -180,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const partes = horarioStr.split(' ');
             const dataStr = partes[0];
-            const horaStr = partes[1] || '00:00'; // Padrão 00:00 se só a data for fornecida
+            const horaStr = partes[1] || '00:00'; 
             
             if (!dataStr || !horaStr || !dataStr.includes('/') || !horaStr.includes(':')) return null;
 
@@ -223,15 +194,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // 2. Definir o objeto Date para a data selecionada (para comparar horários passados)
             const dataSelecionadaObj = parseDataHorario(dataSelecionadaStr);
             if (!dataSelecionadaObj) {
                 throw new Error('Data selecionada em formato inválido.');
             }
 
+            // --- [ALTERADO] --- Lógica de formatação (Manhã/Tarde)
+            
             // 3. Gerar todos os horários e filtrar
-            const horariosDisponiveis = [];
-            const agora = new Date(); // Hora atual do cliente
+            const horariosManha = [];
+            const horariosTarde = [];
+            const agora = new Date(); 
 
             // Loop das 07:00 às 17:30
             for (let hora = 7; hora <= 17; hora++) {
@@ -241,7 +214,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     const minutoStr = minuto.toString().padStart(2, '0');
                     const slotTimeStr = `${horaStr}:${minutoStr}`;
 
-                    // Cria um objeto Date para este slot específico
                     const slotDateTime = new Date(
                         dataSelecionadaObj.getFullYear(),
                         dataSelecionadaObj.getMonth(),
@@ -252,7 +224,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     // Validação: Não está ocupado E não está no passado
                     if (!horariosOcupados.has(slotTimeStr) && slotDateTime > agora) {
-                        horariosDisponiveis.push(slotTimeStr);
+                        if (hora < 12) {
+                            horariosManha.push(slotTimeStr);
+                        } else {
+                            horariosTarde.push(slotTimeStr);
+                        }
                     }
                 }
             }
@@ -260,14 +236,24 @@ document.addEventListener('DOMContentLoaded', () => {
             hideTypingIndicator();
             let botMessage = "";
 
-            // 4. Montar a resposta
-            if (horariosDisponiveis.length === 0) {
+            // 4. Montar a resposta formatada
+            if (horariosManha.length === 0 && horariosTarde.length === 0) {
                 botMessage = `Puxa, parece que não há horários disponíveis para o dia ${dataSelecionadaStr}. Por favor, escolha outra data.`;
             } else {
-                // Formata a lista para exibição
-                const listaHorarios = horariosDisponiveis.map(h => `- ${h}`).join('\n');
-                botMessage = `Ótimo! Para o dia ${dataSelecionadaStr}, os horários disponíveis são:\n${listaHorarios}\n\nQual horário você prefere?`;
+                botMessage = `Claro! Para o dia ${dataSelecionadaStr}, temos estes horários:\n\n`; // Adiciona espaço
+                
+                if (horariosManha.length > 0) {
+                    // Formato: "☀️ Manhã: 09:00, 09:30, 10:00"
+                    botMessage += `☀️ *Manhã:* ${horariosManha.join(', ')}\n`;
+                }
+                if (horariosTarde.length > 0) {
+                    // Formato: "🌙 Tarde: 13:00, 13:30, 14:00"
+                    botMessage += `🌙 *Tarde:* ${horariosTarde.join(', ')}`;
+                }
+                
+                botMessage += "\n\nQual horário você prefere?";
             }
+            // --- Fim da alteração de formatação ---
 
             // 5. Enviar a lista para o chat e para o histórico
             appendMessage(botMessage, 'bot-message');
@@ -311,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const bodyString = innerString.substring(secondPipeIndex + 1).trim(); 
 
             // =================================================================
-            // --- [NOVO] --- Interceptador do GET_HORARIOS
+            // --- Interceptador do GET_HORARIOS (Mantido) ---
             // =================================================================
             if (method === 'GET_HORARIOS') {
                 console.log(`Interceptada API Call: ${method} para ${url}`);
@@ -393,8 +379,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Verifica se a API call que ACABOU de ser executada foi a de Histórico
                 } else if (url.includes('/Consulta/HistoricoChat')) {
                     
-                    // Pega a penúltima mensagem do histórico (a última é a do bot, ex: "Claro! Vou mostrar...")
-                    // A penúltima é a do usuário (ex: "cancelar")
                     const lastUserMessage = conversationHistory.length > 1 ? conversationHistory[conversationHistory.length - 2] : null;
 
                     if (lastUserMessage && lastUserMessage.role === 'user') {
@@ -403,21 +387,17 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Verifica se a intenção do usuário era realmente "cancelar"
                         if (userText.includes('cancelar') || userText.includes('desmarcar')) {
                             
-                            // Esta é a pergunta que você solicitou
                             const followupQuestion = "Aqui estão suas consultas. Você gostaria de cancelar alguma delas? Se sim, por favor, me informe o código da consulta.";
                             
-                            // Adiciona a pergunta com um pequeno delay para parecer natural
                             setTimeout(() => {
                                 showTypingIndicator();
-                            }, 500); // Mostra "digitando" por 0.5s
+                            }, 500); 
 
                             setTimeout(() => {
                                 hideTypingIndicator();
-                                // Adiciona a pergunta como uma nova mensagem do bot
                                 appendMessage(followupQuestion, 'bot-message');
-                                // Adiciona esta pergunta ao histórico para o Gemini ter contexto
                                 conversationHistory.push({ role: 'model', parts: [{ text: followupQuestion }] });
-                            }, 1200); // Adiciona a mensagem após 1.2s
+                            }, 1200); 
                         }
                     }
                 }
@@ -441,7 +421,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /**
      * Reinicia o chat, limpa o histórico e começa de novo.
-     * (Esta função é mantida exatamente como está)
      */
     function recomecarChat(showMessage = true) {
         chatbox.innerHTML = '';
@@ -454,7 +433,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /**
      * Inicia o chat com uma saudação do backend.
-     * (Esta função é mantida exatamente como está)
      */
     async function startChat() {
         const staticMessage = document.querySelector('.bot-message');
@@ -497,12 +475,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =============================================================================
-    // FUNÇÃO PARA RENDERIZAR O MAPA DE CLÍNICAS E ROTAS DENTRO DE UMA MENSAGEM DO BOT
+    // FUNÇÃO PARA RENDERIZAR O MAPA DE CLÍNICAS E ROTAS
     // =============================================================================
     function renderMap(clinicas, origem) {
         const chatbox = document.getElementById('chatbox');
         
-        // 1. Cria o HTML da nova mensagem do bot para o mapa
         const mapMessageHTML = `
             <div class="message bot-message map-message">
                 <div class="message-content map-message-content">
@@ -512,37 +489,29 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
 
-        // 2. Adiciona a nova mensagem do mapa ao chatbox
         chatbox.insertAdjacentHTML('beforeend', mapMessageHTML);
         
-        // 3. Identifica o ID do novo div do mapa (usando um timestamp para garantir unicidade)
         const mapId = chatbox.lastElementChild.querySelector('.map-inserted').id;
         const mapElement = document.getElementById(mapId);
 
-        // Verifica se o SDK do Google Maps está carregado
         if (!mapElement || typeof google === 'undefined' || !google.maps.Map) {
             console.error("Google Maps SDK não carregado ou elemento DOM do mapa ausente. Não é possível renderizar o mapa.");
-            // Oculta o container da mensagem se não puder renderizar o mapa
             if (mapElement) {
                 mapElement.closest('.message').style.display = 'none';
             }
             return;
         }
         
-        // 4. Scrolla para o final do chat
         chatbox.scrollTop = chatbox.scrollHeight;
 
-        // 5. Inicializa o Mapa
         const map = new google.maps.Map(mapElement, {
             center: { lat: origem.lat, lng: origem.lng }, 
             zoom: 12,
             mapId: "d6184030db5995351120a20f"
         });
 
-        // --- Cria um InfoWindow para ser reutilizado ---
         const infoWindow = new google.maps.InfoWindow();
 
-        // 6. Adiciona o marcador de origem (o paciente) - Ponto Vermelho
         const originMarker = new google.maps.marker.AdvancedMarkerElement({
             position: { lat: origem.lat, lng: origem.lng },
             map: map,
@@ -550,18 +519,15 @@ document.addEventListener('DOMContentLoaded', () => {
             gmpClickable: true,
         });
 
-        // Adiciona evento de clique para a Origem
         originMarker.addListener("click", () => {
             infoWindow.close();
-            infoWindow.setContent("Você"); // Conteúdo: "Você"
+            infoWindow.setContent("Você"); 
             infoWindow.open(map, originMarker);
         });
 
-        // 7. Adiciona marcadores e rotas para cada clínica
         clinicas.forEach((clinica, index) => {
             const destino = { lat: parseFloat(clinica.lat), lng: parseFloat(clinica.lng) };
 
-            // Marcador da Clínica - Ponto Verde
             const pinElement = new google.maps.marker.PinElement({
                 glyphText: (index + 1).toString(), 
                 background: '#4CAF50', 
@@ -579,7 +545,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 gmpClickable: true, 
             });
 
-            // Conteúdo formatado para a clínica (com SVG corrigido e estilo)
             const contentString = `
                 <div id="infoWindowContent" style="padding: 5px 10px 5px 10px; max-width: 250px;">
                     <h4 style="margin: 0 0 5px 0; font-size: 15px; font-weight: bold; color: #333;">${clinica.nome}</h4>
@@ -594,15 +559,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
             
-            // Adiciona evento de clique para a Clínica
             clinicMarker.addListener("click", () => {
                 infoWindow.close();
                 infoWindow.setContent(contentString);
                 infoWindow.open(map, clinicMarker);
             });
 
-
-            // Desenha a Rota (Polyline)
             if (clinica.polyline && google.maps.geometry) {
                 new google.maps.Polyline({
                     path: google.maps.geometry.encoding.decodePath(clinica.polyline),
@@ -618,23 +580,19 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function getGeolocation() {
         if (navigator.geolocation) {
-            // Tenta obter a posição atual
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    // Sucesso: armazena a lat/lng
                     userLocation.latitude = position.coords.latitude;
                     userLocation.longitude = position.coords.longitude;
                     userLocation.status = 'granted';
                     console.log("Localização obtida com sucesso:", userLocation);
                 },
                 (error) => {
-                    // Erro: armazena o status 'denied'
                     userLocation.status = 'denied';
                     console.warn("Permissão de geolocalização negada/erro:", error.message);
-                    // NOTA: Se o usuário negar, a Lambda usará o FALLBACK!
                 },
                 {
-                    enableHighAccuracy: false, // Não precisa de alta precisão
+                    enableHighAccuracy: false, 
                     timeout: 30000, 
                     maximumAge: 0
                 }
@@ -644,11 +602,9 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn("Geolocalização não suportada neste navegador.");
         }
     }
-    // =============================================================================
 
     // =============================================================================
     // Event Listeners (Ouvintes de Eventos)
-    // (Todas as funções de menu e envio são mantidas como estão)
     // =============================================================================
     menuToggle.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -683,16 +639,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Inicialização ---
-
-    // 1. Tenta obter a geolocalização assim que o script é carregado
     getGeolocation(); 
-
     const savedTheme = localStorage.getItem('chat-theme');
     if (savedTheme) {
         document.documentElement.setAttribute('data-theme', savedTheme);
     }
     window.addEventListener('load', () => {
-        // 2. Inicia o chat após tentar obter a localização (independente do resultado)
         startChat();
     });
 
